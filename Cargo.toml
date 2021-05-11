@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Philipp Rehner <rehner@itt.uni-stuttgart.de>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
-workspace = ".."
 
 [dependencies]
 ndarray = { version = "0.14", features = ["serde"] }
