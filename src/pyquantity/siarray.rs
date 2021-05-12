@@ -7,26 +7,25 @@ use pyo3::{PyNumberProtocol, PySequenceProtocol};
 
 use super::PySINumber;
 
-/// An one dimensional array of SI numbers.
-#[pyclass(module = "eos_python.si_numbers", name = "SIArray1")]
+#[pyclass(name = "SIArray1")]
 #[derive(Clone)]
 pub struct PySIArray1 {
     pub _data: SIArray1,
 }
 
-#[pyclass(module = "eos_python.si_numbers", name = "SIArray2")]
+#[pyclass(name = "SIArray2")]
 #[derive(Clone)]
 pub struct PySIArray2 {
     pub _data: SIArray2,
 }
 
-#[pyclass(module = "eos_python.si_numbers", name = "SIArray3")]
+#[pyclass(name = "SIArray3")]
 #[derive(Clone)]
 pub struct PySIArray3 {
     pub _data: SIArray3,
 }
 
-#[pyclass(module = "eos_python.si_numbers", name = "SIArray4")]
+#[pyclass(name = "SIArray4")]
 #[derive(Clone)]
 pub struct PySIArray4 {
     pub _data: SIArray4,
