@@ -22,7 +22,7 @@ numpy = { version = "0.13", optional = true }
 
 [dependencies.pyo3]
 version = "0.13"
-features = ["extension-module"]
+features = ["extension-module", "abi3", "abi3-py36"]
 optional = true
 
 [features]

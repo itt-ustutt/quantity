@@ -247,5 +247,20 @@ macro_rules! impl_array {
                 })
             }
         }
+
+        #[pymethods]
+        impl $struct {
+            pub fn sqrt(&self) -> Result<Self, QuantityError> {
+                Ok(Self {
+                    _data: self._data.sqrt()?,
+                })
+            }
+
+            pub fn cbrt(&self) -> Result<Self, QuantityError> {
+                Ok(Self {
+                    _data: self._data.cbrt()?,
+                })
+            }
+        }
     };
 }
