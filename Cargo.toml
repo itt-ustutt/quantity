@@ -5,6 +5,10 @@ authors = ["Philipp Rehner <rehner@itt.uni-stuttgart.de>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
 
+[lib]
+name = "si"
+crate-type = ["rlib", "cdylib"]
+
 [dependencies]
 ndarray = { version = "0.14", features = ["serde", "approx"] }
 approx = "0.4"
@@ -14,9 +18,16 @@ serde = { version = "1.0", features = ["derive"] }
 ang = "0.4"
 regex = "1.0"
 ndarray-linalg = { version = "0.13", optional = true }
+numpy = { version = "0.13", optional = true }
+
+[dependencies.pyo3]
+version = "0.13"
+features = ["extension-module"]
+optional = true
 
 [features]
 default = []
+python = ["pyo3", "numpy"]
 linalg = ["ndarray-linalg"]
 openblas-system = ["ndarray-linalg/openblas-system"]
 openblas-static = ["ndarray-linalg/openblas-static"]
