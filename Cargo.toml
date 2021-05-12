@@ -6,7 +6,7 @@ authors = ["Philipp Rehner <rehner@itt.uni-stuttgart.de>",
 edition = "2018"
 
 [dependencies]
-ndarray = { version = "0.14", features = ["serde"] }
+ndarray = { version = "0.14", features = ["serde", "approx"] }
 approx = "0.4"
 lazy_static = "1.4"
 thiserror = "1.0"
