@@ -6,7 +6,6 @@ authors = ["Philipp Rehner <rehner@itt.uni-stuttgart.de>",
 edition = "2018"
 
 [lib]
-name = "si"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
