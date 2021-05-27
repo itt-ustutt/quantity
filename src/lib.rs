@@ -68,7 +68,7 @@ use thiserror::Error;
 #[cfg(feature = "linalg")]
 mod linalg;
 #[cfg(feature = "python")]
-mod pyquantity;
+pub mod pyquantity;
 pub mod si;
 mod si_fmt;
 
