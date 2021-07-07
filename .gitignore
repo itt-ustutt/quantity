@@ -1,3 +1,6 @@
 /target
 Cargo.lock
 *.so
+docs/_build
+docs/api/generated
+quantity/__pycache__/
