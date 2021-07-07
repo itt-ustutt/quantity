@@ -18,14 +18,15 @@ impl From<QuantityError> for PyErr {
     }
 }
 
+// Base Units
+const SECOND: PySINumber = PySINumber {
+    _data: crate::si::SECOND,
+};
 const METER: PySINumber = PySINumber {
     _data: crate::si::METER,
 };
 const KILOGRAM: PySINumber = PySINumber {
     _data: crate::si::KILOGRAM,
-};
-const SECOND: PySINumber = PySINumber {
-    _data: crate::si::SECOND,
 };
 const AMPERE: PySINumber = PySINumber {
     _data: crate::si::AMPERE,
@@ -39,12 +40,31 @@ const KELVIN: PySINumber = PySINumber {
 const CANDELA: PySINumber = PySINumber {
     _data: crate::si::CANDELA,
 };
-const ANGSTROM: PySINumber = PySINumber {
-    _data: crate::si::ANGSTROM,
+
+// Associated Constants
+const DVCS: PySINumber = PySINumber {
+    _data: crate::si::DVCS,
 };
-const GRAM: PySINumber = PySINumber {
-    _data: crate::si::GRAM,
+const CLIGHT: PySINumber = PySINumber {
+    _data: crate::si::CLIGHT,
 };
+const PLANCK: PySINumber = PySINumber {
+    _data: crate::si::PLANCK,
+};
+const QE: PySINumber = PySINumber {
+    _data: crate::si::QE,
+};
+const KB: PySINumber = PySINumber {
+    _data: crate::si::KB,
+};
+const NAV: PySINumber = PySINumber {
+    _data: crate::si::NAV,
+};
+const KCD: PySINumber = PySINumber {
+    _data: crate::si::KCD,
+};
+
+// Derived Units
 const HERTZ: PySINumber = PySINumber {
     _data: crate::si::HERTZ,
 };
@@ -54,79 +74,139 @@ const NEWTON: PySINumber = PySINumber {
 const PASCAL: PySINumber = PySINumber {
     _data: crate::si::PASCAL,
 };
-const BAR: PySINumber = PySINumber {
-    _data: crate::si::BAR,
-};
 const JOULE: PySINumber = PySINumber {
     _data: crate::si::JOULE,
-};
-const CALORIE: PySINumber = PySINumber {
-    _data: crate::si::CALORIE,
 };
 const WATT: PySINumber = PySINumber {
     _data: crate::si::WATT,
 };
-const LITER: PySINumber = PySINumber {
-    _data: crate::si::LITER,
+const COULOMB: PySINumber = PySINumber {
+    _data: crate::si::COULOMB,
 };
-const RADIANS: PyAngle = PyAngle {
-    _data: crate::si::RADIANS,
+const VOLT: PySINumber = PySINumber {
+    _data: crate::si::VOLT,
+};
+const FARAD: PySINumber = PySINumber {
+    _data: crate::si::FARAD,
+};
+const OHM: PySINumber = PySINumber {
+    _data: crate::si::OHM,
+};
+const SIEMENS: PySINumber = PySINumber {
+    _data: crate::si::SIEMENS,
+};
+const WEBER: PySINumber = PySINumber {
+    _data: crate::si::WEBER,
+};
+const TESLA: PySINumber = PySINumber {
+    _data: crate::si::TESLA,
+};
+const HENRY: PySINumber = PySINumber {
+    _data: crate::si::HENRY,
+};
+
+// Additional Units
+const ANGSTROM: PySINumber = PySINumber {
+    _data: crate::si::ANGSTROM,
+};
+const AMU: PySINumber = PySINumber {
+    _data: crate::si::AMU,
+};
+const AU: PySINumber = PySINumber {
+    _data: crate::si::AU,
+};
+const BAR: PySINumber = PySINumber {
+    _data: crate::si::BAR,
+};
+const CALORIE: PySINumber = PySINumber {
+    _data: crate::si::CALORIE,
+};
+// const CELSIUS: PySINumber = PySINumber {
+//     _data: crate::si::CELSIUS,
+// };
+const DAY: PySINumber = PySINumber {
+    _data: crate::si::DAY,
 };
 const DEGREES: PyAngle = PyAngle {
     _data: crate::si::DEGREES,
 };
-
-/// Boltzmann constant.
-const KB: PySINumber = PySINumber {
-    _data: crate::si::KB,
+const GRAM: PySINumber = PySINumber {
+    _data: crate::si::GRAM,
+};
+const HOUR: PySINumber = PySINumber {
+    _data: crate::si::HOUR,
+};
+const LITER: PySINumber = PySINumber {
+    _data: crate::si::LITER,
+};
+const MINUTE: PySINumber = PySINumber {
+    _data: crate::si::MINUTE,
+};
+const RADIANS: PyAngle = PyAngle {
+    _data: crate::si::RADIANS,
 };
 
-/// Avogadro constant.
-const NAV: PySINumber = PySINumber {
-    _data: crate::si::NAV,
+// Additional Constants
+const G: PySINumber = PySINumber {
+    _data: crate::si::G,
 };
-
-/// Planck constant.
-const PLANCK: PySINumber = PySINumber {
-    _data: crate::si::PLANCK,
-};
-
-/// Universal gas constant.
 const RGAS: PySINumber = PySINumber {
     _data: crate::si::RGAS,
 };
 
 /// Implementation of SI numbers.
 #[pymodule]
-pub fn si(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+pub fn quantity(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_class::<PySINumber>()?;
     m.add_class::<PySIArray1>()?;
     m.add_class::<PySIArray2>()?;
     m.add_class::<PySIArray3>()?;
     m.add_class::<PySIArray4>()?;
 
+    m.add("SECOND", SECOND)?;
     m.add("METER", METER)?;
     m.add("KILOGRAM", KILOGRAM)?;
-    m.add("SECOND", SECOND)?;
     m.add("AMPERE", AMPERE)?;
-    m.add("MOL", MOL)?;
     m.add("KELVIN", KELVIN)?;
+    m.add("MOL", MOL)?;
     m.add("CANDELA", CANDELA)?;
-    m.add("ANGSTROM", ANGSTROM)?;
-    m.add("GRAM", GRAM)?;
+
+    m.add("DVCS", DVCS)?;
+    m.add("CLIGHT", CLIGHT)?;
+    m.add("PLANCK", PLANCK)?;
+    m.add("QE", QE)?;
+    m.add("KB", KB)?;
+    m.add("NAV", NAV)?;
+    m.add("KCD", KCD)?;
+
     m.add("HERTZ", HERTZ)?;
     m.add("NEWTON", NEWTON)?;
     m.add("PASCAL", PASCAL)?;
-    m.add("BAR", BAR)?;
     m.add("JOULE", JOULE)?;
-    m.add("CALORIE", CALORIE)?;
     m.add("WATT", WATT)?;
-    m.add("LITER", LITER)?;
-    m.add("RADIANS", RADIANS)?;
+    m.add("COULOMB", COULOMB)?;
+    m.add("VOLT", VOLT)?;
+    m.add("FARAD", FARAD)?;
+    m.add("OHM", OHM)?;
+    m.add("SIEMENS", SIEMENS)?;
+    m.add("WEBER", WEBER)?;
+    m.add("TESLA", TESLA)?;
+    m.add("HENRY", HENRY)?;
+
+    m.add("ANGSTROM", ANGSTROM)?;
+    m.add("AMU", AMU)?;
+    m.add("AU", AU)?;
+    m.add("BAR", BAR)?;
+    m.add("CALORIE", CALORIE)?;
+    m.add("DAY", DAY)?;
     m.add("DEGREES", DEGREES)?;
-    m.add("KB", KB)?;
-    m.add("NAV", NAV)?;
-    m.add("PLANCK", PLANCK)?;
+    m.add("GRAM", GRAM)?;
+    m.add("HOUR", HOUR)?;
+    m.add("LITER", LITER)?;
+    m.add("MINUTE", MINUTE)?;
+    m.add("RADIANS", RADIANS)?;
+
+    m.add("G", G)?;
     m.add("RGAS", RGAS)?;
 
     m.add("YOCTO", crate::si::YOCTO)?;

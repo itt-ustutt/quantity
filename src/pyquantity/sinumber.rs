@@ -6,41 +6,7 @@ use pyo3::PyNumberProtocol;
 
 use super::{PySIArray1, PySIArray2, PySIArray3, PySIArray4};
 
-/// A scalar value with SI unit.
-///
-/// .. note::
-///
-///     A scalar value is constructed by multiplying or dividing
-///     a float with a "unit". See the examples below.
-///
-/// Examples
-/// --------
-///
-/// Generating a SINumber is done by multiplication with a
-/// "unit", i.e. a SINumber defined in the library.
-///
-/// >>> from eos_python.si_number import BAR
-/// >>> pressure = 1.0 * BAR
-/// >>> pressure
-/// 100 kPa
-///
-/// When a SINumber is dimensionless after an arithmetic operation,
-/// the return value is a float. This way, we can convert units as well.
-///
-/// >>> from eos_python.si_number import BAR, MILLI, PASCAL
-/// >>> pressure = 1.0 * BAR
-/// >>> pressure / (MILLI * PASCAL)
-/// 100000000.0
-///
-/// Some interaction with numpy.ndarrays is also provided. For example
-/// we can create a SIArray1 using multiplication equivalent to the example above
-///
-/// >>> from eos_python.si_number import BAR
-/// >>> import numpy as np
-/// >>> pressures = np.array([1.0, 2.0, 3.0, 5.0]) * BAR
-/// >>> pressures
-/// [100000, 200000, 300000, 500000] Pa
-#[pyclass(module = "eos_python.si_numbers", name = "SINumber")]
+#[pyclass(name = "SINumber")]
 #[derive(Clone)]
 pub struct PySINumber {
     pub _data: SINumber,
@@ -162,6 +128,42 @@ impl PyNumberProtocol for PySINumber {
                     py,
                     PySIArray4 {
                         _data: lhs._data * r.to_owned_array(),
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(r) = rhs.extract::<PySIArray1>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray1 {
+                        _data: lhs._data * r._data,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(r) = rhs.extract::<PySIArray2>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray2 {
+                        _data: lhs._data * r._data,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(r) = rhs.extract::<PySIArray3>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray3 {
+                        _data: lhs._data * r._data,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(r) = rhs.extract::<PySIArray4>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray4 {
+                        _data: lhs._data * r._data,
                     },
                 )?
                 .to_object(py));
@@ -375,6 +377,15 @@ impl PyNumberProtocol for PySINumber {
 
 #[pymethods]
 impl PySINumber {
+    /// Try to calculate the integer root of self.
+    ///
+    /// Examples
+    /// --------
+    ///
+    /// >>> import si
+    /// >>> m2 = METER**2
+    /// >>> m2.sqrt()
+    /// 1  m
     pub fn sqrt(&self) -> Result<Self, QuantityError> {
         Ok(Self {
             _data: self._data.sqrt()?,
@@ -387,3 +398,9 @@ impl PySINumber {
         })
     }
 }
+
+// #[pyclass(name = "Celsius")]
+// #[derive(Clone)]
+// pub struct PyCelsius {
+//     pub _data: CELSIUS,
+// }
