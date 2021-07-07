@@ -4,6 +4,13 @@ version = "0.1.0"
 authors = ["Philipp Rehner <rehner@itt.uni-stuttgart.de>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "Representation of quantites, i.e. of unit valued scalars and arrays."
+homepage = "https://github.com/itt-ustutt/quantity"
+repository = "https://github.com/itt-ustutt/quantity"
+keywords = ["physics", "units", "SI"]
+categories = ["data-structures", "science"]
+exclude = ["/.github/*", "*.ipynb", "/docs"]
 
 [lib]
 crate-type = ["rlib", "cdylib"]
