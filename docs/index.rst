@@ -1,8 +1,3 @@
-.. si documentation master file, created by
-   sphinx-quickstart on Wed May 12 13:30:58 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to si's documentation!
 ==============================
 
@@ -12,7 +7,7 @@ Examples
 Pressure of an ideal gas
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-    >>> from si import *
+    >>> from quantity import *
     >>> temperature = 298.15 * KELVIN
     >>> volume = 1.5 * METER**3
     >>> moles = 75.0 * MOL
@@ -22,7 +17,7 @@ Pressure of an ideal gas
 
 You can use division to perform unit conversions.
 
-    >>> from si import *
+    >>> from quantity import *
     >>> temperature = 298.15 * KELVIN
     >>> volume = 1.5 * METER**3
     >>> moles = 75.0 * MOL
@@ -37,7 +32,7 @@ You can use division to perform unit conversions.
 Gravitational pull of the moon on the earth
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    >>> from si import *
+    >>> from quantity import *
     >>> mass_earth = 5.9724e24 * KILOGRAM
     >>> mass_moon = 7.346e22 * KILOGRAM
     >>> distance = 383.398 * KILO * METER
@@ -53,7 +48,7 @@ This example demonstrates how dimensioned arrays can be constructed using numpy.
 
 .. code-block:: python
 
-    >>> from si import *
+    >>> from quantity import *
     >>> import numpy as np
 
     >>> z = np.linspace(1.0, 70.0e3, 10) * METER
@@ -84,7 +79,7 @@ Using `numpy` Functions
 
 Functions such as `exp`, `sqrt` and `cbrt` work with methods or the equivalent numpy functions.
 
-    >>> from si import *
+    >>> from quantity import *
     >>> import numpy as np
     >>> sqm = METER**2
     >>> np.sqrt(sqm)
@@ -94,7 +89,7 @@ Functions such as `exp`, `sqrt` and `cbrt` work with methods or the equivalent n
 
 This also works with numpy.ndarray's.
 
-    >>> from si import *
+    >>> from quantity import *
     >>> import numpy as np
     >>> ms = np.array([2.0, 3.0, 4.0]) * METER
     >>> sqms = np.square(ms)

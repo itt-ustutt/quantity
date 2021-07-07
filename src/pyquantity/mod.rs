@@ -156,7 +156,7 @@ const RGAS: PySINumber = PySINumber {
 
 /// Implementation of SI numbers.
 #[pymodule]
-pub fn si(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+pub fn quantity(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_class::<PySINumber>()?;
     m.add_class::<PySIArray1>()?;
     m.add_class::<PySIArray2>()?;

@@ -1,4 +1,4 @@
-.. currentmodule:: si
+.. currentmodule:: quantity
 
 .. contents:: Table of Contents
     :depth: 3
