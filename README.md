@@ -1,5 +1,9 @@
 # quantity
 
+[![crate](https://img.shields.io/crates/v/quantity.svg)](https://crates.io/crates/quantity)
+[![documentation](https://docs.rs/quantity/badge.svg)](https://docs.rs/quantity)
+[![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity)
+
 Representation of quantites, i.e. of unit valued scalars and arrays.
 
 As opposed to other implementations, this crate does not attempt to achieve compile time checks on units.
@@ -8,8 +12,8 @@ Additional to simple scalar quantities, it also provides utilities for vector va
 
 ## Documentation
 
-For the rust documentation, see here.
-For the python documentation, see here.
+For the rust documentation, see [here](https://docs.rs/quantity).
+For the python documentation, see [here](https://itt-ustutt.github.io/quantity).
 
 ## Usage
 
@@ -80,18 +84,18 @@ maturin develop --release --cargo-extra-args="--features python"
 maturin build --release --cargo-extra-args="--features python"
 ```
 
-### Build Documentation
+### Build Python Documentation
 
 To build the documentation you need `sphinx` and some additional packages. (todo: requirements.txt)
 
 ```
-cd doc
+cd docs
 make html
 ```
 
 ### Run Doctests
 
 ```
-cd doc
+cd docs
 make doctest
 ```
