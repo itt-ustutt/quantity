@@ -2,3 +2,4 @@ virtualenv
 maturin
 sphinx
 sphinx_bootstrap_theme
+numpydoc
