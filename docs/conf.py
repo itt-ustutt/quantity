@@ -35,7 +35,6 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
-    'nbsphinx',
     'sphinx.ext.mathjax',
     'numpydoc',
 ]
@@ -66,7 +65,6 @@ html_theme_options = {
     'bootstrap_version': "3",
     'navbar_links': [
         ("API", "api/index"),
-        ("Tutorials", "tutorials/index"),
     ],
 }
 
