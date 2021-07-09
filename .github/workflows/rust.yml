@@ -50,7 +50,9 @@ jobs:
           path: target
           key: ${{ runner.os }}-${{ steps.rustup.outputs.rustc_hash }}-target-${{ hashFiles('**/Cargo.lock') }}
       - name: Build shared object
-        run: maturin develop --release --cargo-extra-args="--features python"
+        run: |
+          source venv/bin/activate
+          maturin develop --release --cargo-extra-args="--features python"
       - name: Run rust tests
         run: cargo test --release
       - name: Run python doctests
@@ -97,7 +99,9 @@ jobs:
           path: target
           key: ${{ runner.os }}-${{ steps.rustup.outputs.rustc_hash }}-target-${{ hashFiles('**/Cargo.lock') }}
       - name: Build artifacts
-        run: maturin build --release --cargo-extra-args="--features python"
+        run: |
+          source venv/bin/activate
+          maturin build --release --cargo-extra-args="--features python"
       - uses: actions/upload-artifact@v2
         with:
           name: wheels
