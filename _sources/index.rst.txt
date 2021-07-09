@@ -1,5 +1,5 @@
-Welcome to si's documentation!
-==============================
+Welcome to quantity
+===================
 
 Examples
 --------
