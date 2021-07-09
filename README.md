@@ -2,7 +2,7 @@
 
 [![crate](https://img.shields.io/crates/v/quantity.svg)](https://crates.io/crates/quantity)
 [![documentation](https://docs.rs/quantity/badge.svg)](https://docs.rs/quantity)
-[![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity)
+[![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity/index.html)
 
 Representation of quantites, i.e. of unit valued scalars and arrays.
 
@@ -13,7 +13,7 @@ Additional to simple scalar quantities, it also provides utilities for vector va
 ## Documentation
 
 For the rust documentation, see [here](https://docs.rs/quantity).
-For the python documentation, see [here](https://itt-ustutt.github.io/quantity).
+For the python documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
 
 ## Usage
 
