@@ -12,6 +12,9 @@ keywords = ["physics", "units", "SI"]
 categories = ["data-structures", "science"]
 exclude = ["/.github/*", "*.ipynb", "/docs"]
 
+[package.metadata.docs.rs]
+rustdoc-args = [ "--html-in-header", "./src/docs-header.html" ]
+
 [lib]
 crate-type = ["rlib", "cdylib"]
 
