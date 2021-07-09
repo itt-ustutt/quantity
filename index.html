@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to si’s documentation! &#8212; quantity 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          quantity</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="api/index.html">API</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="welcome-to-si-s-documentation">
+<h1>Welcome to si’s documentation!<a class="headerlink" href="#welcome-to-si-s-documentation" title="Permalink to this headline">¶</a></h1>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<section id="pressure-of-an-ideal-gas">
+<h3>Pressure of an ideal gas<a class="headerlink" href="#pressure-of-an-ideal-gas" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">quantity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">298.15</span> <span class="o">*</span> <span class="n">KELVIN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">volume</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">moles</span> <span class="o">=</span> <span class="mf">75.0</span> <span class="o">*</span> <span class="n">MOL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pressure</span> <span class="o">=</span> <span class="n">moles</span> <span class="o">*</span> <span class="n">RGAS</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">/</span> <span class="n">volume</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
+<span class="go">123.94785148011941 kPa</span>
+</pre></div>
+</div>
+<p>You can use division to perform unit conversions.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">quantity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">298.15</span> <span class="o">*</span> <span class="n">KELVIN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">volume</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">moles</span> <span class="o">=</span> <span class="mf">75.0</span> <span class="o">*</span> <span class="n">MOL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pressure</span> <span class="o">=</span> <span class="n">moles</span> <span class="o">*</span> <span class="n">RGAS</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">/</span> <span class="n">volume</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pressure</span> <span class="o">/</span> <span class="n">BAR</span><span class="p">)</span>
+<span class="go">1.2394785148011942</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pressure</span> <span class="o">/</span> <span class="p">(</span><span class="n">MILLI</span> <span class="o">*</span> <span class="n">NEWTON</span> <span class="o">/</span> <span class="n">ANGSTROM</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">1.239478514801194e-12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">volume</span> <span class="o">/</span> <span class="n">LITER</span><span class="p">)</span>
+<span class="go">1500.0</span>
+</pre></div>
+</div>
+</section>
+<section id="gravitational-pull-of-the-moon-on-the-earth">
+<h3>Gravitational pull of the moon on the earth<a class="headerlink" href="#gravitational-pull-of-the-moon-on-the-earth" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">quantity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mass_earth</span> <span class="o">=</span> <span class="mf">5.9724e24</span> <span class="o">*</span> <span class="n">KILOGRAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mass_moon</span> <span class="o">=</span> <span class="mf">7.346e22</span> <span class="o">*</span> <span class="n">KILOGRAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distance</span> <span class="o">=</span> <span class="mf">383.398</span> <span class="o">*</span> <span class="n">KILO</span> <span class="o">*</span> <span class="n">METER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">force</span> <span class="o">=</span> <span class="n">G</span> <span class="o">*</span> <span class="n">mass_earth</span> <span class="o">*</span> <span class="n">mass_moon</span> <span class="o">/</span> <span class="n">distance</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">force</span><span class="p">)</span>
+<span class="go">199.20757483023252 YN</span>
+</pre></div>
+</div>
+</section>
+<section id="pressure-distribution-in-the-atmosphere">
+<h3>Pressure distribution in the atmosphere<a class="headerlink" href="#pressure-distribution-in-the-atmosphere" title="Permalink to this headline">¶</a></h3>
+<p>Using the barometric formula.
+This example demonstrates how dimensioned arrays can be constructed using numpy.ndarray’s.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">quantity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">70.0e3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="n">METER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">*</span> <span class="n">METER</span> <span class="o">/</span> <span class="n">SECOND</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="mf">28.949</span> <span class="o">*</span> <span class="n">GRAM</span> <span class="o">/</span> <span class="n">MOL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="mf">283.15</span> <span class="o">*</span> <span class="n">KELVIN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p0</span> <span class="o">=</span> <span class="n">BAR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pressure</span> <span class="o">=</span> <span class="n">p0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="n">z</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">RGAS</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># dividing with the unit of an SIArray returns a numpy.ndarray</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># iteration is currently not implemented.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">zi</span><span class="p">,</span> <span class="n">pi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">z</span> <span class="o">/</span> <span class="n">METER</span><span class="p">,</span> <span class="n">pressure</span> <span class="o">/</span> <span class="p">(</span><span class="n">KILO</span> <span class="o">*</span> <span class="n">PASCAL</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;z = </span><span class="si">{</span><span class="n">zi</span><span class="si">:</span><span class="s1">16.10f</span><span class="si">}</span><span class="s1">   p = </span><span class="si">{</span><span class="n">pi</span><span class="si">:</span><span class="s1">16.10f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="go">z =     1.0000000000   p =    99.9879378249</span>
+<span class="go">z =  7778.6666666667   p =    39.1279560236</span>
+<span class="go">z = 15556.3333333333   p =    15.3118163640</span>
+<span class="go">z = 23334.0000000000   p =     5.9919235296</span>
+<span class="go">z = 31111.6666666667   p =     2.3448000375</span>
+<span class="go">z = 38889.3333333333   p =     0.9175830080</span>
+<span class="go">z = 46667.0000000000   p =     0.3590747881</span>
+<span class="go">z = 54444.6666666667   p =     0.1405155744</span>
+<span class="go">z = 62222.3333333333   p =     0.0549875048</span>
+<span class="go">z = 70000.0000000000   p =     0.0215180823</span>
+</pre></div>
+</div>
+</section>
+<section id="using-numpy-functions">
+<h3>Using <cite>numpy</cite> Functions<a class="headerlink" href="#using-numpy-functions" title="Permalink to this headline">¶</a></h3>
+<p>Functions such as <cite>exp</cite>, <cite>sqrt</cite> and <cite>cbrt</cite> work with methods or the equivalent numpy functions.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">quantity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqm</span> <span class="o">=</span> <span class="n">METER</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqm</span><span class="p">)</span>
+<span class="go">1  m</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqm</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>   <span class="c1"># this is equivalent</span>
+<span class="go">1  m</span>
+</pre></div>
+</div>
+<p>This also works with numpy.ndarray’s.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">quantity</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span> <span class="o">*</span> <span class="n">METER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqms</span>
+<span class="go">[4, 9, 16] m^2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqms</span><span class="p">)</span>
+<span class="go">[2, 3, 4] m</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Philipp Rehner, Gernot Bauer.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

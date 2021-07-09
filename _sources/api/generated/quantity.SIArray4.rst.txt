@@ -1,0 +1,32 @@
+﻿quantity.SIArray4
+=================
+
+.. currentmodule:: quantity
+
+.. autoclass:: SIArray4
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SIArray4.__init__
+      ~SIArray4.as_list
+      ~SIArray4.cbrt
+      ~SIArray4.has_unit
+      ~SIArray4.sqrt
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SIArray4.shape
+   
+   

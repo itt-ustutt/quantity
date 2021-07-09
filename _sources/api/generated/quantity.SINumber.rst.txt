@@ -1,0 +1,25 @@
+﻿quantity.SINumber
+=================
+
+.. currentmodule:: quantity
+
+.. autoclass:: SINumber
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SINumber.__init__
+      ~SINumber.cbrt
+      ~SINumber.has_unit
+      ~SINumber.sqrt
+   
+   
+
+   
+   
+   
