@@ -84,7 +84,7 @@ impl PySINumber {
     }
 
     fn _repr_latex_(&self) -> String {
-        self._data.to_latex()
+        format!("${}$", self._data.to_latex())
     }
 }
 

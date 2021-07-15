@@ -58,22 +58,22 @@ impl SINumber {
                 let prefix = 10.0f64.powi(e as i32);
                 if let Some(e) = PREFIX_SYMBOLS.get(&e) {
                     return format!(
-                        "${}\\,{}",
+                        "{}\\,{}",
                         float_to_latex(value / prefix),
-                        &unit_to_latex(symbols, exponents, Some(e))[1..]
+                        &unit_to_latex(symbols, exponents, Some(e))
                     );
                 }
             }
             format!(
-                "${}\\,{}",
+                "{}\\,{}",
                 float_to_latex(value),
-                &unit_to_latex(symbols, exponents, None)[1..]
+                &unit_to_latex(symbols, exponents, None)
             )
         } else {
             format!(
-                "${}\\,{}",
+                "{}\\,{}",
                 float_to_latex(self.value),
-                &self.unit.to_latex()[1..]
+                &self.unit.to_latex()
             )
         }
     }
@@ -166,9 +166,9 @@ fn unit_to_latex(symbols: &[&str], exponents: &[i8], prefix: Option<&str>) -> St
     let den_st = unit_to_latex_product(den);
     match (num_st, den_st) {
         (None, None) => format!(""),
-        (Some(num), None) => format!("$\\mathrm{{{}}}$", num),
-        (None, Some(den)) => format!("$\\mathrm{{\\frac{{1}}{{{}}}}}$", den),
-        (Some(num), Some(den)) => format!("$\\mathrm{{\\frac{{{}}}{{{}}}}}$", num, den),
+        (Some(num), None) => format!("\\mathrm{{{}}}", num),
+        (None, Some(den)) => format!("\\mathrm{{\\frac{{1}}{{{}}}}}", den),
+        (Some(num), Some(den)) => format!("\\mathrm{{\\frac{{{}}}{{{}}}}}", num, den),
     }
 }
 
