@@ -56,7 +56,7 @@ impl PySIArray1 {
     /// SIArray1
     ///
     #[staticmethod]
-    #[text_signature = "(start, end, n)"]
+    #[pyo3(text_signature = "(start, end, n)")]
     fn linspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
         Ok(SIArray1::linspace(start._data, end._data, n)?.into())
     }
@@ -77,7 +77,7 @@ impl PySIArray1 {
     /// SIArray1
     ///
     #[staticmethod]
-    #[text_signature = "(start, end, n)"]
+    #[pyo3(text_signature = "(start, end, n)")]
     fn logspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
         Ok(SIArray1::logspace(start._data, end._data, n)?.into())
     }
