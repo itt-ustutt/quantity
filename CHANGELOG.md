@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 26-07-2021
+## [0.2.0] - 2021-07-26
 ### Packaging
 - Updated `ndarray` dependency to 0.15.
 - Updated `ang` dependency to 0.4.
