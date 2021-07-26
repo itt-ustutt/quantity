@@ -13,4 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `pyo3` dependency to 0.14.
 
 ### Added 
-- new constant `CELSIUS` that can be used for simple temperature conversions.
+- Constant `CELSIUS`, that can be used for simple temperature conversions, mirrored in python.
