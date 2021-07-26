@@ -15,6 +15,18 @@ macro_rules! impl_array {
 
         #[pymethods]
         impl $struct {
+            pub fn sqrt(&self) -> Result<Self, QuantityError> {
+                Ok(Self {
+                    _data: self._data.sqrt()?,
+                })
+            }
+
+            pub fn cbrt(&self) -> Result<Self, QuantityError> {
+                Ok(Self {
+                    _data: self._data.cbrt()?,
+                })
+            }
+
             #[classattr]
             fn __array_priority__() -> u64 {
                 100
@@ -30,7 +42,7 @@ macro_rules! impl_array {
             /// Returns
             /// -------
             /// bool
-            #[text_signature = "($self, other)"]
+            #[pyo3(text_signature = "($self, other)")]
             fn has_unit(&self, other: Self) -> bool {
                 self._data.has_unit(&other._data)
             }
@@ -244,21 +256,6 @@ macro_rules! impl_array {
             fn __neg__(&self) -> PyResult<Self> {
                 Ok(Self {
                     _data: -self._data.clone(),
-                })
-            }
-        }
-
-        #[pymethods]
-        impl $struct {
-            pub fn sqrt(&self) -> Result<Self, QuantityError> {
-                Ok(Self {
-                    _data: self._data.sqrt()?,
-                })
-            }
-
-            pub fn cbrt(&self) -> Result<Self, QuantityError> {
-                Ok(Self {
-                    _data: self._data.cbrt()?,
                 })
             }
         }

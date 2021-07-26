@@ -24,11 +24,43 @@ impl From<PySINumber> for SINumber {
     }
 }
 
+#[pyproto]
+impl pyo3::class::basic::PyObjectProtocol for PySINumber {
+    fn __repr__(&self) -> PyResult<String> {
+        Ok(self._data.to_string())
+    }
+}
+
 #[pymethods]
 impl PySINumber {
-    #[classattr]
-    fn __array_priority__() -> u64 {
-        1000
+    /// Try to calculate the square root of self.
+    ///
+    /// Examples
+    /// --------
+    ///
+    /// >>> import si
+    /// >>> m2 = METER**2
+    /// >>> m2.sqrt()
+    /// 1  m
+    pub fn sqrt(&self) -> Result<Self, QuantityError> {
+        Ok(Self {
+            _data: self._data.sqrt()?,
+        })
+    }
+
+    /// Try to calculate the cubic root of self.
+    ///
+    /// Examples
+    /// --------
+    ///
+    /// >>> import si
+    /// >>> m3 = METER**3
+    /// >>> m3.cbrt()
+    /// 1  m
+    pub fn cbrt(&self) -> Result<Self, QuantityError> {
+        Ok(Self {
+            _data: self._data.cbrt()?,
+        })
     }
 
     /// Test if the quantity has the same unit as the argument.
@@ -41,21 +73,16 @@ impl PySINumber {
     /// Returns
     /// -------
     /// bool
-    #[text_signature = "($self, other)"]
+    #[pyo3(text_signature = "($self, other)")]
     fn has_unit(&self, other: PySINumber) -> bool {
         self._data.has_unit(&other._data)
     }
-}
 
-#[pyproto]
-impl pyo3::class::basic::PyObjectProtocol for PySINumber {
-    fn __repr__(&self) -> PyResult<String> {
-        Ok(self._data.to_string())
+    #[classattr]
+    fn __array_priority__() -> u64 {
+        1000
     }
-}
 
-#[pymethods]
-impl PySINumber {
     fn _repr_latex_(&self) -> String {
         self._data.to_latex()
     }
@@ -375,32 +402,54 @@ impl PyNumberProtocol for PySINumber {
     }
 }
 
-#[pymethods]
-impl PySINumber {
-    /// Try to calculate the integer root of self.
-    ///
-    /// Examples
-    /// --------
-    ///
-    /// >>> import si
-    /// >>> m2 = METER**2
-    /// >>> m2.sqrt()
-    /// 1  m
-    pub fn sqrt(&self) -> Result<Self, QuantityError> {
-        Ok(Self {
-            _data: self._data.sqrt()?,
-        })
-    }
+#[pyclass(name = "Celsius")]
+#[derive(Clone)]
+pub struct PyCelsius;
 
-    pub fn cbrt(&self) -> Result<Self, QuantityError> {
-        Ok(Self {
-            _data: self._data.cbrt()?,
+#[pyproto]
+impl PyNumberProtocol for PyCelsius {
+    fn __rmul__(&self, lhs: &PyAny) -> PyResult<PyObject> {
+        Python::with_gil(|py| {
+            if let Ok(l) = lhs.extract::<PyReadonlyArray1<f64>>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray1 {
+                        _data: l.to_owned_array() * CELSIUS,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(l) = lhs.extract::<PyReadonlyArray2<f64>>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray2 {
+                        _data: l.to_owned_array() * CELSIUS,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(l) = lhs.extract::<PyReadonlyArray3<f64>>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray3 {
+                        _data: l.to_owned_array() * CELSIUS,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(l) = lhs.extract::<PyReadonlyArray4<f64>>() {
+                return Ok(PyCell::new(
+                    py,
+                    PySIArray4 {
+                        _data: l.to_owned_array() * CELSIUS,
+                    },
+                )?
+                .to_object(py));
+            };
+            if let Ok(l) = lhs.extract::<f64>() {
+                return Ok(PyCell::new(py, PySINumber { _data: l * CELSIUS })?.to_object(py));
+            };
+            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
         })
     }
 }
-
-// #[pyclass(name = "Celsius")]
-// #[derive(Clone)]
-// pub struct PyCelsius {
-//     pub _data: CELSIUS,
-// }
