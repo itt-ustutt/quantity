@@ -482,6 +482,7 @@ pub struct CELSIUS;
 
 impl Mul<CELSIUS> for f64 {
     type Output = SINumber;
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn mul(self, _: CELSIUS) -> SINumber {
         SINumber {
             value: self + 273.15,
@@ -492,6 +493,7 @@ impl Mul<CELSIUS> for f64 {
 
 impl<S: Data<Elem = f64>, D: Dimension> Mul<CELSIUS> for ArrayBase<S, D> {
     type Output = SIArray<D>;
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn mul(self, _: CELSIUS) -> SIArray<D> {
         SIArray {
             value: &self + 273.15,

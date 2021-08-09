@@ -90,7 +90,7 @@ impl PyNumberProtocol for PySINumber {
             if let Ok(r) = rhs.extract::<PySINumber>() {
                 return Ok(PyCell::new(py, Self(lhs.0 + r.0))?.to_object(py));
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
@@ -99,7 +99,7 @@ impl PyNumberProtocol for PySINumber {
             if let Ok(r) = rhs.extract::<PySINumber>() {
                 return Ok(PyCell::new(py, Self(lhs.0 - r.0))?.to_object(py));
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
@@ -139,7 +139,7 @@ impl PyNumberProtocol for PySINumber {
                     Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                 });
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
@@ -160,7 +160,7 @@ impl PyNumberProtocol for PySINumber {
             if let Ok(l) = lhs.extract::<f64>() {
                 return Ok(PyCell::new(py, Self(self.0 * l))?.to_object(py));
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
@@ -173,7 +173,7 @@ impl PyNumberProtocol for PySINumber {
     // //         self.0 = self.0 * n.0;
     // //         return Ok(());
     // //     };
-    // //     Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+    // //     Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
     // // }
 
     fn __truediv__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
@@ -204,7 +204,7 @@ impl PyNumberProtocol for PySINumber {
                     Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                 });
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
@@ -233,7 +233,7 @@ impl PyNumberProtocol for PySINumber {
             if let Ok(l) = lhs.extract::<f64>() {
                 return Ok(PyCell::new(py, Self(l / self.0))?.to_object(py));
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
@@ -269,7 +269,7 @@ impl PyNumberProtocol for PyCelsius {
             if let Ok(l) = lhs.extract::<f64>() {
                 return Ok(PyCell::new(py, PySINumber(l * CELSIUS))?.to_object(py));
             };
-            Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 }

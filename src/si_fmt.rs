@@ -30,51 +30,45 @@ impl fmt::Display for SINumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if DERIVED_UNITS.contains_key(&self.unit) && !self.is_nan() {
             let (unit, symbol, has_prefix, _, _) = DERIVED_UNITS.get(&self.unit).unwrap();
-            let value = self.to_reduced(*unit).unwrap();
-            if *has_prefix {
-                let e: i8 = (value.abs().log10().floor() as i8).div_euclid(3) * 3;
-                let prefix = 10.0f64.powi(e as i32);
-                if let Some(e) = PREFIX_SYMBOLS.get(&e) {
-                    (value / prefix).fmt(f)?;
-                    return write!(f, " {}{}", e, symbol);
-                }
+            let (value, prefix) = get_prefix(self.to_reduced(*unit).unwrap(), *has_prefix);
+            if !(1e-2..1e4).contains(&value) {
+                write!(f, "{:e} {}{}", value, prefix, symbol)
+            } else {
+                write!(f, "{} {}{}", value, prefix, symbol)
             }
-            value.fmt(f)?;
-            write!(f, " {}", symbol)
+        } else if !(1e-2..1e4).contains(&self.value) {
+            write!(f, "{:e} {}", self.value, self.unit)
         } else {
-            self.value.fmt(f)?;
-            write!(f, " {}", self.unit)
+            write!(f, "{} {}", self.value, self.unit)
         }
     }
+}
+
+fn get_prefix(value: f64, has_prefix: Option<f64>) -> (f64, &'static str) {
+    if let Some(p) = has_prefix {
+        if value > PICO && value < p {
+            let e: i8 = (value.abs().log10().floor() as i8).div_euclid(3) * 3;
+            let prefix = 10.0f64.powi(e as i32);
+            if let Some(&e) = PREFIX_SYMBOLS.get(&e) {
+                return (value / prefix, e);
+            }
+        }
+    }
+    (value, "")
 }
 
 impl SINumber {
     pub fn to_latex(&self) -> String {
         if DERIVED_UNITS.contains_key(&self.unit) && !self.is_nan() {
             let (unit, _, has_prefix, symbols, exponents) = DERIVED_UNITS.get(&self.unit).unwrap();
-            let value = self.to_reduced(*unit).unwrap();
-            if *has_prefix {
-                let e: i8 = (value.abs().log10() as i8).div_euclid(3) * 3;
-                let prefix = 10.0f64.powi(e as i32);
-                if let Some(e) = PREFIX_SYMBOLS.get(&e) {
-                    return format!(
-                        "{}\\,{}",
-                        float_to_latex(value / prefix),
-                        &unit_to_latex(symbols, exponents, Some(e))
-                    );
-                }
-            }
-            format!(
+            let (value, prefix) = get_prefix(self.to_reduced(*unit).unwrap(), *has_prefix);
+            return format!(
                 "{}\\,{}",
                 float_to_latex(value),
-                &unit_to_latex(symbols, exponents, None)
-            )
+                &unit_to_latex(symbols, exponents, Some(prefix))
+            );
         } else {
-            format!(
-                "{}\\,{}",
-                float_to_latex(self.value),
-                &self.unit.to_latex()
-            )
+            format!("{}\\,{}", float_to_latex(self.value), &self.unit.to_latex())
         }
     }
 }
@@ -141,7 +135,7 @@ impl fmt::Display for SIUnit {
 impl SIUnit {
     pub fn to_latex(&self) -> String {
         match DERIVED_UNITS.get(self) {
-            Some((_, _, _, symbols, exponents)) => unit_to_latex(&symbols, &exponents, None),
+            Some((_, _, _, symbols, exponents)) => unit_to_latex(symbols, exponents, None),
             None => unit_to_latex(&UNIT_SYMBOLS, &self.0, None),
         }
     }
@@ -203,38 +197,42 @@ impl<D: Dimension> fmt::Display for SIArray<D> {
 const UNIT_SYMBOLS: [&str; 7] = ["m", "kg", "s", "A", "mol", "K", "cd"];
 
 lazy_static! {
-    static ref DERIVED_UNIT_SYMBOLS: HashMap<&'static str, (SINumber, bool)> = {
+    static ref DERIVED_UNIT_SYMBOLS: HashMap<&'static str, (SINumber, Option<f64>)> = {
         let mut m = HashMap::new();
-        m.insert("m", (METER, true));
-        m.insert("g", (GRAM, true));
-        m.insert("s", (SECOND, false));
-        m.insert("mol", (MOL, true));
-        m.insert("K", (KELVIN, false));
-        m.insert("N", (NEWTON, true));
-        m.insert("Pa", (PASCAL, true));
-        m.insert("J", (JOULE, true));
-        m.insert("W", (WATT, true));
-        m.insert("m³", (METER.powi(3), false));
-        m.insert("m²", (METER.powi(2), false));
-        m.insert("kg", (KILOGRAM, false));
-        m.insert("V", (VOLT, true));
-        m.insert("F", (FARAD, true));
-        m.insert("Ω", (OHM, true));
-        m.insert("S", (SIEMENS, true));
-        m.insert("Wb", (WEBER, true));
-        m.insert("T", (TESLA, true));
-        m.insert("H", (HENRY, true));
+        m.insert("m", (METER, Some(MEGA)));
+        m.insert("g", (GRAM, Some(MEGA)));
+        m.insert("s", (SECOND, Some(KILO)));
+        m.insert("mol", (MOL, Some(MEGA)));
+        m.insert("K", (KELVIN, None));
+        m.insert("Hz", (HERTZ, Some(PETA)));
+        m.insert("N", (NEWTON, Some(PETA)));
+        m.insert("Pa", (PASCAL, Some(PETA)));
+        m.insert("J", (JOULE, Some(PETA)));
+        m.insert("W", (WATT, Some(PETA)));
+        m.insert("m³", (METER.powi(3), None));
+        m.insert("m²", (METER.powi(2), None));
+        m.insert("kg", (KILOGRAM, None));
+        m.insert("C", (COULOMB, None));
+        m.insert("V", (VOLT, Some(PETA)));
+        m.insert("F", (FARAD, Some(PETA)));
+        m.insert("Ω", (OHM, Some(PETA)));
+        m.insert("S", (SIEMENS, Some(PETA)));
+        m.insert("Wb", (WEBER, Some(PETA)));
+        m.insert("T", (TESLA, Some(PETA)));
+        m.insert("H", (HENRY, Some(PETA)));
+        m.insert("lm", (CANDELA, None));
+        m.insert("s²", (SECOND.powi(2), None));
         m
     };
 }
 
-type SIUnitSymbol = (SINumber, String, bool, Vec<&'static str>, Vec<i8>);
+type SIUnitSymbol = (SINumber, String, Option<f64>, Vec<&'static str>, Vec<i8>);
 
 fn insert_derived_unit(map: &mut HashMap<SIUnit, SIUnitSymbol>, s: &'static str) {
     let u_reg = Regex::new("([\\*/])").unwrap();
-    let o_reg = Regex::new("mol|m³|m²|m|g|kg|s|K|N|Pa|J|Wb|W|V|F|Ω|S|T|H").unwrap();
+    let o_reg = Regex::new("mol|m³|m²|m|g|kg|s²|s|K|Hz|N|Pa|J|Wb|W|C|V|F|Ω|S|T|H|lm").unwrap();
     let mut unit = None;
-    let mut has_prefix = false;
+    let mut has_prefix = None;
     let mut symbols = Vec::new();
     let mut exponents = Vec::new();
     for (o, u) in o_reg.split(&format!("*{}", s)).zip(u_reg.split(s)) {
@@ -278,10 +276,12 @@ lazy_static! {
         insert_derived_unit(&mut m, "s");
         insert_derived_unit(&mut m, "mol");
         insert_derived_unit(&mut m, "K");
+        insert_derived_unit(&mut m, "Hz");
         insert_derived_unit(&mut m, "N");
         insert_derived_unit(&mut m, "Pa");
         insert_derived_unit(&mut m, "J");
         insert_derived_unit(&mut m, "W");
+        insert_derived_unit(&mut m, "C");
         insert_derived_unit(&mut m, "V");
         insert_derived_unit(&mut m, "F");
         insert_derived_unit(&mut m, "Ω");
@@ -304,6 +304,10 @@ lazy_static! {
         insert_derived_unit(&mut m, "m²/s");
         insert_derived_unit(&mut m, "W/m/K");
         insert_derived_unit(&mut m, "g/mol");
+        insert_derived_unit(&mut m, "m²");
+        insert_derived_unit(&mut m, "m³");
+        insert_derived_unit(&mut m, "lm/W");
+        insert_derived_unit(&mut m, "m³/kg/s²");
         m
     };
 }

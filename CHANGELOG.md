@@ -5,15 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.3.0] - 2021-08-13
+### Added
+- Added `PyAngle:From<Angle>` and `Angle:From<PyAngle>`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
+- Added `PySIArrayX:Deref<Target=SIArrayX>` to automatically convert between `&PySIArrayX` and `&SIArrayX`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
+
 ### Changed
 - Renamed module `pyquantity` to `python`. [#19](https://github.com/itt-ustutt/quantity/pull/19)
 - Replaced all Python wrapper structs with tuple structs. [#19](https://github.com/itt-ustutt/quantity/pull/19)
 - Made the fields of the tuple structs `pub(crate)`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
 - Made `PySINumber`, `PyAngle` and `PyCelsius` `Copy`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
-
-### Added
-- Added `PyAngle:From<Angle>` and `Angle:From<PyAngle>`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
-- Added `PySIArrayX:Deref<Target=SIArrayX>` to automatically convert between `&PySIArrayX` and `&SIArrayX`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
+- Improved float and latex representations of some SI quantities. [#20](https://github.com/itt-ustutt/quantity/pull/19)
 
 ## [0.2.0] - 2021-07-26
 ### Packaging
@@ -23,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `ndarray-linalg` dependency to 0.13.
 - Updated `pyo3` dependency to 0.14.
 
-### Added 
+### Added
 - Constant `CELSIUS`, that can be used for simple temperature conversions, mirrored in python. [#17](https://github.com/itt-ustutt/quantity/pull/17)
 
 ### Changed
