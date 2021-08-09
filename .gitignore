@@ -4,3 +4,6 @@ Cargo.lock
 docs/_build
 docs/api/generated
 quantity/__pycache__/
+/venv
+.ipynb_checkpoints
+*.ipynb

@@ -55,6 +55,8 @@
 //! # Ok(())
 //! # }
 //! ```
+
+#![warn(clippy::all)]
 use approx::{AbsDiffEq, RelativeEq};
 use ndarray::*;
 use serde::{Deserialize, Serialize};
@@ -695,7 +697,7 @@ impl<U: Unit> QuantityScalar<U> {
         if self.unit == other.unit {
             Ok(Self {
                 value: self.value.max(other.value),
-                unit: self.unit.clone(),
+                unit: self.unit,
             })
         } else {
             Err(QuantityError::UnitError {
@@ -728,7 +730,7 @@ impl<U: Unit> QuantityScalar<U> {
         if self.unit == other.unit {
             Ok(Self {
                 value: self.value.min(other.value),
-                unit: self.unit.clone(),
+                unit: self.unit,
             })
         } else {
             Err(QuantityError::UnitError {
@@ -754,7 +756,7 @@ impl<U: Unit> QuantityScalar<U> {
     {
         Self {
             value: self.value.abs(),
-            unit: self.unit.clone(),
+            unit: self.unit,
         }
     }
 

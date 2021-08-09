@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Renamed module `pyquantity` to `python`. [#19](https://github.com/itt-ustutt/quantity/pull/19)
 - Replaced all Python wrapper structs with tuple structs. [#19](https://github.com/itt-ustutt/quantity/pull/19)
+- Improved float and latex representations of some SI quantities. [#20](https://github.com/itt-ustutt/quantity/pull/19)
 
 ## [0.2.0] - 2021-07-26
 ### Packaging
