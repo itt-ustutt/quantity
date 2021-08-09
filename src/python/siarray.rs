@@ -9,27 +9,19 @@ use super::PySINumber;
 
 #[pyclass(name = "SIArray1")]
 #[derive(Clone)]
-pub struct PySIArray1 {
-    pub _data: SIArray1,
-}
+pub struct PySIArray1(pub SIArray1);
 
 #[pyclass(name = "SIArray2")]
 #[derive(Clone)]
-pub struct PySIArray2 {
-    pub _data: SIArray2,
-}
+pub struct PySIArray2(pub SIArray2);
 
 #[pyclass(name = "SIArray3")]
 #[derive(Clone)]
-pub struct PySIArray3 {
-    pub _data: SIArray3,
-}
+pub struct PySIArray3(pub SIArray3);
 
 #[pyclass(name = "SIArray4")]
 #[derive(Clone)]
-pub struct PySIArray4 {
-    pub _data: SIArray4,
-}
+pub struct PySIArray4(pub SIArray4);
 
 // Adding the macro is not sufficient.
 // You need to add _mul_ and _div_ in sinumber.rs to construct from numpy arrays.
@@ -58,7 +50,7 @@ impl PySIArray1 {
     #[staticmethod]
     #[pyo3(text_signature = "(start, end, n)")]
     fn linspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
-        Ok(SIArray1::linspace(start._data, end._data, n)?.into())
+        Ok(SIArray1::linspace(start.0, end.0, n)?.into())
     }
 
     /// Create a logarithmically spaced SIArray.
@@ -79,6 +71,6 @@ impl PySIArray1 {
     #[staticmethod]
     #[pyo3(text_signature = "(start, end, n)")]
     fn logspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
-        Ok(SIArray1::logspace(start._data, end._data, n)?.into())
+        Ok(SIArray1::logspace(start.0, end.0, n)?.into())
     }
 }
