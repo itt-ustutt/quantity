@@ -3,8 +3,20 @@ use pyo3::prelude::*;
 use pyo3::PyNumberProtocol;
 
 #[pyclass(name = "Angle")]
-#[derive(Clone)]
-pub struct PyAngle(pub Angle<f64>);
+#[derive(Clone, Copy)]
+pub struct PyAngle(pub(crate) Angle<f64>);
+
+impl From<Angle> for PyAngle {
+    fn from(angle: Angle) -> Self {
+        Self(angle)
+    }
+}
+
+impl From<PyAngle> for Angle {
+    fn from(angle: PyAngle) -> Self {
+        angle.0
+    }
+}
 
 #[pyproto]
 impl pyo3::class::basic::PyObjectProtocol for PyAngle {

@@ -13,6 +13,13 @@ macro_rules! impl_array {
             }
         }
 
+        impl Deref for $struct {
+            type Target = $core_struct;
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         #[pymethods]
         impl $struct {
             pub fn sqrt(&self) -> Result<Self, QuantityError> {
