@@ -1,3 +1,6 @@
+API
+---
+
 .. currentmodule:: quantity
 
 .. contents:: Table of Contents
