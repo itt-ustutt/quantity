@@ -290,6 +290,8 @@ lazy_static! {
         insert_derived_unit(&mut m, "T");
         insert_derived_unit(&mut m, "H");
         insert_derived_unit(&mut m, "mol/m³");
+        insert_derived_unit(&mut m, "mol/m²");
+        insert_derived_unit(&mut m, "mol/m");
         insert_derived_unit(&mut m, "m³/mol");
         insert_derived_unit(&mut m, "m³/mol/K");
         insert_derived_unit(&mut m, "g/m³");
