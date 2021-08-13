@@ -14,13 +14,7 @@ Additional to simple scalar quantities, it also provides utilities for vector va
 
 ### Python
 
-You can install the python package either from pypi:
-
-```
-pip install quantity
-```
-
-of from source (you need a rust compiler for that):
+You can install the python package from source (you need a rust compiler for that):
 
 ```
 pip install git+https://github.com/itt-ustutt/quantity
