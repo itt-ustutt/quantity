@@ -1,4 +1,3 @@
-#[macro_use]
 macro_rules! impl_array {
     ($struct:ident, $core_struct:ty, $numpy_array:ty) => {
         impl From<$core_struct> for $struct {

@@ -12,8 +12,10 @@
 #
 import os
 import sys
-import sphinx_bootstrap_theme
-sys.path.insert(0, os.path.abspath('..'))
+import quantity
+
+sys.path.append(os.path.abspath(os.path.join(__file__, "../..")))
+sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
@@ -23,7 +25,7 @@ copyright = '2021, Philipp Rehner, Gernot Bauer'
 author = 'Philipp Rehner, Gernot Bauer'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = quantity.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -55,21 +57,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'bootstrap'
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
-
-html_theme_options = {
-    'navbar_pagenav': False,
-    'source_link_position': None,
-    'bootswatch_theme': "yeti",
-    'bootstrap_version': "3",
-    'navbar_links': [
-        ("API", "api/index"),
-    ],
-}
-
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
