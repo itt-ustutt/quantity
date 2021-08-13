@@ -7,8 +7,8 @@ use pyo3::PyNumberProtocol;
 use super::{PySIArray1, PySIArray2, PySIArray3, PySIArray4};
 
 #[pyclass(name = "SINumber")]
-#[derive(Clone)]
-pub struct PySINumber(pub SINumber);
+#[derive(Clone, Copy)]
+pub struct PySINumber(pub(crate) SINumber);
 
 impl From<SINumber> for PySINumber {
     fn from(si: SINumber) -> Self {
@@ -247,7 +247,7 @@ impl PyNumberProtocol for PySINumber {
 }
 
 #[pyclass(name = "Celsius")]
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct PyCelsius;
 
 #[pyproto]

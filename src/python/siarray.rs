@@ -4,24 +4,25 @@ use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArra
 use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
 use pyo3::{PyNumberProtocol, PySequenceProtocol};
+use std::ops::Deref;
 
 use super::PySINumber;
 
 #[pyclass(name = "SIArray1")]
 #[derive(Clone)]
-pub struct PySIArray1(pub SIArray1);
+pub struct PySIArray1(pub(crate) SIArray1);
 
 #[pyclass(name = "SIArray2")]
 #[derive(Clone)]
-pub struct PySIArray2(pub SIArray2);
+pub struct PySIArray2(pub(crate) SIArray2);
 
 #[pyclass(name = "SIArray3")]
 #[derive(Clone)]
-pub struct PySIArray3(pub SIArray3);
+pub struct PySIArray3(pub(crate) SIArray3);
 
 #[pyclass(name = "SIArray4")]
 #[derive(Clone)]
-pub struct PySIArray4(pub SIArray4);
+pub struct PySIArray4(pub(crate) SIArray4);
 
 // Adding the macro is not sufficient.
 // You need to add _mul_ and _div_ in sinumber.rs to construct from numpy arrays.

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Renamed module `pyquantity` to `python`. [#19](https://github.com/itt-ustutt/quantity/pull/19)
 - Replaced all Python wrapper structs with tuple structs. [#19](https://github.com/itt-ustutt/quantity/pull/19)
+- Made the fields of the tuple structs `pub(crate)`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
+- Made `PySINumber`, `PyAngle` and `PyCelsius` `Copy`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
+
+### Added
+- Added `PyAngle:From<Angle>` and `Angle:From<PyAngle>`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
+- Added `PySIArrayX:Deref<Target=SIArrayX>` to automatically convert between `&PySIArrayX` and `&SIArrayX`. [#21](https://github.com/itt-ustutt/quantity/pull/21)
 
 ## [0.2.0] - 2021-07-26
 ### Packaging
