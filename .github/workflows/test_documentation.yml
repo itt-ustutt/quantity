@@ -20,7 +20,7 @@ jobs:
           python-version: 3.9
       - name: Install python dependencies
         run: |
-          pip install sphinx sphinx-rtd-theme numpydocs numpy
+          pip install sphinx sphinx-rtd-theme numpydoc numpy
       - name: Build wheels
         uses: messense/maturin-action@v1
         with:
