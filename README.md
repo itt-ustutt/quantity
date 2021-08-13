@@ -57,7 +57,7 @@ from quantity import *
 import numpy as np
 ms = np.array([2.0, 3.0, 4.0]) * METER
 sqms = np.square(ms)
-print(sqms) # [4, 9, 16] m^2
+print(sqms) # [4, 9, 16] m²
 print(np.sqrt(sqms)) # [2, 3, 4] m
 ```
 

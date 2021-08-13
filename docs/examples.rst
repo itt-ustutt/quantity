@@ -35,7 +35,7 @@ Gravitational pull of the moon on the earth
     >>> distance = 383.398 * KILO * METER
     >>> force = G * mass_earth * mass_moon / distance**2
     >>> print(force)
-    199.20757483023252 YN
+    1.992075748302325e26 N
 
 Pressure distribution in the atmosphere
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,6 +91,6 @@ This also works with numpy.ndarray's.
     >>> ms = np.array([2.0, 3.0, 4.0]) * METER
     >>> sqms = np.square(ms)
     >>> sqms
-    [4, 9, 16] m^2
+    [4, 9, 16] m²
     >>> np.sqrt(sqms)
     [2, 3, 4] m
