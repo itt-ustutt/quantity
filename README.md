@@ -4,18 +4,29 @@
 [![documentation](https://docs.rs/quantity/badge.svg)](https://docs.rs/quantity)
 [![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity/index.html)
 
-Representation of quantites, i.e. of unit valued scalars and arrays.
+Representation of quantites, i.e. of unit valued scalars and arrays. Rust library with Python bindings.
 
 As opposed to other implementations, this crate does not attempt to achieve compile time checks on units.
 It is written with flexibility in mind and is able to represent arbitrarily complex units.
-Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the ndarray crate, where all entries share the same unit.
+Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the [ndarray](https://github.com/rust-ndarray/ndarray) crate, where all entries share the same unit.
 
-## Documentation
+## Installation and Usage
 
-For the rust documentation, see [here](https://docs.rs/quantity).
-For the python documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
+### Python
 
-## Usage
+You can install the python package either from pypi:
+
+```
+pip install quantity
+```
+
+of from source (you need a rust compiler for that):
+
+```
+pip install git+https://github.com/itt-ustutt/quantity
+```
+
+### Rust
 
 Add this to your `Cargo.toml`:
 
@@ -25,6 +36,33 @@ quantity = "0.2"
 ```
 
 ## Examples
+
+### Python
+
+Calculate pressure of an ideal gas.
+
+```python
+from quantity import *
+temperature = 25.0 * CELSIUS
+volume = 1.5 * METER**3
+moles = 75.0 * MOL
+pressure = moles * RGAS * temperature / volume
+print(pressure) # 123.94785148011941 kPa
+```
+
+`numpy` functions can be used with quantities:
+
+```python
+from quantity import *
+import numpy as np
+ms = np.array([2.0, 3.0, 4.0]) * METER
+sqms = np.square(ms)
+print(sqms) # [4, 9, 16] m^2
+print(np.sqrt(sqms)) # [2, 3, 4] m
+```
+
+
+### Rust
 
 Calculate pressure of an ideal gas.
 
@@ -70,30 +108,35 @@ for i in 0..10 {
 // z = 70.00000 km   p =  21.51808  Pa
 ```
 
-## Feature: Build Python Package
+## Documentation
+
+For the rust documentation, see [here](https://docs.rs/quantity).
+For the python documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
 
 ### Development
+
+To build the project including the bindings to python, we use [maturin](https://github.com/PyO3/maturin).
+
+When developing, use
 
 ```
 maturin develop --release --cargo-extra-args="--features python"
 ```
 
-### Wheel (ABI3 >= Python 3.6)
+To build the python wheels, use
 
 ```
 maturin build --release --cargo-extra-args="--features python"
 ```
 
-### Build Python Documentation
-
-To build the documentation you need `sphinx` and some additional packages. (todo: requirements.txt)
+To build the documentation you need `sphinx` and some additional packages. From the root directory, type
 
 ```
 cd docs
 make html
 ```
 
-### Run Doctests
+To run the doctests, from the root directory, type
 
 ```
 cd docs
