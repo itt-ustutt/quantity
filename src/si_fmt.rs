@@ -31,12 +31,12 @@ impl fmt::Display for SINumber {
         if DERIVED_UNITS.contains_key(&self.unit) && !self.is_nan() {
             let (unit, symbol, has_prefix, _, _) = DERIVED_UNITS.get(&self.unit).unwrap();
             let (value, prefix) = get_prefix(self.to_reduced(*unit).unwrap(), *has_prefix);
-            if !(1e-2..1e4).contains(&value) {
+            if !(1e-2..1e4).contains(&value.abs()) {
                 write!(f, "{:e} {}{}", value, prefix, symbol)
             } else {
                 write!(f, "{} {}{}", value, prefix, symbol)
             }
-        } else if !(1e-2..1e4).contains(&self.value) {
+        } else if !(1e-2..1e4).contains(&self.value.abs()) {
             write!(f, "{:e} {}", self.value, self.unit)
         } else {
             write!(f, "{} {}", self.value, self.unit)
@@ -46,8 +46,9 @@ impl fmt::Display for SINumber {
 
 fn get_prefix(value: f64, has_prefix: Option<f64>) -> (f64, &'static str) {
     if let Some(p) = has_prefix {
-        if value > PICO && value < p {
-            let e: i8 = (value.abs().log10().floor() as i8).div_euclid(3) * 3;
+        let abs_value = value.abs();
+        if abs_value > PICO && abs_value < p {
+            let e: i8 = (abs_value.log10().floor() as i8).div_euclid(3) * 3;
             let prefix = 10.0f64.powi(e as i32);
             if let Some(&e) = PREFIX_SYMBOLS.get(&e) {
                 return (value / prefix, e);
