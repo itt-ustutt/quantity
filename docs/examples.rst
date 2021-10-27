@@ -89,8 +89,8 @@ This also works with numpy.ndarray's.
     >>> from quantity import *
     >>> import numpy as np
     >>> ms = np.array([2.0, 3.0, 4.0]) * METER
-    >>> sqms = np.square(ms)
+    >>> sqms = ms.square()
     >>> sqms
     [4, 9, 16] m²
-    >>> np.sqrt(sqms)
+    >>> sqms.sqrt()
     [2, 3, 4] m
