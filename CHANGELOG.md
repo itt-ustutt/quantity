@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Index into `PySIArray1` (get values, set values and iterate over all values). [#28](https://github.com/itt-ustutt/quantity/pull/28)
+- Implement rich comparison operators (`==`, `!=`, `<`, `<=`, `>`, `>=`) in python. [#27](https://github.com/itt-ustutt/quantity/pull/27)
+
+### Changed
+- Comparisons (`PartialOrd` and `PartialEq`) of `Quantity`s now panic if they do not have the same unit. [#27](https://github.com/itt-ustutt/quantity/pull/27)
+
 ### Fixed
 - Fix the formatting of `SINumber`s with negative values. [#24](https://github.com/itt-ustutt/quantity/pull/24)
 

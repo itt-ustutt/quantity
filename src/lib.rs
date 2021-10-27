@@ -543,23 +543,27 @@ macro_rules! impl_add_op {
 impl_add_op!(Add, +, add, AddAssign, += , add_assign);
 impl_add_op!(Sub, -, sub, SubAssign, -= , sub_assign);
 
-impl<F: PartialEq, U: PartialEq> PartialEq for Quantity<F, U> {
+impl<F: PartialEq, U: PartialEq + fmt::Display> PartialEq for Quantity<F, U> {
     fn eq(&self, other: &Self) -> bool {
-        self.value.eq(&other.value) && self.unit.eq(&other.unit)
-    }
-}
-
-impl<F: PartialOrd, U: PartialEq> PartialOrd for Quantity<F, U> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         if self.unit.eq(&other.unit) {
-            self.value.partial_cmp(&other.value)
+            self.value.eq(&other.value)
         } else {
-            None
+            panic!("Inconsistent units {} and {}", self.unit, other.unit)
         }
     }
 }
 
-impl<F: AbsDiffEq, U: PartialEq> AbsDiffEq for Quantity<F, U> {
+impl<F: PartialOrd, U: PartialEq + fmt::Display> PartialOrd for Quantity<F, U> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self.unit.eq(&other.unit) {
+            self.value.partial_cmp(&other.value)
+        } else {
+            panic!("Inconsistent units {} and {}", self.unit, other.unit)
+        }
+    }
+}
+
+impl<F: AbsDiffEq, U: PartialEq + fmt::Display> AbsDiffEq for Quantity<F, U> {
     type Epsilon = <F as AbsDiffEq>::Epsilon;
 
     fn default_epsilon() -> Self::Epsilon {
@@ -575,7 +579,7 @@ impl<F: AbsDiffEq, U: PartialEq> AbsDiffEq for Quantity<F, U> {
     }
 }
 
-impl<F: RelativeEq, U: PartialEq> RelativeEq for Quantity<F, U> {
+impl<F: RelativeEq, U: PartialEq + fmt::Display> RelativeEq for Quantity<F, U> {
     fn default_max_relative() -> Self::Epsilon {
         <F as RelativeEq>::default_max_relative()
     }
