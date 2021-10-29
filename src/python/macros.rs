@@ -67,13 +67,6 @@ macro_rules! impl_array {
         }
 
         #[pyproto]
-        impl PySequenceProtocol for $struct {
-            fn __len__(&self) -> PyResult<usize> {
-                Ok(self.0.len())
-            }
-        }
-
-        #[pyproto]
         impl PyNumberProtocol for $struct {
             fn __add__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
                 Python::with_gil(|py| {

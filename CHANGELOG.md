@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Index into `PySIArray1` (get values, set values and iterate over all values). [#28](https://github.com/itt-ustutt/quantity/pull/28)
 ### Fixed
 - Fix the formatting of `SINumber`s with negative values. [#24](https://github.com/itt-ustutt/quantity/pull/24)
 
