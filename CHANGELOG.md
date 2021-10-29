@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Index into `PySIArray1` (get values, set values and iterate over all values). [#28](https://github.com/itt-ustutt/quantity/pull/28)
 - Implement rich comparison operators (`==`, `!=`, `<`, `<=`, `>`, `>=`) in python. [#27](https://github.com/itt-ustutt/quantity/pull/27)
+- Added additional arithmetic operations. [#26](https://github.com/itt-ustutt/quantity/pull/26)
+  - `PySINumber` + `PySIArrayX`, `PySINumber` - `PySIArrayX`, `PySINumber` / `PySIArrayX`
+  - `PySIArrayX` + `PySINumber`, `PySIArrayX` - `PySINumber`
+  - `abs(PySINumber)`
 
 ### Changed
 - Comparisons (`PartialOrd` and `PartialEq`) of `Quantity`s now panic if they do not have the same unit. [#27](https://github.com/itt-ustutt/quantity/pull/27)
+- Changed the order of the type inference in the arithmetic operations to check for scalars first. [#26](https://github.com/itt-ustutt/quantity/pull/26)
 
 ### Fixed
 - Fix the formatting of `SINumber`s with negative values. [#24](https://github.com/itt-ustutt/quantity/pull/24)
+- Correctly return a `np.ndarray` in multiplications of scalars with arrays in which the units cancel out. [#26](https://github.com/itt-ustutt/quantity/pull/26)
 
 ## [0.3.0] - 2021-08-13
 ### Added
