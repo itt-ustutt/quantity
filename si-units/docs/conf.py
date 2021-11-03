@@ -12,7 +12,7 @@
 #
 import os
 import sys
-import quantity
+import si_units
 
 sys.path.append(os.path.abspath(os.path.join(__file__, "../..")))
 sys.path.insert(0, os.path.abspath('.'))
@@ -20,12 +20,12 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'quantity'
+project = 'si_units'
 copyright = '2021, Philipp Rehner, Gernot Bauer'
 author = 'Philipp Rehner, Gernot Bauer'
 
 # The full version, including alpha/beta/rc tags
-release = quantity.__version__
+release = si_units.__version__
 
 
 # -- General configuration ---------------------------------------------------

@@ -1,4 +1,4 @@
-Welcome to quantity
+Welcome to si-units
 ===================
 
 This package enables calculation with dimensioned values.
@@ -6,10 +6,10 @@ This package enables calculation with dimensioned values.
 Installation
 ------------
 
-You can install `quantity` from pypi using `pip`:
+You can install `si-units` from pypi using `pip`:
 
 ```
-pip install quantity
+pip install si-units
 ```
 
 Build from source

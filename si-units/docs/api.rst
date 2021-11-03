@@ -1,7 +1,7 @@
 API
 ---
 
-.. currentmodule:: quantity
+.. currentmodule:: si_units
 
 .. contents:: Table of Contents
     :depth: 3
