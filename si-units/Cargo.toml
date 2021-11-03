@@ -22,4 +22,4 @@ quantity = { path = "..", features = ["python"]}
 
 [dependencies.pyo3]
 version = "0.14"
-features = ["extension-module", "abi3", "abi3-py36"]
+features = ["extension-module", "abi3", "abi3-py36", "multiple-pymethods"]
