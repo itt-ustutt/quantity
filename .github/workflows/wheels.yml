@@ -76,7 +76,7 @@ jobs:
         uses: messense/maturin-action@main
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist --no-sdist -m si-units\\Cargo.toml
+          args: --release --out dist --no-sdist -m si-units\Cargo.toml
       - name: Upload wheels
         uses: actions/upload-artifact@v2
         with:
