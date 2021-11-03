@@ -19,56 +19,56 @@ impl From<QuantityError> for PyErr {
 }
 
 // Base Units
-pub const SECOND: PySINumber = PySINumber(crate::si::SECOND);
-pub const METER: PySINumber = PySINumber(crate::si::METER);
-pub const KILOGRAM: PySINumber = PySINumber(crate::si::KILOGRAM);
-pub const AMPERE: PySINumber = PySINumber(crate::si::AMPERE);
-pub const MOL: PySINumber = PySINumber(crate::si::MOL);
-pub const KELVIN: PySINumber = PySINumber(crate::si::KELVIN);
-pub const CANDELA: PySINumber = PySINumber(crate::si::CANDELA);
+const SECOND: PySINumber = PySINumber(crate::si::SECOND);
+const METER: PySINumber = PySINumber(crate::si::METER);
+const KILOGRAM: PySINumber = PySINumber(crate::si::KILOGRAM);
+const AMPERE: PySINumber = PySINumber(crate::si::AMPERE);
+const MOL: PySINumber = PySINumber(crate::si::MOL);
+const KELVIN: PySINumber = PySINumber(crate::si::KELVIN);
+const CANDELA: PySINumber = PySINumber(crate::si::CANDELA);
 
 // Associated Constants
-pub const DVCS: PySINumber = PySINumber(crate::si::DVCS);
-pub const CLIGHT: PySINumber = PySINumber(crate::si::CLIGHT);
-pub const PLANCK: PySINumber = PySINumber(crate::si::PLANCK);
-pub const QE: PySINumber = PySINumber(crate::si::QE);
-pub const KB: PySINumber = PySINumber(crate::si::KB);
-pub const NAV: PySINumber = PySINumber(crate::si::NAV);
-pub const KCD: PySINumber = PySINumber(crate::si::KCD);
+const DVCS: PySINumber = PySINumber(crate::si::DVCS);
+const CLIGHT: PySINumber = PySINumber(crate::si::CLIGHT);
+const PLANCK: PySINumber = PySINumber(crate::si::PLANCK);
+const QE: PySINumber = PySINumber(crate::si::QE);
+const KB: PySINumber = PySINumber(crate::si::KB);
+const NAV: PySINumber = PySINumber(crate::si::NAV);
+const KCD: PySINumber = PySINumber(crate::si::KCD);
 
 // Derived Units
-pub const HERTZ: PySINumber = PySINumber(crate::si::HERTZ);
-pub const NEWTON: PySINumber = PySINumber(crate::si::NEWTON);
-pub const PASCAL: PySINumber = PySINumber(crate::si::PASCAL);
-pub const JOULE: PySINumber = PySINumber(crate::si::JOULE);
-pub const WATT: PySINumber = PySINumber(crate::si::WATT);
-pub const COULOMB: PySINumber = PySINumber(crate::si::COULOMB);
-pub const VOLT: PySINumber = PySINumber(crate::si::VOLT);
-pub const FARAD: PySINumber = PySINumber(crate::si::FARAD);
-pub const OHM: PySINumber = PySINumber(crate::si::OHM);
-pub const SIEMENS: PySINumber = PySINumber(crate::si::SIEMENS);
-pub const WEBER: PySINumber = PySINumber(crate::si::WEBER);
-pub const TESLA: PySINumber = PySINumber(crate::si::TESLA);
-pub const HENRY: PySINumber = PySINumber(crate::si::HENRY);
+const HERTZ: PySINumber = PySINumber(crate::si::HERTZ);
+const NEWTON: PySINumber = PySINumber(crate::si::NEWTON);
+const PASCAL: PySINumber = PySINumber(crate::si::PASCAL);
+const JOULE: PySINumber = PySINumber(crate::si::JOULE);
+const WATT: PySINumber = PySINumber(crate::si::WATT);
+const COULOMB: PySINumber = PySINumber(crate::si::COULOMB);
+const VOLT: PySINumber = PySINumber(crate::si::VOLT);
+const FARAD: PySINumber = PySINumber(crate::si::FARAD);
+const OHM: PySINumber = PySINumber(crate::si::OHM);
+const SIEMENS: PySINumber = PySINumber(crate::si::SIEMENS);
+const WEBER: PySINumber = PySINumber(crate::si::WEBER);
+const TESLA: PySINumber = PySINumber(crate::si::TESLA);
+const HENRY: PySINumber = PySINumber(crate::si::HENRY);
 
 // Additional Units
-pub const ANGSTROM: PySINumber = PySINumber(crate::si::ANGSTROM);
-pub const AMU: PySINumber = PySINumber(crate::si::AMU);
-pub const AU: PySINumber = PySINumber(crate::si::AU);
-pub const BAR: PySINumber = PySINumber(crate::si::BAR);
-pub const CALORIE: PySINumber = PySINumber(crate::si::CALORIE);
-pub const CELSIUS: PyCelsius = PyCelsius;
-pub const DAY: PySINumber = PySINumber(crate::si::DAY);
-pub const DEGREES: PyAngle = PyAngle(crate::si::DEGREES);
-pub const GRAM: PySINumber = PySINumber(crate::si::GRAM);
-pub const HOUR: PySINumber = PySINumber(crate::si::HOUR);
-pub const LITER: PySINumber = PySINumber(crate::si::LITER);
-pub const MINUTE: PySINumber = PySINumber(crate::si::MINUTE);
-pub const RADIANS: PyAngle = PyAngle(crate::si::RADIANS);
+const ANGSTROM: PySINumber = PySINumber(crate::si::ANGSTROM);
+const AMU: PySINumber = PySINumber(crate::si::AMU);
+const AU: PySINumber = PySINumber(crate::si::AU);
+const BAR: PySINumber = PySINumber(crate::si::BAR);
+const CALORIE: PySINumber = PySINumber(crate::si::CALORIE);
+const CELSIUS: PyCelsius = PyCelsius;
+const DAY: PySINumber = PySINumber(crate::si::DAY);
+const DEGREES: PyAngle = PyAngle(crate::si::DEGREES);
+const GRAM: PySINumber = PySINumber(crate::si::GRAM);
+const HOUR: PySINumber = PySINumber(crate::si::HOUR);
+const LITER: PySINumber = PySINumber(crate::si::LITER);
+const MINUTE: PySINumber = PySINumber(crate::si::MINUTE);
+const RADIANS: PyAngle = PyAngle(crate::si::RADIANS);
 
 // Additional Constants
-pub const G: PySINumber = PySINumber(crate::si::G);
-pub const RGAS: PySINumber = PySINumber(crate::si::RGAS);
+const G: PySINumber = PySINumber(crate::si::G);
+const RGAS: PySINumber = PySINumber(crate::si::RGAS);
 
 /// Implementation of SI numbers.
 #[pymodule]
