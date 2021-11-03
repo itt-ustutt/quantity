@@ -3,8 +3,9 @@
 [![crate](https://img.shields.io/crates/v/quantity.svg)](https://crates.io/crates/quantity)
 [![documentation](https://docs.rs/quantity/badge.svg)](https://docs.rs/quantity)
 [![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity/index.html)
+[![PyPI version](https://badge.fury.io/py/si_units.svg)](https://badge.fury.io/py/si_units)
 
-Representation of quantites, i.e. of unit valued scalars and arrays. Rust library with Python bindings.
+Representation of quantities, i.e. of unit valued scalars and arrays. Rust library with Python bindings.
 
 As opposed to other implementations, this crate does not attempt to achieve compile time checks on units.
 It is written with flexibility in mind and is able to represent arbitrarily complex units.
@@ -33,7 +34,7 @@ quantity = "0.3"
 
 ### Python
 
-Calculate pressure of an ideal gas.
+Calculate the pressure of an ideal gas.
 
 ```python
 from quantity import *
