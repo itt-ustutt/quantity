@@ -21,12 +21,14 @@ jobs:
       - name: Install python dependencies
         run: |
           pip install sphinx sphinx-rtd-theme numpydoc numpy
+      - name: Change directory
+        run: cd si-units
       - name: Build wheels
         uses: messense/maturin-action@v1
         with:
           manylinux: auto
           command: build
-          args: --release --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --out dist --no-sdist
       - name: Install module
         run: |
           pip install quantity --no-index --find-links dist --force-reinstall
