@@ -1,9 +1,8 @@
 **/target
 Cargo.lock
 *.so
-docs/_build
-docs/api/generated
-quantity/__pycache__/
+si-units/docs/_build
+si-units/docs/api/generated
 /venv
 .ipynb_checkpoints
 *.ipynb

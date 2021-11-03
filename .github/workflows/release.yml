@@ -30,12 +30,14 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Change directory
+        run: cd si-units
       - name: Build Wheels
         uses: messense/maturin-action@v1
         with:
           manylinux: auto
           command: build
-          args: --release --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --out dist --no-sdist
       - name: Upload wheels
         uses: actions/upload-artifact@v2
         with:
@@ -56,15 +58,17 @@ jobs:
           toolchain: stable
           profile: minimal
           default: true
+      - name: Change directory
+        run: cd si-units
       - name: Build wheels - x86_64
         uses: messense/maturin-action@v1
         with:
           target: x86_64
-          args: --release --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --out dist --no-sdist
       - name: Build wheels - universal2
         uses: messense/maturin-action@v1
         with:
-          args: --release --universal2 --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --universal2 --out dist --no-sdist
       - name: Upload wheels
         uses: actions/upload-artifact@v2
         with:
@@ -88,11 +92,13 @@ jobs:
           toolchain: stable
           profile: minimal
           default: true
+      - name: Change directory
+        run: cd si-units
       - name: Build wheels
         uses: messense/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --out dist --no-sdist
       - name: Upload wheels
         uses: actions/upload-artifact@v2
         with:
@@ -130,15 +136,17 @@ jobs:
       - name: Install python dependencies
         run: |
           pip install sphinx sphinx-rtd-theme numpydoc
+      - name: Change directory
+        run: cd si-units
       - name: Build Wheels
         uses: messense/maturin-action@v1
         with:
           manylinux: auto
           command: build
-          args: --release --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --out dist --no-sdist
       - name: Install module
         run: |
-          pip install quantity --no-index --find-links dist --force-reinstall
+          pip install si-units --no-index --find-links dist --force-reinstall
       - name: Build documentation
         run: sphinx-build docs/ public/ -b html
       - name: Upload artifacts
