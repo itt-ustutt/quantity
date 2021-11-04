@@ -37,8 +37,6 @@ jobs:
           toolchain: stable
           profile: minimal
           default: true
-      - name: Install numpy
-        run: pip install numpy
       - name: Build wheels - x86_64
         uses: messense/maturin-action@main
         with:
@@ -64,8 +62,6 @@ jobs:
         with:
           python-version: 3.9
           architecture: ${{ matrix.target }}
-      - name: Install numpy
-        run: pip install numpy
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
