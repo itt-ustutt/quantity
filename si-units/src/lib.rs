@@ -1,5 +1,5 @@
 use pyo3::prelude::*;
-use quantity::python::*;
+use quantity::python::quantity;
 
 /// Implementation of SI numbers.
 #[pymodule]

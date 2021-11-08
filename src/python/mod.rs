@@ -70,7 +70,6 @@ const RADIANS: PyAngle = PyAngle(crate::si::RADIANS);
 const G: PySINumber = PySINumber(crate::si::G);
 const RGAS: PySINumber = PySINumber(crate::si::RGAS);
 
-/// Implementation of SI numbers.
 #[pymodule]
 pub fn quantity(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;

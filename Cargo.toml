@@ -16,9 +16,6 @@ exclude = ["/.github/*", "*.ipynb", "/docs"]
 [package.metadata.docs.rs]
 rustdoc-args = [ "--html-in-header", "./src/docs-header.html" ]
 
-[lib]
-crate-type = ["rlib", "cdylib"]
-
 [dependencies]
 ndarray = { version = "0.15", features = ["serde", "approx"] }
 approx = "0.4"
@@ -32,7 +29,7 @@ numpy = { version = "0.14", optional = true }
 
 [dependencies.pyo3]
 version = "0.14"
-features = ["extension-module", "abi3", "abi3-py36", "multiple-pymethods"]
+features = ["multiple-pymethods"]
 optional = true
 
 [features]

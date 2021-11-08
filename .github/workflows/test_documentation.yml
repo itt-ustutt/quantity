@@ -26,9 +26,9 @@ jobs:
         with:
           manylinux: auto
           command: build
-          args: --release --out dist --no-sdist --cargo-extra-args="--features python"
+          args: --release --out dist --no-sdist -m si-units/Cargo.toml
       - name: Install module
         run: |
-          pip install quantity --no-index --find-links dist --force-reinstall
+          pip install si-units --no-index --find-links dist --force-reinstall
       - name: Run doctests
-        run: sphinx-build docs/ public/ -b doctest
+        run: sphinx-build si-units/docs/ public/ -b doctest
