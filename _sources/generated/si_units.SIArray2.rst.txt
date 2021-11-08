@@ -1,7 +1,7 @@
-﻿quantity.SIArray2
-=================
+﻿si\_units.SIArray2
+==================
 
-.. currentmodule:: quantity
+.. currentmodule:: si_units
 
 .. autoclass:: SIArray2
 

@@ -4,7 +4,7 @@ Examples
 Pressure of an ideal gas
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-    >>> from quantity import *
+    >>> from si_units import *
     >>> temperature = 298.15 * KELVIN
     >>> volume = 1.5 * METER**3
     >>> moles = 75.0 * MOL
@@ -14,7 +14,7 @@ Pressure of an ideal gas
 
 You can use division to perform unit conversions.
 
-    >>> from quantity import *
+    >>> from si_units import *
     >>> temperature = 298.15 * KELVIN
     >>> volume = 1.5 * METER**3
     >>> moles = 75.0 * MOL
@@ -29,7 +29,7 @@ You can use division to perform unit conversions.
 Gravitational pull of the moon on the earth
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    >>> from quantity import *
+    >>> from si_units import *
     >>> mass_earth = 5.9724e24 * KILOGRAM
     >>> mass_moon = 7.346e22 * KILOGRAM
     >>> distance = 383.398 * KILO * METER
@@ -45,7 +45,7 @@ This example demonstrates how dimensioned arrays can be constructed using numpy.
 
 .. code-block:: python
 
-    >>> from quantity import *
+    >>> from si_units import *
     >>> import numpy as np
 
     >>> z = np.linspace(1.0, 70.0e3, 10) * METER
@@ -76,7 +76,7 @@ Using `numpy` Functions
 
 Functions such as `exp`, `sqrt` and `cbrt` work with methods or the equivalent numpy functions.
 
-    >>> from quantity import *
+    >>> from si_units import *
     >>> import numpy as np
     >>> sqm = METER**2
     >>> np.sqrt(sqm)
@@ -86,11 +86,11 @@ Functions such as `exp`, `sqrt` and `cbrt` work with methods or the equivalent n
 
 This also works with numpy.ndarray's.
 
-    >>> from quantity import *
+    >>> from si_units import *
     >>> import numpy as np
     >>> ms = np.array([2.0, 3.0, 4.0]) * METER
-    >>> sqms = np.square(ms)
+    >>> sqms = ms**2
     >>> sqms
     [4, 9, 16] m²
-    >>> np.sqrt(sqms)
+    >>> sqms.sqrt()
     [2, 3, 4] m

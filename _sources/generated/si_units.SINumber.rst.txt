@@ -1,7 +1,7 @@
-﻿quantity.SINumber
-=================
+﻿si\_units.SINumber
+==================
 
-.. currentmodule:: quantity
+.. currentmodule:: si_units
 
 .. autoclass:: SINumber
 
