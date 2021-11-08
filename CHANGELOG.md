@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.3.1] - 2021-11-08
 ### Added
 - Index into `PySIArray1` (get values, set values and iterate over all values). [#28](https://github.com/itt-ustutt/quantity/pull/28)
 - Implement rich comparison operators (`==`, `!=`, `<`, `<=`, `>`, `>=`) in python. [#27](https://github.com/itt-ustutt/quantity/pull/27)
@@ -12,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `PySINumber` + `PySIArrayX`, `PySINumber` - `PySIArrayX`, `PySINumber` / `PySIArrayX`
   - `PySIArrayX` + `PySINumber`, `PySIArrayX` - `PySINumber`
   - `abs(PySINumber)`
+
+### Packaging
+- The standalone Python package is renamed to `si_units` to avoid a name conflict on PyPI and to better reflect its content. [#31](https://github.com/itt-ustutt/quantity/pull/31)
 
 ### Changed
 - Comparisons (`PartialOrd` and `PartialEq`) of `Quantity`s now panic if they do not have the same unit. [#27](https://github.com/itt-ustutt/quantity/pull/27)
