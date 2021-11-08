@@ -1,8 +1,9 @@
 use pyo3::prelude::*;
-use quantity::python::*;
+use pyo3::wrap_pymodule;
+use quantity::python::PyInit_quantity;
 
 /// Implementation of SI numbers.
 #[pymodule]
 pub fn si_units(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    quantity(_py, m)
+    m.add_wrapped(wrap_pymodule!(quantity))
 }
