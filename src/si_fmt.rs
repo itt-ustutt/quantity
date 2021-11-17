@@ -302,6 +302,7 @@ lazy_static! {
         insert_derived_unit(&mut m, "J/K");
         insert_derived_unit(&mut m, "J/mol/K");
         insert_derived_unit(&mut m, "J/kg");
+        insert_derived_unit(&mut m, "J/kg/K");
         insert_derived_unit(&mut m, "Pa*s");
         insert_derived_unit(&mut m, "m/s");
         insert_derived_unit(&mut m, "m²/s");
