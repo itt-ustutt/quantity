@@ -1,3 +1,4 @@
+use super::PyCelsius;
 use crate::si::*;
 use crate::QuantityError;
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray4, ToPyArray};

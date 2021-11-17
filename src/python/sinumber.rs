@@ -228,6 +228,9 @@ impl PyNumberProtocol for PySINumber {
                     Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                 });
             };
+            if let Ok(_) = rhs.extract::<PyCelsius>() {
+                return Ok((lhs.0 / CELSIUS).to_object(py));
+            };
             if let Ok(r) = rhs.extract::<PyReadonlyArray1<f64>>() {
                 return Ok(PyCell::new(py, PySIArray1(lhs.0 / r.to_owned_array()))?.to_object(py));
             };
