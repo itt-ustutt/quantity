@@ -59,6 +59,7 @@ of quantities is unique, they do not appear in formatted outputs.
     .. autoclass:: BAR, :math:`\text{bar}`, pressure, :math:`10^5~\text{Pa}`
     .. autoclass:: CALORIE, :math:`\text{cal}`, energy, :math:`4.184~\text{J}`
     .. autoclass:: DAY, :math:`\text{d}`, time, :math:`86400~\text{s}`
+    .. autoclass:: DEBYE, :math:`\text{De}`, dipole moment, :math:`\sqrt{10^{-19}~\text{JÅ}^3}`
     .. autoclass:: DEGREES, :math:`^\circ`, angle, :math:`\frac{\pi}{180}~\text{rad}`
     .. autoclass:: GRAM, :math:`\text{g}`, mass, :math:`10^{-3}~\text{kg}`
     .. autoclass:: HOUR, :math:`\text{h}`, time, :math:`3600~\text{s}`

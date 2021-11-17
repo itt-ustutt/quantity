@@ -344,3 +344,37 @@ impl PyNumberProtocol for PyCelsius {
         })
     }
 }
+
+#[pyclass(name = "Debye")]
+#[derive(Clone, Copy)]
+pub struct PyDebye(pub(crate) Debye);
+
+#[pymethods]
+impl PyDebye {
+    fn _repr_latex_(&self) -> String {
+        format!("${}$", self.0.to_latex())
+    }
+}
+
+#[pyproto]
+impl pyo3::class::basic::PyObjectProtocol for PyDebye {
+    fn __repr__(&self) -> PyResult<String> {
+        Ok(self.0.to_string())
+    }
+}
+
+#[pyproto]
+impl PyNumberProtocol for PyDebye {
+    fn __rmul__(&self, lhs: &PyAny) -> PyResult<PyObject> {
+        Python::with_gil(|py| {
+            if let Ok(l) = lhs.extract::<f64>() {
+                return Ok(PyCell::new(py, PyDebye(l * self.0.clone()))?.to_object(py));
+            };
+            Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
+        })
+    }
+
+    fn __pow__(lhs: PyRef<'p, Self>, rhs: i32, _mod: Option<u32>) -> PySINumber {
+        PySINumber(lhs.0.powi(rhs))
+    }
+}
