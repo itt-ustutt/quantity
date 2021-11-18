@@ -144,6 +144,9 @@ macro_rules! impl_array {
                             Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                         });
                     };
+                    if let Ok(_) = rhs.extract::<PyCelsius>() {
+                        return Ok((lhs.0.clone() / CELSIUS).to_pyarray(py).to_object(py));
+                    };
                     if let Ok(r) = rhs.extract::<$numpy_array>() {
                         return Ok(PyCell::new(
                             py,

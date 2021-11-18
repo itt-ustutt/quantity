@@ -502,6 +502,22 @@ impl<S: Data<Elem = f64>, D: Dimension> Mul<CELSIUS> for ArrayBase<S, D> {
     }
 }
 
+impl Div<CELSIUS> for SINumber {
+    type Output = f64;
+    #[allow(clippy::suspicious_arithmetic_impl)]
+    fn div(self, _: CELSIUS) -> f64 {
+        self.to_reduced(KELVIN).unwrap() - 273.15
+    }
+}
+
+impl<D: Dimension> Div<CELSIUS> for SIArray<D> {
+    type Output = Array<f64, D>;
+    #[allow(clippy::suspicious_arithmetic_impl)]
+    fn div(self, _: CELSIUS) -> Array<f64, D> {
+        self.to_reduced(KELVIN).unwrap() - 273.15
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -568,5 +584,6 @@ mod tests {
     #[test]
     fn test_celsius() {
         assert_eq!(25.0 * CELSIUS, 298.15 * KELVIN);
+        assert_eq!(298.15 * KELVIN / CELSIUS, 25.0);
     }
 }
