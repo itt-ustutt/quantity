@@ -6,7 +6,7 @@ use pyo3::{exceptions::PyRuntimeError, PyErr};
 mod macros;
 
 mod sinumber;
-pub use sinumber::{PyCelsius, PySINumber};
+pub use sinumber::{PyCelsius, PyDebye, PySINumber};
 mod siarray;
 pub use siarray::{PySIArray1, PySIArray2, PySIArray3, PySIArray4};
 mod angle;
@@ -59,6 +59,7 @@ const BAR: PySINumber = PySINumber(crate::si::BAR);
 const CALORIE: PySINumber = PySINumber(crate::si::CALORIE);
 const CELSIUS: PyCelsius = PyCelsius;
 const DAY: PySINumber = PySINumber(crate::si::DAY);
+const DEBYE: PyDebye = PyDebye(crate::si::DEBYE);
 const DEGREES: PyAngle = PyAngle(crate::si::DEGREES);
 const GRAM: PySINumber = PySINumber(crate::si::GRAM);
 const HOUR: PySINumber = PySINumber(crate::si::HOUR);
@@ -117,6 +118,7 @@ pub fn quantity(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add("CALORIE", CALORIE)?;
     m.add("CELSIUS", CELSIUS)?;
     m.add("DAY", DAY)?;
+    m.add("DEBYE", DEBYE)?;
     m.add("DEGREES", DEGREES)?;
     m.add("GRAM", GRAM)?;
     m.add("HOUR", HOUR)?;

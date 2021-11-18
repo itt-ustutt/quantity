@@ -195,6 +195,18 @@ impl<D: Dimension> fmt::Display for SIArray<D> {
     }
 }
 
+impl fmt::Display for Debye {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} De", self.0)
+    }
+}
+
+impl Debye {
+    pub fn to_latex(&self) -> String {
+        format!("{}\\,\\mathrm{{De}}", float_to_latex(self.0))
+    }
+}
+
 const UNIT_SYMBOLS: [&str; 7] = ["m", "kg", "s", "A", "mol", "K", "cd"];
 
 lazy_static! {

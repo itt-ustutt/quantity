@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+<<<<<<< HEAD
 - Added `J/kg/K` to the list of SI unit symbols. [#37](https://github.com/itt-ustutt/quantity/pull/37)
 - Divide `SINumber`s and `SIArray`s by `CELSIUS`. Panics if the quantity is not a temperature. [#36](https://github.com/itt-ustutt/quantity/pull/36)
+=======
+- Additional unit `DEBYE`. Can only be used together with SI units by squaring it first. [#38](https://github.com/itt-ustutt/quantity/pull/38)
+>>>>>>> a991a8b (Added new additional unit DEBYE)
 
 ## [0.3.1] - 2021-11-08
 ### Added

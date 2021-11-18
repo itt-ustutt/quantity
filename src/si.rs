@@ -49,6 +49,7 @@
 //! [CALORIE] | $\text{cal}$ | energy | $4.184\\,\text{J}$
 //! [CELSIUS] | $^\\circ\text{C}$ | temperature | $t\\,^\\circ\text{C}=\\left(t+273.15\\right)\\,\text{K}$
 //! [DAY] | $\text{d}$ | time | $86400\\,\text{s}$
+//! [DEBYE] | $\text{De}$ | dipole moment | $\sqrt{10^{-19}\\,\text{J\\AA}^3}$
 //! [DEGREES] | $^\\circ$ | angle | $\\frac{\pi}{180}\\,\text{rad}$
 //! [GRAM] | $\text{g}$ | mass | $10^{-3}\\,\text{kg}$
 //! [HOUR] | $\text{h}$ | time | $3600\\,\text{s}$
@@ -384,6 +385,8 @@ pub const HENRY: SINumber = SINumber {
     unit: _HENRY,
     value: 1.0,
 };
+/// Additional unit debye $\\left(1\\,\text{De}^2=10^{-19}\\,\text{J\\AA}^3\\right)$
+pub const DEBYE: Debye = Debye(1.0);
 
 /// Boltzmann constant $\\left(k_\text{B}=1.380649\times 10^{-23}\\,\\frac{\text{J}}{\text{K}}\\right)$
 pub const KB: SINumber = SINumber {
@@ -518,6 +521,26 @@ impl<D: Dimension> Div<CELSIUS> for SIArray<D> {
     }
 }
 
+/// Additional unit Debye
+#[derive(Clone, Copy)]
+pub struct Debye(pub(crate) f64);
+
+impl Mul<Debye> for f64 {
+    type Output = Debye;
+    fn mul(self, other: Debye) -> Debye {
+        Debye(self * other.0)
+    }
+}
+
+impl Debye {
+    pub fn powi(&self, n: i32) -> SINumber {
+        if n % 2 == 1 {
+            panic!("Debye can only be raised to even powers!");
+        }
+        (self.0.powi(2) * 1e-19 * JOULE * ANGSTROM.powi(3)).powi(n / 2)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -585,5 +608,10 @@ mod tests {
     fn test_celsius() {
         assert_eq!(25.0 * CELSIUS, 298.15 * KELVIN);
         assert_eq!(298.15 * KELVIN / CELSIUS, 25.0);
+    }
+
+    #[test]
+    fn test_debye() {
+        assert_eq!((4.0 * DEBYE).powi(2), 16e-19 * JOULE * ANGSTROM.powi(3));
     }
 }
