@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `J/kg/K` to the list of SI unit symbols. [#37](https://github.com/itt-ustutt/quantity/pull/37)
 
 ## [0.3.1] - 2021-11-08
 ### Added
