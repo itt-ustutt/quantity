@@ -13,14 +13,6 @@ Additional to simple scalar quantities, it also provides utilities for vector va
 
 ## Installation and Usage
 
-### Python
-
-You can install the python package from source (you need a rust compiler for that):
-
-```
-pip install git+https://github.com/itt-ustutt/quantity
-```
-
 ### Rust
 
 Add this to your `Cargo.toml`:
@@ -30,34 +22,11 @@ Add this to your `Cargo.toml`:
 quantity = "0.3"
 ```
 
+## Python package
+
+Python bindings for the SI functionalities are published under the name [si-units](https://pypi.org/project/si-units/) on PyPI.
+
 ## Examples
-
-### Python
-
-Calculate the pressure of an ideal gas.
-
-```python
-from quantity import *
-temperature = 25.0 * CELSIUS
-volume = 1.5 * METER**3
-moles = 75.0 * MOL
-pressure = moles * RGAS * temperature / volume
-print(pressure) # 123.94785148011941 kPa
-```
-
-`numpy` functions can be used with quantities:
-
-```python
-from quantity import *
-import numpy as np
-ms = np.array([2.0, 3.0, 4.0]) * METER
-sqms = np.square(ms)
-print(sqms) # [4, 9, 16] m²
-print(np.sqrt(sqms)) # [2, 3, 4] m
-```
-
-
-### Rust
 
 Calculate pressure of an ideal gas.
 
@@ -106,34 +75,35 @@ for i in 0..10 {
 ## Documentation
 
 For the rust documentation, see [here](https://docs.rs/quantity).
+
 For the python documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
 
-### Development
+## Development
 
 To build the project including the bindings to python, we use [maturin](https://github.com/PyO3/maturin).
 
 When developing, use
 
 ```
-maturin develop --release --cargo-extra-args="--features python"
+maturin develop --release -m si-units/Cargo.toml
 ```
 
 To build the python wheels, use
 
 ```
-maturin build --release --cargo-extra-args="--features python"
+maturin build --release -m si-units/Cargo.toml
 ```
 
 To build the documentation you need `sphinx` and some additional packages. From the root directory, type
 
 ```
-cd docs
+cd si-units/docs
 make html
 ```
 
 To run the doctests, from the root directory, type
 
 ```
-cd docs
+cd si-units/docs
 make doctest
 ```
