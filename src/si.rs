@@ -614,4 +614,19 @@ mod tests {
     fn test_debye() {
         assert_eq!((4.0 * DEBYE).powi(2), 16e-19 * JOULE * ANGSTROM.powi(3));
     }
+
+    #[test]
+    fn test_from_shape_fn() {
+        let arr = SIArray1::from_shape_fn(3, |i| i as f64 * KELVIN);
+        assert_eq!(arr.to_reduced(KELVIN).unwrap(), arr1(&[0.0, 1.0, 2.0]));
+    }
+
+    #[test]
+    #[should_panic(expected = "Inconsistent units Pa and K")]
+    fn test_from_vec() {
+        let vec = vec![3.0 * PASCAL, 0.04 * BAR, 7.0 * JOULE / METER.powi(3)];
+        let arr = SIArray1::from_vec(vec);
+        assert_eq!(arr.to_reduced(PASCAL).unwrap(), arr1(&[3.0, 4000.0, 7.0]));
+        SIArray1::from_vec(vec![BAR, KELVIN]);
+    }
 }

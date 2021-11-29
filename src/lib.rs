@@ -925,7 +925,11 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
         let mut unit = U::DIMENSIONLESS;
         let value = Array::from_shape_fn(shape, |x| {
             let q = f(x);
-            unit = q.unit;
+            if unit != U::DIMENSIONLESS && unit != q.unit {
+                panic!("Inconsistent units {} and {}", unit, q.unit);
+            } else {
+                unit = q.unit;
+            }
             q.value
         });
         QuantityArray { value, unit }
@@ -1078,5 +1082,10 @@ impl<U: Unit> QuantityArray1<U> {
                 found: end.unit.to_string(),
             })
         }
+    }
+
+    /// Create a one-dimensional array from a vector of scalar quantities.
+    pub fn from_vec(vec: Vec<QuantityScalar<U>>) -> Self {
+        Self::from_shape_fn(vec.len(), |i| vec[i])
     }
 }
