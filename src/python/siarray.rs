@@ -1,6 +1,7 @@
 use super::PyCelsius;
 use crate::si::*;
 use crate::QuantityError;
+use ndarray::arr1;
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray4, ToPyArray};
 use pyo3::exceptions::{PyIndexError, PyTypeError};
 use pyo3::prelude::*;
@@ -9,6 +10,14 @@ use std::ops::Deref;
 
 use super::PySINumber;
 
+/// Create a new SIArray1
+///
+/// Parameters
+/// ----------
+/// value: {SINumber, [SINumber], SIArray1}
+///     An SIArray1 or a scalar or list of SINumbers
+///     to be converted to an SIArray1.
+///     
 #[pyclass(name = "SIArray1")]
 #[derive(Clone)]
 pub struct PySIArray1(pub(crate) SIArray1);
@@ -34,6 +43,21 @@ impl_array!(PySIArray4, SIArray4, PyReadonlyArray4<f64>);
 
 #[pymethods]
 impl PySIArray1 {
+    #[new]
+    fn new(value: &PyAny) -> PyResult<Self> {
+        if let Ok(v) = value.extract::<PySINumber>() {
+            return Ok(Self(arr1(&[1.0]) * v.0));
+        };
+        if let Ok(v) = value.extract::<Vec<PySINumber>>() {
+            let v: Vec<_> = v.iter().map(|v| v.0).collect();
+            return Ok(Self(SIArray1::from_vec(v)));
+        };
+        if let Ok(v) = value.extract::<Self>() {
+            return Ok(v);
+        };
+        Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
+    }
+
     /// Create a linearly spaced SIArray.
     ///
     /// Parameters
