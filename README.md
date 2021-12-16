@@ -19,7 +19,7 @@ Add this to your `Cargo.toml`:
 
 ```
 [dependencies]
-quantity = "0.3"
+quantity = "0.4"
 ```
 
 ## Python package
