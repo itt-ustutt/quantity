@@ -1,6 +1,6 @@
 [package]
 name = "si-units"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["Philipp Rehner <prehner@ethz.ch>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
@@ -21,5 +21,5 @@ crate-type = ["cdylib"]
 quantity = { path = "..", features = ["python"]}
 
 [dependencies.pyo3]
-version = "0.14"
+version = "0.15"
 features = ["extension-module", "abi3", "abi3-py36"]

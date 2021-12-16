@@ -1,6 +1,6 @@
 [package]
 name = "quantity"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["Philipp Rehner <prehner@ethz.ch>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
@@ -24,21 +24,10 @@ thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 ang = "0.5"
 regex = "1.5"
-ndarray-linalg = { version = "0.14", optional = true }
-numpy = { version = "0.14", optional = true }
-
-[dependencies.pyo3]
-version = "0.14"
-features = ["multiple-pymethods"]
-optional = true
+pyo3 = { version = "0.15", features = ["multiple-pymethods"], optional = true}
+numpy = { version = "0.15", optional = true }
 
 [features]
 default = []
 python = ["pyo3", "numpy"]
-linalg = ["ndarray-linalg"]
-openblas-system = ["ndarray-linalg/openblas-system"]
-openblas-static = ["ndarray-linalg/openblas-static"]
-intel-mkl-system = ["ndarray-linalg/intel-mkl-system"]
-intel-mkl-static = ["ndarray-linalg/intel-mkl-static"]
-netlib-system = ["ndarray-linalg/netlib-system"]
-netlib-static = ["ndarray-linalg/netlib-static"]
+linalg = []

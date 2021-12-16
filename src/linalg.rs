@@ -1,5 +1,4 @@
 use super::*;
-use ndarray_linalg::{error::LinalgError, solve::Solve};
 
 impl<U: Unit> QuantityArray1<U> {
     pub fn gradient(
@@ -47,7 +46,7 @@ impl<U: Unit> QuantityArray2<U> {
     }
 }
 
-impl<S: Data<Elem = f64>, D: Dimension, U: Copy + MulAssign> Quantity<ArrayBase<S, D>, U> {
+impl<S: Data<Elem = f64>, D: Dimension, U: Unit> Quantity<ArrayBase<S, D>, U> {
     pub fn integrate(&self, weights: &[QuantityArray1<U>]) -> QuantityScalar<U> {
         assert_eq!(self.value.ndim(), weights.len());
 
@@ -83,14 +82,5 @@ impl<S: Data<Elem = f64>, U: Unit> Quantity<ArrayBase<S, Ix1>, U> {
             value: value * dx.value,
             unit: self.unit * dx.unit,
         }
-    }
-}
-
-impl<U: Unit> QuantityArray2<U> {
-    pub fn solve(&self, b: &QuantityArray1<U>) -> Result<QuantityArray1<U>, LinalgError> {
-        Ok(Quantity {
-            value: self.value.solve(&b.value)?,
-            unit: b.unit / self.unit,
-        })
     }
 }
