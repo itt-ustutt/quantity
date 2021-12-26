@@ -2,7 +2,7 @@ use ang::Angle;
 use pyo3::prelude::*;
 use pyo3::PyNumberProtocol;
 
-#[pyclass(name = "Angle")]
+#[pyclass(name = "Angle", module = "si_units")]
 #[derive(Clone, Copy)]
 pub struct PyAngle(pub(crate) Angle<f64>);
 

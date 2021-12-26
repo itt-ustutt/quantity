@@ -1,13 +1,15 @@
-use crate::{si::*, QuantityError};
+use crate::{si::*, QuantityError, Unit};
+use bincode::{deserialize, serialize};
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray4, ToPyArray};
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
+use pyo3::types::PyBytes;
 use pyo3::PyNumberProtocol;
 
 use super::{PySIArray1, PySIArray2, PySIArray3, PySIArray4};
 
-#[pyclass(name = "SINumber")]
+#[pyclass(name = "SINumber", module = "si_units")]
 #[derive(Clone, Copy)]
 pub struct PySINumber(pub(crate) SINumber);
 
@@ -20,6 +22,28 @@ impl From<SINumber> for PySINumber {
 impl From<PySINumber> for SINumber {
     fn from(si: PySINumber) -> Self {
         si.0
+    }
+}
+
+#[pymethods]
+impl PySINumber {
+    #[new]
+    #[args(value = "0.0")]
+    pub fn new(value: f64) -> Self {
+        Self(SINumber {
+            value,
+            unit: SIUnit::DIMENSIONLESS,
+        })
+    }
+
+    fn __setstate__(&mut self, py: Python, state: PyObject) -> PyResult<()> {
+        state
+            .extract::<&PyBytes>(py)
+            .map(|s| self.0 = deserialize(s.as_bytes()).unwrap())
+    }
+
+    fn __getstate__(&self, py: Python) -> PyObject {
+        PyBytes::new(py, &serialize(&self.0).unwrap()).to_object(py)
     }
 }
 
@@ -317,7 +341,7 @@ impl PyNumberProtocol for PySINumber {
     }
 }
 
-#[pyclass(name = "Celsius")]
+#[pyclass(name = "Celsius", module = "si_units")]
 #[derive(Clone, Copy)]
 pub struct PyCelsius;
 
@@ -345,7 +369,7 @@ impl PyNumberProtocol for PyCelsius {
     }
 }
 
-#[pyclass(name = "Debye")]
+#[pyclass(name = "Debye", module = "si_units")]
 #[derive(Clone, Copy)]
 pub struct PyDebye(pub(crate) Debye);
 
@@ -368,7 +392,7 @@ impl PyNumberProtocol for PyDebye {
     fn __rmul__(&self, lhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(l) = lhs.extract::<f64>() {
-                return Ok(PyCell::new(py, PyDebye(l * self.0.clone()))?.to_object(py));
+                return Ok(PyCell::new(py, PyDebye(l * self.0))?.to_object(py));
             };
             Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })

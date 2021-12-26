@@ -21,6 +21,16 @@ macro_rules! impl_array {
 
         #[pymethods]
         impl $struct {
+            fn __setstate__(&mut self, py: Python, state: PyObject) -> PyResult<()> {
+                state
+                    .extract::<&PyBytes>(py)
+                    .map(|s| self.0 = deserialize(s.as_bytes()).unwrap())
+            }
+
+            fn __getstate__(&self, py: Python) -> PyObject {
+                PyBytes::new(py, &serialize(&self.0).unwrap()).to_object(py)
+            }
+
             pub fn sqrt(&self) -> Result<Self, QuantityError> {
                 Ok(Self(self.0.sqrt()?))
             }
