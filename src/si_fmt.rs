@@ -353,3 +353,13 @@ lazy_static! {
         m
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_fmt_si() {
+        assert_eq!(format!("{:.3}", RGAS), "8.314  J/mol/K");
+    }
+}
