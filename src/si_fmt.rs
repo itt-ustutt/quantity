@@ -34,12 +34,14 @@ impl fmt::Display for SINumber {
             if !(1e-2..1e4).contains(&value.abs()) {
                 write!(f, "{:e} {}{}", value, prefix, symbol)
             } else {
-                write!(f, "{} {}{}", value, prefix, symbol)
+                value.fmt(f)?;
+                write!(f, " {}{}", prefix, symbol)
             }
         } else if !(1e-2..1e4).contains(&self.value.abs()) {
             write!(f, "{:e} {}", self.value, self.unit)
         } else {
-            write!(f, "{} {}", self.value, self.unit)
+            self.value.fmt(f)?;
+            write!(f, " {}", self.unit)
         }
     }
 }
