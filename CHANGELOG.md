@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-01-10
+### Added
+- Added implementations of `__getstate__` and `__setstate__` functions for `PySINumber` and `PySIArrayX` to allow pickling of python objects.  [#43](https://github.com/itt-ustutt/quantity/pull/43)
+
+### Fixed
+- Formatted output for `SINumber`s shows the correct number of decimal places again. [#42](https://github.com/itt-ustutt/quantity/pull/42)
+- Fixed representation of `SINumbers`s with zero value. [#42](https://github.com/itt-ustutt/quantity/pull/42)
+
 ## [0.4.0] - 2021-12-16
 ### Added
 - `QuantityScalar1<U>::from_vec` as a simple way to convert vectors of scalar quantities to `QuantityArray`s. [#40](https://github.com/itt-ustutt/quantity/pull/40)
