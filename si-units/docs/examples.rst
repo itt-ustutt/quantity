@@ -35,7 +35,7 @@ Gravitational pull of the moon on the earth
     >>> distance = 383.398 * KILO * METER
     >>> force = G * mass_earth * mass_moon / distance**2
     >>> print(force)
-    1.992075748302325e26 N
+    1.992075748302325e26  N
 
 Pressure distribution in the atmosphere
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

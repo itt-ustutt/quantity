@@ -31,15 +31,17 @@ impl fmt::Display for SINumber {
         if DERIVED_UNITS.contains_key(&self.unit) && !self.is_nan() {
             let (unit, symbol, has_prefix, _, _) = DERIVED_UNITS.get(&self.unit).unwrap();
             let (value, prefix) = get_prefix(self.to_reduced(*unit).unwrap(), *has_prefix);
-            if !(1e-2..1e4).contains(&value.abs()) {
+            if !((1e-2..1e4).contains(&value.abs()) || value == 0.0) {
                 write!(f, "{:e} {}{}", value, prefix, symbol)
             } else {
-                write!(f, "{} {}{}", value, prefix, symbol)
+                value.fmt(f)?;
+                write!(f, " {}{}", prefix, symbol)
             }
-        } else if !(1e-2..1e4).contains(&self.value.abs()) {
+        } else if !((1e-2..1e4).contains(&self.value.abs()) || self.value == 0.0) {
             write!(f, "{:e} {}", self.value, self.unit)
         } else {
-            write!(f, "{} {}", self.value, self.unit)
+            self.value.fmt(f)?;
+            write!(f, " {}", self.unit)
         }
     }
 }
@@ -47,13 +49,13 @@ impl fmt::Display for SINumber {
 fn get_prefix(value: f64, has_prefix: Option<f64>) -> (f64, &'static str) {
     if let Some(p) = has_prefix {
         let abs_value = value.abs();
-        if abs_value > PICO && abs_value < p {
-            let e: i8 = (abs_value.log10().floor() as i8).div_euclid(3) * 3;
-            let prefix = 10.0f64.powi(e as i32);
-            if let Some(&e) = PREFIX_SYMBOLS.get(&e) {
-                return (value / prefix, e);
-            }
-        }
+        let e: i8 = if abs_value > PICO && abs_value < p {
+            (abs_value.log10().floor() as i8).div_euclid(3) * 3
+        } else {
+            0
+        };
+        let prefix = 10.0f64.powi(e as i32);
+        return (value / prefix, PREFIX_SYMBOLS.get(&e).unwrap());
     }
     (value, "")
 }
@@ -75,6 +77,9 @@ impl SINumber {
 }
 
 fn float_to_latex(f: f64) -> String {
+    if f == 0.0 {
+        return "0".to_string();
+    }
     let e = f.abs().log10().floor() as i32;
     match e {
         -1 => trim_zeros(format!("{:.5}", f)),
@@ -350,4 +355,21 @@ lazy_static! {
         m.insert(24, "Y");
         m
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_fmt_si() {
+        assert_eq!(format!("{:.3}", RGAS), "8.314  J/mol/K");
+    }
+
+    #[test]
+    fn test_fmt_zero() {
+        assert_eq!(format!("{}", 0.0 * KELVIN), "0 K");
+        assert_eq!(format!("{:.2}", 0.0 * PASCAL), "0.00  Pa");
+        assert_eq!((0.0 * KELVIN).to_latex(), "0\\,\\mathrm{K}");
+    }
 }
