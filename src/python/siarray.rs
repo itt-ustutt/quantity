@@ -1,10 +1,12 @@
 use super::PyCelsius;
 use crate::si::*;
-use crate::QuantityError;
-use ndarray::arr1;
+use crate::{QuantityError, Unit};
+use bincode::{deserialize, serialize};
+use ndarray::{arr1, Array};
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray4, ToPyArray};
 use pyo3::exceptions::{PyIndexError, PyTypeError};
 use pyo3::prelude::*;
+use pyo3::types::PyBytes;
 use pyo3::{PyNumberProtocol, PySequenceProtocol};
 use std::ops::Deref;
 
@@ -18,19 +20,19 @@ use super::PySINumber;
 ///     An SIArray1 or a scalar or list of SINumbers
 ///     to be converted to an SIArray1.
 ///     
-#[pyclass(name = "SIArray1")]
+#[pyclass(name = "SIArray1", module = "si_units")]
 #[derive(Clone)]
 pub struct PySIArray1(pub(crate) SIArray1);
 
-#[pyclass(name = "SIArray2")]
+#[pyclass(name = "SIArray2", module = "si_units")]
 #[derive(Clone)]
 pub struct PySIArray2(pub(crate) SIArray2);
 
-#[pyclass(name = "SIArray3")]
+#[pyclass(name = "SIArray3", module = "si_units")]
 #[derive(Clone)]
 pub struct PySIArray3(pub(crate) SIArray3);
 
-#[pyclass(name = "SIArray4")]
+#[pyclass(name = "SIArray4", module = "si_units")]
 #[derive(Clone)]
 pub struct PySIArray4(pub(crate) SIArray4);
 
@@ -44,15 +46,16 @@ impl_array!(PySIArray4, SIArray4, PyReadonlyArray4<f64>);
 #[pymethods]
 impl PySIArray1 {
     #[new]
-    fn new(value: &PyAny) -> PyResult<Self> {
-        if let Ok(v) = value.extract::<PySINumber>() {
+    #[args(value = "Vec::<PySINumber>::new().into_py(_py)")]
+    fn new(py: Python, value: Py<PyAny>) -> PyResult<Self> {
+        if let Ok(v) = value.extract::<PySINumber>(py) {
             return Ok(Self(arr1(&[1.0]) * v.0));
         };
-        if let Ok(v) = value.extract::<Vec<PySINumber>>() {
+        if let Ok(v) = value.extract::<Vec<PySINumber>>(py) {
             let v: Vec<_> = v.iter().map(|v| v.0).collect();
             return Ok(Self(SIArray1::from_vec(v)));
         };
-        if let Ok(v) = value.extract::<Self>() {
+        if let Ok(v) = value.extract::<Self>(py) {
             return Ok(v);
         };
         Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
@@ -98,6 +101,39 @@ impl PySIArray1 {
     #[pyo3(text_signature = "(start, end, n)")]
     fn logspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
         Ok(SIArray1::logspace(start.0, end.0, n)?.into())
+    }
+}
+
+#[pymethods]
+impl PySIArray2 {
+    #[new]
+    fn new() -> Self {
+        Self(SIArray2 {
+            value: Array::zeros([0; 2]),
+            unit: SIUnit::DIMENSIONLESS,
+        })
+    }
+}
+
+#[pymethods]
+impl PySIArray3 {
+    #[new]
+    fn new() -> Self {
+        Self(SIArray3 {
+            value: Array::zeros([0; 3]),
+            unit: SIUnit::DIMENSIONLESS,
+        })
+    }
+}
+
+#[pymethods]
+impl PySIArray4 {
+    #[new]
+    fn new() -> Self {
+        Self(SIArray4 {
+            value: Array::zeros([0; 4]),
+            unit: SIUnit::DIMENSIONLESS,
+        })
     }
 }
 
