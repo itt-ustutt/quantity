@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2022-03-09
+### Packaging
+- Updated `pyo3` and `numpy` dependencies to 0.16.
+- Updated `ang` dependency to 0.6.
+
 ## [0.4.1] - 2022-01-10
 ### Added
 - Added implementations of `__getstate__` and `__setstate__` functions for `PySINumber` and `PySIArrayX` to allow pickling of python objects.  [#43](https://github.com/itt-ustutt/quantity/pull/43)

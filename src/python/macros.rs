@@ -67,59 +67,53 @@ macro_rules! impl_array {
             fn get_shape(&self) -> Vec<usize> {
                 self.0.shape().to_vec()
             }
-        }
 
-        #[pyproto]
-        impl pyo3::class::basic::PyObjectProtocol for $struct {
             fn __repr__(&self) -> PyResult<String> {
                 Ok(self.0.to_string())
             }
-        }
 
-        #[pyproto]
-        impl PyNumberProtocol for $struct {
-            fn __add__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+            fn __add__(&self, rhs: &PyAny) -> PyResult<PyObject> {
                 Python::with_gil(|py| {
                     if let Ok(r) = rhs.extract::<PySINumber>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() + r.0))?.to_object(py));
+                        return Ok(PyCell::new(py, Self(self.0.clone() + r.0))?.to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<Self>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() + r.0))?.to_object(py));
+                        return Ok(PyCell::new(py, Self(self.0.clone() + r.0))?.to_object(py));
                     };
                     Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
                 })
             }
 
-            fn __sub__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+            fn __sub__(&self, rhs: &PyAny) -> PyResult<PyObject> {
                 Python::with_gil(|py| {
                     if let Ok(r) = rhs.extract::<PySINumber>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() - r.0))?.to_object(py));
+                        return Ok(PyCell::new(py, Self(self.0.clone() - r.0))?.to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<Self>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() - r.0))?.to_object(py));
+                        return Ok(PyCell::new(py, Self(self.0.clone() - r.0))?.to_object(py));
                     };
                     Err(PyErr::new::<PyTypeError, _>(format!("not implemented!")))
                 })
             }
 
-            fn __mul__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+            fn __mul__(&self, rhs: &PyAny) -> PyResult<PyObject> {
                 Python::with_gil(|py| {
                     if let Ok(r) = rhs.extract::<f64>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() * r))?.to_object(py));
+                        return Ok(PyCell::new(py, Self(self.0.clone() * r))?.to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<PySINumber>() {
-                        let result = lhs.0.clone() * r.0;
+                        let result = self.0.clone() * r.0;
                         return Ok(match result.value() {
                             Ok(r) => r.to_pyarray(py).to_object(py),
                             Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                         });
                     };
                     if let Ok(r) = rhs.extract::<$numpy_array>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() * r.to_owned_array()))?
+                        return Ok(PyCell::new(py, Self(self.0.clone() * r.to_owned_array()))?
                             .to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<Self>() {
-                        let result = lhs.0.clone() * r.0;
+                        let result = self.0.clone() * r.0;
                         return Ok(match result.value() {
                             Ok(r) => r.to_pyarray(py).to_object(py),
                             Err(_) => PyCell::new(py, Self(result))?.to_object(py),
@@ -142,30 +136,30 @@ macro_rules! impl_array {
                 })
             }
 
-            fn __truediv__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+            fn __truediv__(&self, rhs: &PyAny) -> PyResult<PyObject> {
                 Python::with_gil(|py| {
                     if let Ok(r) = rhs.extract::<f64>() {
-                        return Ok(PyCell::new(py, Self(lhs.0.clone() / r))?.to_object(py));
+                        return Ok(PyCell::new(py, Self(self.0.clone() / r))?.to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<PySINumber>() {
-                        let result = lhs.0.clone() / r.0;
+                        let result = self.0.clone() / r.0;
                         return Ok(match result.value() {
                             Ok(r) => r.to_pyarray(py).to_object(py),
                             Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                         });
                     };
                     if let Ok(_) = rhs.extract::<PyCelsius>() {
-                        return Ok((lhs.0.clone() / CELSIUS).to_pyarray(py).to_object(py));
+                        return Ok((self.0.clone() / CELSIUS).to_pyarray(py).to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<$numpy_array>() {
                         return Ok(PyCell::new(
                             py,
-                            Self(lhs.0.clone() * (1.0 / r.to_owned_array())),
+                            Self(self.0.clone() * (1.0 / r.to_owned_array())),
                         )?
                         .to_object(py));
                     };
                     if let Ok(r) = rhs.extract::<Self>() {
-                        let result = lhs.0.clone() / r.0;
+                        let result = self.0.clone() / r.0;
                         return Ok(match result.value() {
                             Ok(r) => r.to_pyarray(py).to_object(py),
                             Err(_) => PyCell::new(py, Self(result))?.to_object(py),
@@ -191,8 +185,8 @@ macro_rules! impl_array {
                 })
             }
 
-            fn __pow__(lhs: PyRef<'p, Self>, rhs: i32, _mod: Option<u32>) -> Self {
-                Self(lhs.0.powi(rhs))
+            fn __pow__(&self, rhs: i32, _mod: Option<u32>) -> Self {
+                Self(self.0.powi(rhs))
             }
 
             fn __neg__(&self) -> Self {

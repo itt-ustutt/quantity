@@ -5,7 +5,6 @@ use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
-use pyo3::PyNumberProtocol;
 
 use super::{PySIArray1, PySIArray2, PySIArray3, PySIArray4};
 
@@ -45,12 +44,13 @@ impl PySINumber {
     fn __getstate__(&self, py: Python) -> PyObject {
         PyBytes::new(py, &serialize(&self.0).unwrap()).to_object(py)
     }
-}
 
-#[pyproto]
-impl pyo3::class::basic::PyObjectProtocol for PySINumber {
     fn __repr__(&self) -> PyResult<String> {
         Ok(self.0.to_string())
+    }
+
+    fn _repr_latex_(&self) -> String {
+        format!("${}$", self.0.to_latex())
     }
 
     fn __richcmp__(&self, other: Self, op: CompareOp) -> PyResult<bool> {
@@ -63,10 +63,7 @@ impl pyo3::class::basic::PyObjectProtocol for PySINumber {
             CompareOp::Ge => self.0 >= other.0,
         })
     }
-}
 
-#[pymethods]
-impl PySINumber {
     /// Try to calculate the square root of self.
     ///
     /// Examples
@@ -113,103 +110,95 @@ impl PySINumber {
         1000
     }
 
-    fn _repr_latex_(&self) -> String {
-        format!("${}$", self.0.to_latex())
-    }
-}
-
-#[pyproto]
-impl PyNumberProtocol for PySINumber {
-    /// Addition
-    fn __add__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+    fn __add__(&self, rhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(r) = rhs.extract::<PySINumber>() {
-                return Ok(PyCell::new(py, Self(lhs.0 + r.0))?.to_object(py));
+                return Ok(PyCell::new(py, Self(self.0 + r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray1>() {
-                return Ok(PyCell::new(py, PySIArray1(lhs.0 + r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray1(self.0 + r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray2>() {
-                return Ok(PyCell::new(py, PySIArray2(lhs.0 + r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray2(self.0 + r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray3>() {
-                return Ok(PyCell::new(py, PySIArray3(lhs.0 + r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray3(self.0 + r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray4>() {
-                return Ok(PyCell::new(py, PySIArray4(lhs.0 + r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray4(self.0 + r.0))?.to_object(py));
             };
             Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
-    fn __sub__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+    fn __sub__(&self, rhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(r) = rhs.extract::<PySINumber>() {
-                return Ok(PyCell::new(py, Self(lhs.0 - r.0))?.to_object(py));
+                return Ok(PyCell::new(py, Self(self.0 - r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray1>() {
-                return Ok(PyCell::new(py, PySIArray1(lhs.0 - r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray1(self.0 - r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray2>() {
-                return Ok(PyCell::new(py, PySIArray2(lhs.0 - r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray2(self.0 - r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray3>() {
-                return Ok(PyCell::new(py, PySIArray3(lhs.0 - r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray3(self.0 - r.0))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray4>() {
-                return Ok(PyCell::new(py, PySIArray4(lhs.0 - r.0))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray4(self.0 - r.0))?.to_object(py));
             };
             Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
         })
     }
 
-    fn __mul__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+    fn __mul__(&self, rhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(r) = rhs.extract::<f64>() {
-                return Ok(PyCell::new(py, Self(lhs.0 * r))?.to_object(py));
+                return Ok(PyCell::new(py, Self(self.0 * r))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySINumber>() {
-                let result = lhs.0 * r.0;
+                let result = self.0 * r.0;
                 return Ok(match result.into_value() {
                     Ok(r) => r.to_object(py),
                     Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray1<f64>>() {
-                return Ok(PyCell::new(py, PySIArray1(lhs.0 * r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray1(self.0 * r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray2<f64>>() {
-                return Ok(PyCell::new(py, PySIArray2(lhs.0 * r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray2(self.0 * r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray3<f64>>() {
-                return Ok(PyCell::new(py, PySIArray3(lhs.0 * r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray3(self.0 * r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray4<f64>>() {
-                return Ok(PyCell::new(py, PySIArray4(lhs.0 * r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray4(self.0 * r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray1>() {
-                let result = lhs.0 * r.0;
+                let result = self.0 * r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray1(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PySIArray2>() {
-                let result = lhs.0 * r.0;
+                let result = self.0 * r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray2(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PySIArray3>() {
-                let result = lhs.0 * r.0;
+                let result = self.0 * r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray3(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PySIArray4>() {
-                let result = lhs.0 * r.0;
+                let result = self.0 * r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray4(result))?.to_object(py),
@@ -240,56 +229,56 @@ impl PyNumberProtocol for PySINumber {
         })
     }
 
-    fn __truediv__(lhs: PyRef<'p, Self>, rhs: &PyAny) -> PyResult<PyObject> {
+    fn __truediv__(&self, rhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(r) = rhs.extract::<f64>() {
-                return Ok(PyCell::new(py, Self(lhs.0 / r))?.to_object(py));
+                return Ok(PyCell::new(py, Self(self.0 / r))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySINumber>() {
-                let result = lhs.0 / r.0;
+                let result = self.0 / r.0;
                 return Ok(match result.into_value() {
                     Ok(r) => r.to_object(py),
                     Err(_) => PyCell::new(py, Self(result))?.to_object(py),
                 });
             };
             if let Ok(_) = rhs.extract::<PyCelsius>() {
-                return Ok((lhs.0 / CELSIUS).to_object(py));
+                return Ok((self.0 / CELSIUS).to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray1<f64>>() {
-                return Ok(PyCell::new(py, PySIArray1(lhs.0 / r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray1(self.0 / r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray2<f64>>() {
-                return Ok(PyCell::new(py, PySIArray2(lhs.0 / r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray2(self.0 / r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray3<f64>>() {
-                return Ok(PyCell::new(py, PySIArray3(lhs.0 / r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray3(self.0 / r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PyReadonlyArray4<f64>>() {
-                return Ok(PyCell::new(py, PySIArray4(lhs.0 / r.to_owned_array()))?.to_object(py));
+                return Ok(PyCell::new(py, PySIArray4(self.0 / r.to_owned_array()))?.to_object(py));
             };
             if let Ok(r) = rhs.extract::<PySIArray1>() {
-                let result = lhs.0 / r.0;
+                let result = self.0 / r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray1(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PySIArray2>() {
-                let result = lhs.0 / r.0;
+                let result = self.0 / r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray2(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PySIArray3>() {
-                let result = lhs.0 / r.0;
+                let result = self.0 / r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray3(result))?.to_object(py),
                 });
             };
             if let Ok(r) = rhs.extract::<PySIArray4>() {
-                let result = lhs.0 / r.0;
+                let result = self.0 / r.0;
                 return Ok(match result.value() {
                     Ok(r) => r.to_pyarray(py).to_object(py),
                     Err(_) => PyCell::new(py, PySIArray4(result))?.to_object(py),
@@ -328,8 +317,8 @@ impl PyNumberProtocol for PySINumber {
         })
     }
 
-    fn __pow__(lhs: PyRef<'p, Self>, rhs: i32, _mod: Option<u32>) -> Self {
-        Self(lhs.0.powi(rhs))
+    fn __pow__(&self, rhs: i32, _mod: Option<u32>) -> Self {
+        Self(self.0.powi(rhs))
     }
 
     fn __neg__(&self) -> Self {
@@ -345,8 +334,8 @@ impl PyNumberProtocol for PySINumber {
 #[derive(Clone, Copy)]
 pub struct PyCelsius;
 
-#[pyproto]
-impl PyNumberProtocol for PyCelsius {
+#[pymethods]
+impl PyCelsius {
     fn __rmul__(&self, lhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(l) = lhs.extract::<f64>() {
@@ -378,17 +367,11 @@ impl PyDebye {
     fn _repr_latex_(&self) -> String {
         format!("${}$", self.0.to_latex())
     }
-}
 
-#[pyproto]
-impl pyo3::class::basic::PyObjectProtocol for PyDebye {
     fn __repr__(&self) -> PyResult<String> {
         Ok(self.0.to_string())
     }
-}
 
-#[pyproto]
-impl PyNumberProtocol for PyDebye {
     fn __rmul__(&self, lhs: &PyAny) -> PyResult<PyObject> {
         Python::with_gil(|py| {
             if let Ok(l) = lhs.extract::<f64>() {
@@ -398,7 +381,7 @@ impl PyNumberProtocol for PyDebye {
         })
     }
 
-    fn __pow__(lhs: PyRef<'p, Self>, rhs: i32, _mod: Option<u32>) -> PySINumber {
-        PySINumber(lhs.0.powi(rhs))
+    fn __pow__(&self, rhs: i32, _mod: Option<u32>) -> PySINumber {
+        PySINumber(self.0.powi(rhs))
     }
 }
