@@ -7,7 +7,6 @@ use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArra
 use pyo3::exceptions::{PyIndexError, PyTypeError};
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
-use pyo3::{PyNumberProtocol, PySequenceProtocol};
 use std::ops::Deref;
 
 use super::PySINumber;
@@ -137,8 +136,8 @@ impl PySIArray4 {
     }
 }
 
-#[pyproto]
-impl PySequenceProtocol for PySIArray1 {
+#[pymethods]
+impl PySIArray1 {
     fn __len__(&self) -> PyResult<usize> {
         Ok(self.0.len())
     }
@@ -160,22 +159,22 @@ impl PySequenceProtocol for PySIArray1 {
     }
 }
 
-#[pyproto]
-impl PySequenceProtocol for PySIArray2 {
+#[pymethods]
+impl PySIArray2 {
     fn __len__(&self) -> PyResult<usize> {
         Ok(self.0.len())
     }
 }
 
-#[pyproto]
-impl PySequenceProtocol for PySIArray3 {
+#[pymethods]
+impl PySIArray3 {
     fn __len__(&self) -> PyResult<usize> {
         Ok(self.0.len())
     }
 }
 
-#[pyproto]
-impl PySequenceProtocol for PySIArray4 {
+#[pymethods]
+impl PySIArray4 {
     fn __len__(&self) -> PyResult<usize> {
         Ok(self.0.len())
     }
