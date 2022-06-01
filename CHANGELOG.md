@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Added implementations of `IntoIterator` for every `Quantity` with iteratable inner types. [#48](https://github.com/itt-ustutt/quantity/pull/48)
-- Implemented `FromIterator` for `QuantityArray1`, enabling the use of `collect()` for quantity Arrays. [#48](https://github.com/itt-ustutt/quantity/pull/48)
+- Implemented `FromIterator` for `QuantityArray1`, enabling the use of `collect()` for quantity arrays. [#48](https://github.com/itt-ustutt/quantity/pull/48)
 
 ## [0.5.0] - 2022-03-09
 ### Packaging
