@@ -58,7 +58,6 @@
 
 #![warn(clippy::all)]
 use approx::{AbsDiffEq, RelativeEq};
-use ndarray::iter::Iter;
 use ndarray::*;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -1092,12 +1091,12 @@ impl<U: Unit> QuantityArray1<U> {
     }
 }
 
-pub struct QuantityIter<'a, U> {
-    inner: Iter<'a, f64, Ix1>,
+pub struct QuantityIter<I, U> {
+    inner: I,
     unit: U,
 }
 
-impl<'a, U: Copy> Iterator for QuantityIter<'a, U> {
+impl<'a, I: Iterator<Item = &'a f64>, U: Copy> Iterator for QuantityIter<I, U> {
     type Item = QuantityScalar<U>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -1112,13 +1111,17 @@ impl<'a, U: Copy> Iterator for QuantityIter<'a, U> {
     }
 }
 
-impl<'a, U: Copy> ExactSizeIterator for QuantityIter<'a, U> {
+impl<'a, I: Iterator<Item = &'a f64> + ExactSizeIterator, U: Copy> ExactSizeIterator
+    for QuantityIter<I, U>
+{
     fn len(&self) -> usize {
         self.inner.len()
     }
 }
 
-impl<'a, U: Copy> DoubleEndedIterator for QuantityIter<'a, U> {
+impl<'a, I: Iterator<Item = &'a f64> + DoubleEndedIterator, U: Copy> DoubleEndedIterator
+    for QuantityIter<I, U>
+{
     fn next_back(&mut self) -> Option<Self::Item> {
         self.inner.next_back().map(|value| QuantityScalar {
             value: *value,
@@ -1127,9 +1130,12 @@ impl<'a, U: Copy> DoubleEndedIterator for QuantityIter<'a, U> {
     }
 }
 
-impl<'a, U: Copy> IntoIterator for &'a QuantityArray1<U> {
+impl<'a, F, U: Copy> IntoIterator for &'a Quantity<F, U>
+where
+    &'a F: IntoIterator<Item = &'a f64>,
+{
     type Item = QuantityScalar<U>;
-    type IntoIter = QuantityIter<'a, U>;
+    type IntoIter = QuantityIter<<&'a F as IntoIterator>::IntoIter, U>;
 
     fn into_iter(self) -> Self::IntoIter {
         QuantityIter {
