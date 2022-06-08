@@ -165,7 +165,7 @@ fn unit_to_latex(symbols: &[&str], exponents: &[i8], prefix: Option<&str>) -> St
     let num_st = unit_to_latex_product(num);
     let den_st = unit_to_latex_product(den);
     match (num_st, den_st) {
-        (None, None) => format!(""),
+        (None, None) => String::new(),
         (Some(num), None) => format!("\\mathrm{{{}}}", num),
         (None, Some(den)) => format!("\\mathrm{{\\frac{{1}}{{{}}}}}", den),
         (Some(num), Some(den)) => format!("\\mathrm{{\\frac{{{}}}{{{}}}}}", num, den),
@@ -282,7 +282,7 @@ fn insert_derived_unit(map: &mut HashMap<SIUnit, SIUnitSymbol>, s: &'static str)
     let unit = unit.unwrap();
     map.insert(
         unit.unit,
-        (unit, s.replace("*", ""), has_prefix, symbols, exponents),
+        (unit, s.replace('*', ""), has_prefix, symbols, exponents),
     );
 }
 

@@ -62,6 +62,7 @@ use ndarray::*;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::fmt;
+use std::iter::FromIterator;
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
@@ -1087,5 +1088,122 @@ impl<U: Unit> QuantityArray1<U> {
     /// Create a one-dimensional array from a vector of scalar quantities.
     pub fn from_vec(vec: Vec<QuantityScalar<U>>) -> Self {
         Self::from_shape_fn(vec.len(), |i| vec[i])
+    }
+}
+
+pub struct QuantityIter<I, U> {
+    inner: I,
+    unit: U,
+}
+
+impl<'a, I: Iterator<Item = &'a f64>, U: Copy> Iterator for QuantityIter<I, U> {
+    type Item = QuantityScalar<U>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next().map(|value| QuantityScalar {
+            value: *value,
+            unit: self.unit,
+        })
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.inner.size_hint()
+    }
+}
+
+impl<'a, I: Iterator<Item = &'a f64> + ExactSizeIterator, U: Copy> ExactSizeIterator
+    for QuantityIter<I, U>
+{
+    fn len(&self) -> usize {
+        self.inner.len()
+    }
+}
+
+impl<'a, I: Iterator<Item = &'a f64> + DoubleEndedIterator, U: Copy> DoubleEndedIterator
+    for QuantityIter<I, U>
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.inner.next_back().map(|value| QuantityScalar {
+            value: *value,
+            unit: self.unit,
+        })
+    }
+}
+
+impl<'a, F, U: Copy> IntoIterator for &'a Quantity<F, U>
+where
+    &'a F: IntoIterator<Item = &'a f64>,
+{
+    type Item = QuantityScalar<U>;
+    type IntoIter = QuantityIter<<&'a F as IntoIterator>::IntoIter, U>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        QuantityIter {
+            inner: (&self.value).into_iter(),
+            unit: self.unit,
+        }
+    }
+}
+
+impl<U: Unit> FromIterator<QuantityScalar<U>> for QuantityArray1<U> {
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = QuantityScalar<U>>,
+    {
+        let (value, unit) =
+            iter.into_iter()
+                .fold((Vec::new(), U::DIMENSIONLESS), |(mut value, unit), q| {
+                    value.push(q.value);
+                    if unit != q.unit && unit != U::DIMENSIONLESS {
+                        panic!("Inconsistent units {unit} and {}", q.unit);
+                    }
+                    (value, q.unit)
+                });
+        let value = Array1::from_vec(value);
+        Self { value, unit }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::si::*;
+    use std::iter::once;
+
+    #[test]
+    fn test_into_iter() {
+        let x = SIArray1::linspace(1.0 * METER, 3.0 * METER, 6).unwrap();
+        for q in &x {
+            println!("{q}");
+        }
+        let mut x_iter = x.into_iter();
+        assert_eq!(x_iter.next(), Some(1.0 * METER));
+        assert_eq!(x_iter.next(), Some(1.4 * METER));
+        assert_eq!(x_iter.next(), Some(1.8 * METER));
+        assert_eq!(x_iter.next(), Some(2.2 * METER));
+        assert_eq!(x_iter.next(), Some(2.6 * METER));
+        assert_eq!(x_iter.next(), Some(3.0 * METER));
+        assert_eq!(x_iter.next(), None);
+    }
+
+    #[test]
+    fn test_collect_vec() {
+        let vec: Vec<_> = once(KELVIN).chain(once(METER)).collect();
+        assert_eq!(vec[0], KELVIN);
+        assert_eq!(vec[1], METER);
+    }
+
+    #[test]
+    #[should_panic(expected = "Inconsistent units K and m")]
+    fn test_collect_array_wrong() {
+        let arr: SIArray1 = once(KELVIN).chain(once(METER)).collect();
+        println!("{arr}");
+    }
+
+    #[test]
+    fn test_collect_array_correct() {
+        let arr: SIArray1 = once(KELVIN).chain(once(25.0 * CELSIUS)).collect();
+        println!("{arr}");
+        assert_eq!(arr.get(0), KELVIN);
+        assert_eq!(arr.get(1), 25.0 * CELSIUS);
     }
 }
