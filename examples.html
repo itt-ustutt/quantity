@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examples &mdash; si_units 0.5.0 documentation</title>
+  <title>Examples &mdash; si_units 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -73,9 +74,9 @@
            <div itemprop="articleBody">
              
   <section id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h1>
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
 <section id="pressure-of-an-ideal-gas">
-<h2>Pressure of an ideal gas<a class="headerlink" href="#pressure-of-an-ideal-gas" title="Permalink to this headline"></a></h2>
+<h2>Pressure of an ideal gas<a class="headerlink" href="#pressure-of-an-ideal-gas" title="Permalink to this heading"></a></h2>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">298.15</span> <span class="o">*</span> <span class="n">KELVIN</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">volume</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
@@ -101,7 +102,7 @@
 </div>
 </section>
 <section id="gravitational-pull-of-the-moon-on-the-earth">
-<h2>Gravitational pull of the moon on the earth<a class="headerlink" href="#gravitational-pull-of-the-moon-on-the-earth" title="Permalink to this headline"></a></h2>
+<h2>Gravitational pull of the moon on the earth<a class="headerlink" href="#gravitational-pull-of-the-moon-on-the-earth" title="Permalink to this heading"></a></h2>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mass_earth</span> <span class="o">=</span> <span class="mf">5.9724e24</span> <span class="o">*</span> <span class="n">KILOGRAM</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mass_moon</span> <span class="o">=</span> <span class="mf">7.346e22</span> <span class="o">*</span> <span class="n">KILOGRAM</span>
@@ -113,7 +114,7 @@
 </div>
 </section>
 <section id="pressure-distribution-in-the-atmosphere">
-<h2>Pressure distribution in the atmosphere<a class="headerlink" href="#pressure-distribution-in-the-atmosphere" title="Permalink to this headline"></a></h2>
+<h2>Pressure distribution in the atmosphere<a class="headerlink" href="#pressure-distribution-in-the-atmosphere" title="Permalink to this heading"></a></h2>
 <p>Using the barometric formula.
 This example demonstrates how dimensioned arrays can be constructed using numpy.ndarray’s.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
@@ -145,7 +146,7 @@ This example demonstrates how dimensioned arrays can be constructed using numpy.
 </div>
 </section>
 <section id="using-numpy-functions">
-<h2>Using <cite>numpy</cite> Functions<a class="headerlink" href="#using-numpy-functions" title="Permalink to this headline"></a></h2>
+<h2>Using <cite>numpy</cite> Functions<a class="headerlink" href="#using-numpy-functions" title="Permalink to this heading"></a></h2>
 <p>Functions such as <cite>exp</cite>, <cite>sqrt</cite> and <cite>cbrt</cite> work with methods or the equivalent numpy functions.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
