@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.1] - 2022-06-08
 ### Added
 - Added implementations of `IntoIterator` for every `Quantity` with iteratable inner types. [#48](https://github.com/itt-ustutt/quantity/pull/48)
 - Implemented `FromIterator` for `QuantityArray1`, enabling the use of `collect()` for quantity arrays. [#48](https://github.com/itt-ustutt/quantity/pull/48)
