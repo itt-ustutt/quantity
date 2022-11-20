@@ -129,6 +129,8 @@ pub fn quantity(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add("G", G)?;
     m.add("RGAS", RGAS)?;
 
+    m.add("QUECTO", crate::si::QUECTO)?;
+    m.add("RONTO", crate::si::RONTO)?;
     m.add("YOCTO", crate::si::YOCTO)?;
     m.add("ZEPTO", crate::si::ZEPTO)?;
     m.add("ATTO", crate::si::ATTO)?;
@@ -149,5 +151,7 @@ pub fn quantity(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add("EXA", crate::si::EXA)?;
     m.add("ZETTA", crate::si::ZETTA)?;
     m.add("YOTTA", crate::si::YOTTA)?;
+    m.add("RONNA", crate::si::RONNA)?;
+    m.add("QUETTA", crate::si::QUETTA)?;
     Ok(())
 }

@@ -80,6 +80,8 @@
 //! [ATTO] | $\text{a}$ | $10^{-18}$ | | [EXA] | $\text{E}$ | $10^{18}$
 //! [ZEPTO] | $\text{z}$ | $10^{-21}$ | | [ZETTA] | $\text{Z}$ | $10^{21}$
 //! [YOCTO] | $\text{y}$ | $10^{-24}$ | | [YOTTA] | $\text{Y}$ | $10^{24}$
+//! [RONTO] | $\text{r}$ | $10^{-27}$ | | [RONNA] | $\text{R}$ | $10^{27}$
+//! [QUECTO] | $\text{q}$ | $10^{-30}$ | | [QUETTA] | $\text{Q}$ | $10^{30}$
 use super::{Quantity, QuantityError, Unit};
 use ang::{Angle, Degrees, Radians};
 use ndarray::*;
@@ -439,6 +441,10 @@ pub const RADIANS: Angle = Radians(1.0);
 /// Angle unit degree $\\left(1^\\circ=\frac{\pi}{180}\\,\text{rad}\\approx 0.0174532925\\,\text{rad}\\right)$
 pub const DEGREES: Angle = Degrees(1.0);
 
+/// Prefix quecto $\\left(\text{q}=10^{-30}\\right)$
+pub const QUECTO: f64 = 1e-30;
+/// Prefix ronto $\\left(\text{r}=10^{-27}\\right)$
+pub const RONTO: f64 = 1e-27;
 /// Prefix yocto $\\left(\text{y}=10^{-24}\\right)$
 pub const YOCTO: f64 = 1e-24;
 /// Prefix zepto $\\left(\text{z}=10^{-21}\\right)$
@@ -479,6 +485,10 @@ pub const EXA: f64 = 1e18;
 pub const ZETTA: f64 = 1e21;
 /// Prefix yotta $\\left(\text{Y}=10^{24}\\right)$
 pub const YOTTA: f64 = 1e24;
+/// Prefix ronna $\\left(\text{R}=10^{27}\\right)$
+pub const RONNA: f64 = 1e27;
+/// Prefix qutta $\\left(\text{Q}=10^{30}\\right)$
+pub const QUETTA: f64 = 1e30;
 
 /// Additional unit celsius
 pub struct CELSIUS;
