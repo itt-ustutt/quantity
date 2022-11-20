@@ -26,7 +26,7 @@ jobs:
         with:
           manylinux: auto
           command: build
-          args: --release --out dist --no-sdist -m si-units/Cargo.toml
+          args: --release --out dist -m si-units/Cargo.toml
       - name: Install module
         run: |
           pip install si-units --no-index --find-links dist --force-reinstall
