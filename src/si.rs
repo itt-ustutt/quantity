@@ -487,7 +487,7 @@ pub const ZETTA: f64 = 1e21;
 pub const YOTTA: f64 = 1e24;
 /// Prefix ronna $\\left(\text{R}=10^{27}\\right)$
 pub const RONNA: f64 = 1e27;
-/// Prefix qutta $\\left(\text{Q}=10^{30}\\right)$
+/// Prefix quetta $\\left(\text{Q}=10^{30}\\right)$
 pub const QUETTA: f64 = 1e30;
 
 /// Additional unit celsius
