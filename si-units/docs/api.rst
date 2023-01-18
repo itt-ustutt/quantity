@@ -96,6 +96,8 @@ All units can be combined with the following prefixes:
     .. autoclass:: ATTO, :math:`\text{a}`, :math:`10^{-18}`, .. autoclass:: EXA, :math:`\text{E}`, :math:`10^{18}`
     .. autoclass:: ZEPTO, :math:`\text{z}`, :math:`10^{-21}`, .. autoclass:: ZETTA, :math:`\text{Z}`, :math:`10^{21}`
     .. autoclass:: YOCTO, :math:`\text{y}`, :math:`10^{-24}`, .. autoclass:: YOTTA, :math:`\text{Y}`, :math:`10^{24}`
+    .. autoclass:: RONTO, :math:`\text{r}`, :math:`10^{-27}`, .. autoclass:: RONNA, :math:`\text{R}`, :math:`10^{27}`
+    .. autoclass:: QUECTO, :math:`\text{q}`, :math:`10^{-30}`, .. autoclass:: QUETTA, :math:`\text{Q}`, :math:`10^{30}`
 
 Datatypes
 ~~~~~~~~~
