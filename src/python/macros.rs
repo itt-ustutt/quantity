@@ -54,7 +54,6 @@ macro_rules! impl_array {
             /// Returns
             /// -------
             /// bool
-            #[pyo3(text_signature = "($self, other)")]
             fn has_unit(&self, other: Self) -> bool {
                 self.0.has_unit(&other.0)
             }

@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added the new SI unit prefixes `QUECTO`, `RONTO`, `RONNA`, and `QUETTA`. [#49](https://github.com/itt-ustutt/quantity/pull/49)
 
+### Packaging
+- Updated `pyo3` and `numpy` dependencies to 0.18. [#52](https://github.com/itt-ustutt/quantity/pull/52)
+
 ## [0.5.1] - 2022-06-08
 ### Added
 - Added implementations of `IntoIterator` for every `Quantity` with iteratable inner types. [#48](https://github.com/itt-ustutt/quantity/pull/48)
