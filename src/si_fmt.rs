@@ -65,11 +65,11 @@ impl SINumber {
         if DERIVED_UNITS.contains_key(&self.unit) && !self.is_nan() {
             let (unit, _, has_prefix, symbols, exponents) = DERIVED_UNITS.get(&self.unit).unwrap();
             let (value, prefix) = get_prefix(self.to_reduced(*unit).unwrap(), *has_prefix);
-            return format!(
+            format!(
                 "{}\\,{}",
                 float_to_latex(value),
                 &unit_to_latex(symbols, exponents, Some(prefix))
-            );
+            )
         } else {
             format!("{}\\,{}", float_to_latex(self.value), &self.unit.to_latex())
         }
