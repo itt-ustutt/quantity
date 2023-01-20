@@ -45,7 +45,7 @@ impl_array!(PySIArray4, SIArray4, PyReadonlyArray4<f64>);
 #[pymethods]
 impl PySIArray1 {
     #[new]
-    #[args(value = "Vec::<PySINumber>::new().into_py(_py)")]
+    #[pyo3(signature = (value=Python::with_gil(|py| PySINumber::new().into_py(py))))]
     fn new(py: Python, value: Py<PyAny>) -> PyResult<Self> {
         if let Ok(v) = value.extract::<PySINumber>(py) {
             return Ok(Self(arr1(&[1.0]) * v.0));
@@ -76,7 +76,6 @@ impl PySIArray1 {
     /// SIArray1
     ///
     #[staticmethod]
-    #[pyo3(text_signature = "(start, end, n)")]
     fn linspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
         Ok(SIArray1::linspace(start.0, end.0, n)?.into())
     }
@@ -97,7 +96,6 @@ impl PySIArray1 {
     /// SIArray1
     ///
     #[staticmethod]
-    #[pyo3(text_signature = "(start, end, n)")]
     fn logspace(start: PySINumber, end: PySINumber, n: usize) -> Result<Self, QuantityError> {
         Ok(SIArray1::logspace(start.0, end.0, n)?.into())
     }

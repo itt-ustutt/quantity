@@ -27,10 +27,10 @@ impl From<PySINumber> for SINumber {
 #[pymethods]
 impl PySINumber {
     #[new]
-    #[args(value = "0.0")]
-    pub fn new(value: f64) -> Self {
+    // Required for pickling SINumbers
+    pub fn new() -> Self {
         Self(SINumber {
-            value,
+            value: 0.0,
             unit: SIUnit::DIMENSIONLESS,
         })
     }
@@ -100,7 +100,6 @@ impl PySINumber {
     /// Returns
     /// -------
     /// bool
-    #[pyo3(text_signature = "($self, other)")]
     fn has_unit(&self, other: PySINumber) -> bool {
         self.0.has_unit(&other.0)
     }
