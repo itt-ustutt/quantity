@@ -1,6 +1,6 @@
 [package]
 name = "quantity"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Philipp Rehner <prehner@ethz.ch>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
