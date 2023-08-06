@@ -1,6 +1,6 @@
 [package]
 name = "si-units"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Philipp Rehner <prehner@ethz.ch>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
 edition = "2018"
