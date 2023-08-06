@@ -105,6 +105,21 @@ pub type SIArray4 = SIArray<Ix4>;
 pub type SIArray5 = SIArray<Ix5>;
 pub type SIArray6 = SIArray<Ix6>;
 
+impl<T> Quantity<T, SIUnit> {
+    /// Split an SI quantity into its value and unit vector.
+    pub fn into_raw_parts(self) -> (T, [i8; 7]) {
+        (self.value, self.unit.0)
+    }
+
+    /// Create an SI quantity from its value and unit vector.
+    pub fn from_raw_parts(value: T, unit: [i8; 7]) -> Self {
+        Quantity {
+            value,
+            unit: SIUnit(unit),
+        }
+    }
+}
+
 impl Unit for SIUnit {
     const DIMENSIONLESS: Self = SIUnit([0; 7]);
 
