@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.1] - 2023-08-06
 ### Added
+- Added new functions `SIUnit::from_raw_parts` and `SIUnit::into_raw_parts`. [#55](https://github.com/itt-ustutt/quantity/pull/55)
+
+## Fixed
+- Fixed workflow for Apple universal2 wheels. [#55](https://github.com/itt-ustutt/quantity/pull/55)
+
+## [0.6.1] - 2023-08-06
+### Added
 - Added new functions `Quantity::from_raw_parts` and `Quantity::into_raw_parts` for SI quantities. [#54](https://github.com/itt-ustutt/quantity/pull/54)
 
 ## [0.6.0] - 2023-01-20

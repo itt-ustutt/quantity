@@ -105,6 +105,18 @@ pub type SIArray4 = SIArray<Ix4>;
 pub type SIArray5 = SIArray<Ix5>;
 pub type SIArray6 = SIArray<Ix6>;
 
+impl SIUnit {
+    /// Return the underlying unit vector.
+    pub fn into_raw_parts(self) -> [i8; 7] {
+        self.0
+    }
+
+    /// Build a unit from the underlying unit vector.
+    pub fn from_raw_parts(unit: [i8; 7]) -> Self {
+        Self(unit)
+    }
+}
+
 impl<T> Quantity<T, SIUnit> {
     /// Split an SI quantity into its value and unit vector.
     pub fn into_raw_parts(self) -> (T, [i8; 7]) {
