@@ -1,9 +1,9 @@
 [package]
 name = "quantity"
-version = "0.6.2"
+version = "0.7.0"
 authors = ["Philipp Rehner <prehner@ethz.ch>",
            "Gernot Bauer <bauer@itt.uni-stuttgart.de>"]
-edition = "2018"
+edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Representation of quantites, i.e. of unit valued scalars and arrays."
 homepage = "https://github.com/itt-ustutt/quantity"
@@ -17,16 +17,16 @@ exclude = ["/.github/*", "*.ipynb", "/docs"]
 rustdoc-args = [ "--html-in-header", "./src/docs-header.html" ]
 
 [dependencies]
-ndarray = { version = "0.15", features = ["serde", "approx"] }
-approx = "0.4"
+ndarray = { version = "0.15", features = ["serde", "approx-0_5"] }
+approx = "0.5"
 lazy_static = "1.4"
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 bincode = "1.3"
 ang = "0.6"
 regex = "1.5"
-pyo3 = { version = "0.18", features = ["multiple-pymethods"], optional = true}
-numpy = { version = "0.18", optional = true }
+pyo3 = { version = "0.20", features = ["multiple-pymethods"], optional = true}
+numpy = { version = "0.20", optional = true }
 
 [features]
 default = []
