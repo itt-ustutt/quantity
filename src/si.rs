@@ -92,7 +92,7 @@ use std::ops::Rem;
 use std::ops::{Div, DivAssign, Mul, MulAssign};
 
 /// Representation of a unit as a combination of SI base units.
-#[derive(Hash, PartialEq, Eq, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Hash, PartialEq, Eq, Debug, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct SIUnit(pub(crate) [i8; 7]);
 
 pub type SINumber = Quantity<f64, SIUnit>;
