@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-04-11
+### Packaging
+- Updated `pyo3` and `numpy` dependencies to 0.21 and adjusted to the new `Bound` API.
+
 ## [0.7.0] - 2023-10-15
 ### Packaging
 - Updated `pyo3` and `numpy` dependencies to 0.20.

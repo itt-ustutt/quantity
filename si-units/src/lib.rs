@@ -3,6 +3,6 @@ use quantity::python::quantity;
 
 /// Implementation of SI numbers.
 #[pymodule]
-pub fn si_units(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
-    quantity(_py, m)
+pub fn si_units<'py>(py: Python<'py>, m: Bound<'py, PyModule>) -> PyResult<()> {
+    quantity(py, m)
 }

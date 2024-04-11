@@ -120,7 +120,7 @@ pub trait Unit:
 /// + [Methods for Scalar Quantities](#methods-for-scalar-quantities)
 /// + [Methods for n-Dimensional Array Quantities](#methods-for-n-dimensional-array-quantities)
 /// + [Methods for 1-Dimensional Array Quantities](#methods-for-1-dimensional-array-quantities)
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct Quantity<F, U> {
     pub(crate) value: F,
     pub(crate) unit: U,
