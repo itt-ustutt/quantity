@@ -179,7 +179,6 @@ impl Unit for SIUnit {
 
 impl Mul for SIUnit {
     type Output = Self;
-    #[allow(clippy::suspicious_arithmetic_impl)]
     fn mul(self, other: Self) -> Self {
         Self([
             self.0[0] + other.0[0],
@@ -195,7 +194,6 @@ impl Mul for SIUnit {
 
 impl Div for SIUnit {
     type Output = Self;
-    #[allow(clippy::suspicious_arithmetic_impl)]
     fn div(self, other: Self) -> Self {
         Self([
             self.0[0] - other.0[0],
@@ -210,7 +208,6 @@ impl Div for SIUnit {
 }
 
 impl MulAssign for SIUnit {
-    #[allow(clippy::suspicious_op_assign_impl)]
     fn mul_assign(&mut self, rhs: Self) {
         self.0[0] += rhs.0[0];
         self.0[1] += rhs.0[1];
@@ -223,7 +220,6 @@ impl MulAssign for SIUnit {
 }
 
 impl DivAssign for SIUnit {
-    #[allow(clippy::suspicious_op_assign_impl)]
     fn div_assign(&mut self, rhs: Self) {
         self.0[0] -= rhs.0[0];
         self.0[1] -= rhs.0[1];
@@ -522,7 +518,7 @@ pub struct CELSIUS;
 
 impl Mul<CELSIUS> for f64 {
     type Output = SINumber;
-    #[allow(clippy::suspicious_arithmetic_impl)]
+    #[expect(clippy::suspicious_arithmetic_impl)]
     fn mul(self, _: CELSIUS) -> SINumber {
         SINumber {
             value: self + 273.15,
@@ -533,7 +529,7 @@ impl Mul<CELSIUS> for f64 {
 
 impl<S: Data<Elem = f64>, D: Dimension> Mul<CELSIUS> for ArrayBase<S, D> {
     type Output = SIArray<D>;
-    #[allow(clippy::suspicious_arithmetic_impl)]
+    #[expect(clippy::suspicious_arithmetic_impl)]
     fn mul(self, _: CELSIUS) -> SIArray<D> {
         SIArray {
             value: &self + 273.15,
@@ -544,7 +540,7 @@ impl<S: Data<Elem = f64>, D: Dimension> Mul<CELSIUS> for ArrayBase<S, D> {
 
 impl Div<CELSIUS> for SINumber {
     type Output = f64;
-    #[allow(clippy::suspicious_arithmetic_impl)]
+    #[expect(clippy::suspicious_arithmetic_impl)]
     fn div(self, _: CELSIUS) -> f64 {
         self.to_reduced(KELVIN).unwrap() - 273.15
     }
@@ -552,7 +548,7 @@ impl Div<CELSIUS> for SINumber {
 
 impl<D: Dimension> Div<CELSIUS> for SIArray<D> {
     type Output = Array<f64, D>;
-    #[allow(clippy::suspicious_arithmetic_impl)]
+    #[expect(clippy::suspicious_arithmetic_impl)]
     fn div(self, _: CELSIUS) -> Array<f64, D> {
         self.to_reduced(KELVIN).unwrap() - 273.15
     }
