@@ -1,10 +1,10 @@
 use super::si::*;
-use lazy_static::lazy_static;
 use ndarray::prelude::*;
 use regex::Regex;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt;
+use std::sync::LazyLock;
 
 macro_rules! impl_fmt {
     ($trt:path) => {
@@ -214,8 +214,8 @@ impl Debye {
 
 const UNIT_SYMBOLS: [&str; 7] = ["m", "kg", "s", "A", "mol", "K", "cd"];
 
-lazy_static! {
-    static ref DERIVED_UNIT_SYMBOLS: HashMap<&'static str, (SINumber, Option<f64>)> = {
+static DERIVED_UNIT_SYMBOLS: LazyLock<HashMap<&'static str, (SINumber, Option<f64>)>> =
+    LazyLock::new(|| {
         let mut m = HashMap::new();
         m.insert("m", (METER, Some(MEGA)));
         m.insert("g", (GRAM, Some(MEGA)));
@@ -241,8 +241,7 @@ lazy_static! {
         m.insert("lm", (CANDELA, None));
         m.insert("s²", (SECOND.powi(2), None));
         m
-    };
-}
+    });
 
 type SIUnitSymbol = (SINumber, String, Option<f64>, Vec<&'static str>, Vec<i8>);
 
@@ -286,76 +285,72 @@ fn insert_derived_unit(map: &mut HashMap<SIUnit, SIUnitSymbol>, s: &'static str)
     );
 }
 
-lazy_static! {
-    static ref DERIVED_UNITS: HashMap<SIUnit, SIUnitSymbol> = {
-        let mut m = HashMap::new();
-        insert_derived_unit(&mut m, "m");
-        insert_derived_unit(&mut m, "g");
-        insert_derived_unit(&mut m, "s");
-        insert_derived_unit(&mut m, "mol");
-        insert_derived_unit(&mut m, "K");
-        insert_derived_unit(&mut m, "Hz");
-        insert_derived_unit(&mut m, "N");
-        insert_derived_unit(&mut m, "Pa");
-        insert_derived_unit(&mut m, "J");
-        insert_derived_unit(&mut m, "W");
-        insert_derived_unit(&mut m, "C");
-        insert_derived_unit(&mut m, "V");
-        insert_derived_unit(&mut m, "F");
-        insert_derived_unit(&mut m, "Ω");
-        insert_derived_unit(&mut m, "S");
-        insert_derived_unit(&mut m, "Wb");
-        insert_derived_unit(&mut m, "T");
-        insert_derived_unit(&mut m, "H");
-        insert_derived_unit(&mut m, "mol/m³");
-        insert_derived_unit(&mut m, "mol/m²");
-        insert_derived_unit(&mut m, "mol/m");
-        insert_derived_unit(&mut m, "m³/mol");
-        insert_derived_unit(&mut m, "m³/mol/K");
-        insert_derived_unit(&mut m, "g/m³");
-        insert_derived_unit(&mut m, "N/m");
-        insert_derived_unit(&mut m, "J*s");
-        insert_derived_unit(&mut m, "J/mol");
-        insert_derived_unit(&mut m, "J/K");
-        insert_derived_unit(&mut m, "J/mol/K");
-        insert_derived_unit(&mut m, "J/kg");
-        insert_derived_unit(&mut m, "J/kg/K");
-        insert_derived_unit(&mut m, "Pa*s");
-        insert_derived_unit(&mut m, "m/s");
-        insert_derived_unit(&mut m, "m²/s");
-        insert_derived_unit(&mut m, "W/m/K");
-        insert_derived_unit(&mut m, "g/mol");
-        insert_derived_unit(&mut m, "m²");
-        insert_derived_unit(&mut m, "m³");
-        insert_derived_unit(&mut m, "lm/W");
-        insert_derived_unit(&mut m, "m³/kg/s²");
-        m
-    };
-}
+static DERIVED_UNITS: LazyLock<HashMap<SIUnit, SIUnitSymbol>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    insert_derived_unit(&mut m, "m");
+    insert_derived_unit(&mut m, "g");
+    insert_derived_unit(&mut m, "s");
+    insert_derived_unit(&mut m, "mol");
+    insert_derived_unit(&mut m, "K");
+    insert_derived_unit(&mut m, "Hz");
+    insert_derived_unit(&mut m, "N");
+    insert_derived_unit(&mut m, "Pa");
+    insert_derived_unit(&mut m, "J");
+    insert_derived_unit(&mut m, "W");
+    insert_derived_unit(&mut m, "C");
+    insert_derived_unit(&mut m, "V");
+    insert_derived_unit(&mut m, "F");
+    insert_derived_unit(&mut m, "Ω");
+    insert_derived_unit(&mut m, "S");
+    insert_derived_unit(&mut m, "Wb");
+    insert_derived_unit(&mut m, "T");
+    insert_derived_unit(&mut m, "H");
+    insert_derived_unit(&mut m, "mol/m³");
+    insert_derived_unit(&mut m, "mol/m²");
+    insert_derived_unit(&mut m, "mol/m");
+    insert_derived_unit(&mut m, "m³/mol");
+    insert_derived_unit(&mut m, "m³/mol/K");
+    insert_derived_unit(&mut m, "g/m³");
+    insert_derived_unit(&mut m, "N/m");
+    insert_derived_unit(&mut m, "J*s");
+    insert_derived_unit(&mut m, "J/mol");
+    insert_derived_unit(&mut m, "J/K");
+    insert_derived_unit(&mut m, "J/mol/K");
+    insert_derived_unit(&mut m, "J/kg");
+    insert_derived_unit(&mut m, "J/kg/K");
+    insert_derived_unit(&mut m, "Pa*s");
+    insert_derived_unit(&mut m, "m/s");
+    insert_derived_unit(&mut m, "m²/s");
+    insert_derived_unit(&mut m, "W/m/K");
+    insert_derived_unit(&mut m, "g/mol");
+    insert_derived_unit(&mut m, "m²");
+    insert_derived_unit(&mut m, "m³");
+    insert_derived_unit(&mut m, "lm/W");
+    insert_derived_unit(&mut m, "m³/kg/s²");
+    m
+});
 
-lazy_static! {
-    static ref PREFIX_SYMBOLS: HashMap<i8, &'static str> = {
-        let mut m = HashMap::new();
-        m.insert(0, " ");
-        m.insert(-24, "y");
-        m.insert(-21, "z");
-        m.insert(-18, "a");
-        m.insert(-15, "f");
-        m.insert(-12, "p");
-        m.insert(-9, "n");
-        m.insert(-6, "µ");
-        m.insert(-3, "m");
-        m.insert(3, "k");
-        m.insert(6, "M");
-        m.insert(9, "G");
-        m.insert(12, "T");
-        m.insert(15, "P");
-        m.insert(18, "E");
-        m.insert(21, "Z");
-        m.insert(24, "Y");
-        m
-    };
-}
+static PREFIX_SYMBOLS: LazyLock<HashMap<i8, &'static str>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    m.insert(0, " ");
+    m.insert(-24, "y");
+    m.insert(-21, "z");
+    m.insert(-18, "a");
+    m.insert(-15, "f");
+    m.insert(-12, "p");
+    m.insert(-9, "n");
+    m.insert(-6, "µ");
+    m.insert(-3, "m");
+    m.insert(3, "k");
+    m.insert(6, "M");
+    m.insert(9, "G");
+    m.insert(12, "T");
+    m.insert(15, "P");
+    m.insert(18, "E");
+    m.insert(21, "Z");
+    m.insert(24, "Y");
+    m
+});
 
 #[cfg(test)]
 mod tests {
