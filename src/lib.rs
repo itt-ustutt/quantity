@@ -71,6 +71,8 @@ use thiserror::Error;
 #[cfg(feature = "linalg")]
 mod linalg;
 #[cfg(feature = "python")]
+pub mod pyo3;
+#[cfg(feature = "python")]
 pub mod python;
 pub mod si;
 mod si_fmt;

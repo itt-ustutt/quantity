@@ -35,6 +35,11 @@ impl PySINumber {
         Self::default()
     }
 
+    #[staticmethod]
+    pub fn _from_state(state: &Bound<'_, PyBytes>) -> Self {
+        Self(deserialize(state.as_bytes()).unwrap())
+    }
+
     fn __setstate__(&mut self, state: &Bound<'_, PyBytes>) {
         self.0 = deserialize(state.as_bytes()).unwrap();
     }
