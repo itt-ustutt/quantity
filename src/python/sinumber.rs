@@ -40,6 +40,15 @@ impl PySINumber {
         Self(deserialize(state.as_bytes()).unwrap())
     }
 
+    #[staticmethod]
+    pub fn _from_raw_parts(value: f64, unit: [i8; 7]) -> Self {
+        Self(SINumber::from_raw_parts(value, unit))
+    }
+
+    pub fn _into_raw_parts(&self) -> (f64, [i8; 7]) {
+        self.0.into_raw_parts()
+    }
+
     fn __setstate__(&mut self, state: &Bound<'_, PyBytes>) {
         self.0 = deserialize(state.as_bytes()).unwrap();
     }
