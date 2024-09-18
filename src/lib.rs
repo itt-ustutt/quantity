@@ -61,7 +61,6 @@ use approx::{AbsDiffEq, RelativeEq};
 use ndarray::*;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
-use std::fmt;
 use std::iter::FromIterator;
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
@@ -72,7 +71,8 @@ use thiserror::Error;
 mod linalg;
 #[cfg(feature = "python")]
 pub mod python;
-pub mod si;
+mod si;
+use si::*;
 mod si_fmt;
 
 /// Error type used to indicate unit conversion failures.
@@ -90,28 +90,6 @@ pub enum QuantityError {
     SINumberError { op: String, cause: String },
 }
 
-/// A generalized unit.
-pub trait Unit:
-    Copy + PartialEq + Div<Output = Self> + Mul<Output = Self> + DivAssign + MulAssign + fmt::Display
-{
-    /// The value of Self that corresponds to a dimensionless property.
-    const DIMENSIONLESS: Self;
-
-    /// Returns `true` if `self` is dimensionless and `false` otherwise.
-    fn is_dimensionless(&self) -> bool {
-        self.eq(&Self::DIMENSIONLESS)
-    }
-
-    /// Calculate the integer power of self.
-    fn powi(&self, i: i32) -> Self;
-    /// Try to calculate the square root of self.
-    fn sqrt(&self) -> Result<Self, QuantityError>;
-    /// Try to calculate the cubic root of self.
-    fn cbrt(&self) -> Result<Self, QuantityError>;
-    /// Try to calculate the integer root of self.
-    fn root(&self, i: i32) -> Result<Self, QuantityError>;
-}
-
 /// Representation of a value with a corresponding unit.
 ///
 /// ## Contents
@@ -121,23 +99,36 @@ pub trait Unit:
 /// + [Methods for n-Dimensional Array Quantities](#methods-for-n-dimensional-array-quantities)
 /// + [Methods for 1-Dimensional Array Quantities](#methods-for-1-dimensional-array-quantities)
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
-pub struct Quantity<F, U> {
+pub struct Quantity<F> {
     pub(crate) value: F,
-    pub(crate) unit: U,
+    pub(crate) unit: SIUnit,
 }
 
-pub type QuantityScalar<U> = Quantity<f64, U>;
-pub type QuantityArray<U, D> = Quantity<Array<f64, D>, U>;
-pub type QuantityArray0<U> = QuantityArray<U, Ix0>;
-pub type QuantityArray1<U> = QuantityArray<U, Ix1>;
-pub type QuantityArray2<U> = QuantityArray<U, Ix2>;
-pub type QuantityArray3<U> = QuantityArray<U, Ix3>;
-pub type QuantityArray4<U> = QuantityArray<U, Ix4>;
-pub type QuantityArray5<U> = QuantityArray<U, Ix5>;
-pub type QuantityArray6<U> = QuantityArray<U, Ix6>;
+pub type SINumber = Quantity<f64>;
+pub type SIArray<D> = Quantity<Array<f64, D>>;
+pub type SIArray0 = SIArray<Ix0>;
+pub type SIArray1 = SIArray<Ix1>;
+pub type SIArray2 = SIArray<Ix2>;
+pub type SIArray3 = SIArray<Ix3>;
+pub type SIArray4 = SIArray<Ix4>;
+pub type SIArray5 = SIArray<Ix5>;
+pub type SIArray6 = SIArray<Ix6>;
 
 /// # Methods for All Quantities
-impl<F, U: Unit> Quantity<F, U> {
+impl<F> Quantity<F> {
+    /// Split an SI quantity into its value and unit vector.
+    pub fn into_raw_parts(self) -> (F, [i8; 7]) {
+        (self.value, self.unit.0)
+    }
+
+    /// Create an SI quantity from its value and unit vector.
+    pub fn from_raw_parts(value: F, unit: [i8; 7]) -> Self {
+        Quantity {
+            value,
+            unit: SIUnit(unit),
+        }
+    }
+
     /// Check if the quantity has the same unit as the argument.
     ///
     /// # Example
@@ -147,7 +138,7 @@ impl<F, U: Unit> Quantity<F, U> {
     /// let p = 5.0 * NEWTON/METER.powi(2);
     /// assert!(p.has_unit(&BAR));
     /// ```
-    pub fn has_unit<F2>(&self, other: &Quantity<F2, U>) -> bool {
+    pub fn has_unit<F2>(&self, other: &Quantity<F2>) -> bool {
         self.unit.eq(&other.unit)
     }
 
@@ -172,7 +163,7 @@ impl<F, U: Unit> Quantity<F, U> {
         } else {
             Err(QuantityError::UnitError {
                 op: "value".to_string(),
-                expected: U::DIMENSIONLESS.to_string(),
+                expected: SIUnit::DIMENSIONLESS.to_string(),
                 found: self.unit.to_string(),
             })
         }
@@ -199,7 +190,7 @@ impl<F, U: Unit> Quantity<F, U> {
         } else {
             Err(QuantityError::UnitError {
                 op: "into_value".to_string(),
-                expected: U::DIMENSIONLESS.to_string(),
+                expected: SIUnit::DIMENSIONLESS.to_string(),
                 found: self.unit.to_string(),
             })
         }
@@ -218,25 +209,25 @@ impl<F, U: Unit> Quantity<F, U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn to_reduced<'a>(&'a self, reference: QuantityScalar<U>) -> Result<F, QuantityError>
+    pub fn to_reduced<'a>(&'a self, reference: SINumber) -> Result<F, QuantityError>
     where
-        &'a Self: Div<QuantityScalar<U>, Output = Self>,
+        &'a Self: Div<SINumber, Output = Self>,
     {
         (self / reference).into_value()
     }
 }
 
-impl<F, U: Unit> From<F> for Quantity<F, U> {
+impl<F> From<F> for Quantity<F> {
     fn from(value: F) -> Self {
         Self {
             value,
-            unit: U::DIMENSIONLESS,
+            unit: SIUnit::DIMENSIONLESS,
         }
     }
 }
 
-impl<F: Neg, U> Neg for Quantity<F, U> {
-    type Output = Quantity<<F as Neg>::Output, U>;
+impl<F: Neg> Neg for Quantity<F> {
+    type Output = Quantity<<F as Neg>::Output>;
     fn neg(self) -> Self::Output {
         Quantity {
             value: -self.value,
@@ -245,12 +236,11 @@ impl<F: Neg, U> Neg for Quantity<F, U> {
     }
 }
 
-impl<'a, F, U> Neg for &'a Quantity<F, U>
+impl<'a, F> Neg for &'a Quantity<F>
 where
     &'a F: Neg,
-    U: Copy,
 {
-    type Output = Quantity<<&'a F as Neg>::Output, U>;
+    type Output = Quantity<<&'a F as Neg>::Output>;
     fn neg(self) -> Self::Output {
         Quantity {
             value: -&self.value,
@@ -261,13 +251,12 @@ where
 
 macro_rules! impl_mul_op {
     ($trt:ident, $operator:tt, $mth:ident, $trt_assign:ident, $op_assign:tt, $mth_assign:ident, $exp:literal) => {
-        impl<F, F2, U> $trt<Quantity<F2, U>> for Quantity<F, U>
+        impl<F, F2> $trt<Quantity<F2>> for Quantity<F>
         where
             F: $trt<F2>,
-            U: $trt<Output = U>,
         {
-            type Output = Quantity<<F as $trt<F2>>::Output, U>;
-            fn $mth(self, other: Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<F as $trt<F2>>::Output>;
+            fn $mth(self, other: Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: self.value $operator other.value,
                     unit: self.unit $operator other.unit,
@@ -275,13 +264,12 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<'a, F, F2, U> $trt<Quantity<F2, U>> for &'a Quantity<F, U>
+        impl<'a, F, F2> $trt<Quantity<F2>> for &'a Quantity<F>
         where
             &'a F: $trt<F2>,
-            U: $trt<Output = U> + Copy,
         {
-            type Output = Quantity<<&'a F as $trt<F2>>::Output, U>;
-            fn $mth(self, other: Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<&'a F as $trt<F2>>::Output>;
+            fn $mth(self, other: Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: &self.value $operator other.value,
                     unit: self.unit $operator other.unit,
@@ -289,13 +277,12 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<'a, F, F2, U> $trt<&'a Quantity<F2, U>> for Quantity<F, U>
+        impl<'a, F, F2> $trt<&'a Quantity<F2>> for Quantity<F>
         where
             F: $trt<&'a F2>,
-            U: $trt<Output = U> + Copy,
         {
-            type Output = Quantity<<F as $trt<&'a F2>>::Output, U>;
-            fn $mth(self, other: &'a Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<F as $trt<&'a F2>>::Output>;
+            fn $mth(self, other: &'a Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: self.value $operator &other.value,
                     unit: self.unit $operator other.unit,
@@ -303,13 +290,12 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<'a, 'b, F, F2, U> $trt<&'b Quantity<F2, U>> for &'a Quantity<F, U>
+        impl<'a, 'b, F, F2> $trt<&'b Quantity<F2>> for &'a Quantity<F>
         where
             &'a F: $trt<&'b F2>,
-            U: $trt<Output = U> + Copy,
         {
-            type Output = Quantity<<&'a F as $trt<&'b F2>>::Output, U>;
-            fn $mth(self, other: &'b Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<&'a F as $trt<&'b F2>>::Output>;
+            fn $mth(self, other: &'b Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: &self.value $operator &other.value,
                     unit: self.unit $operator other.unit,
@@ -317,11 +303,11 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<F, U> $trt<f64> for Quantity<F, U>
+        impl<F> $trt<f64> for Quantity<F>
         where
             F: $trt<f64>,
         {
-            type Output = Quantity<<F as $trt<f64>>::Output, U>;
+            type Output = Quantity<<F as $trt<f64>>::Output>;
             fn $mth(self, other: f64) -> Self::Output {
                 Quantity {
                     value: self.value $operator other,
@@ -330,12 +316,11 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<'a, F, U> $trt<f64> for &'a Quantity<F, U>
+        impl<'a, F> $trt<f64> for &'a Quantity<F>
         where
             &'a F: $trt<f64>,
-            U: Copy,
         {
-            type Output = Quantity<<&'a F as $trt<f64>>::Output, U>;
+            type Output = Quantity<<&'a F as $trt<f64>>::Output>;
             fn $mth(self, other: f64) -> Self::Output {
                 Quantity {
                     value: &self.value $operator other,
@@ -344,13 +329,12 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<F, U> $trt<Quantity<F, U>> for f64
+        impl<F> $trt<Quantity<F>> for f64
         where
             f64: $trt<F>,
-            U: Unit,
         {
-            type Output = Quantity<<f64 as $trt<F>>::Output, U>;
-            fn $mth(self, other: Quantity<F, U>) -> Self::Output {
+            type Output = Quantity<<f64 as $trt<F>>::Output>;
+            fn $mth(self, other: Quantity<F>) -> Self::Output {
                 Quantity {
                     value: self $operator other.value,
                     unit: other.unit.powi($exp),
@@ -358,11 +342,11 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<F, U, S: RawData, D> $trt<ArrayBase<S, D>> for Quantity<F, U>
+        impl<F, S: RawData, D> $trt<ArrayBase<S, D>> for Quantity<F>
         where
             F: $trt<ArrayBase<S, D>>,
         {
-            type Output = Quantity<<F as $trt<ArrayBase<S, D>>>::Output, U>;
+            type Output = Quantity<<F as $trt<ArrayBase<S, D>>>::Output>;
             fn $mth(self, other: ArrayBase<S, D>) -> Self::Output {
                 Quantity {
                     value: self.value $operator other,
@@ -371,11 +355,11 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<'a, F, U, S: RawData, D> $trt<&'a ArrayBase<S, D>> for Quantity<F, U>
+        impl<'a, F, S: RawData, D> $trt<&'a ArrayBase<S, D>> for Quantity<F>
         where
             F: $trt<&'a ArrayBase<S, D>>,
         {
-            type Output = Quantity<<F as $trt<&'a ArrayBase<S, D>>>::Output, U>;
+            type Output = Quantity<<F as $trt<&'a ArrayBase<S, D>>>::Output>;
             fn $mth(self, other: &'a ArrayBase<S, D>) -> Self::Output {
                 Quantity {
                     value: self.value $operator other,
@@ -384,13 +368,12 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<F, U, S: RawData, D> $trt<Quantity<F, U>> for ArrayBase<S, D>
+        impl<F, S: RawData, D> $trt<Quantity<F>> for ArrayBase<S, D>
         where
             ArrayBase<S, D>: $trt<F>,
-            U: Unit,
         {
-            type Output = Quantity<<ArrayBase<S, D> as $trt<F>>::Output, U>;
-            fn $mth(self, other: Quantity<F, U>) -> Self::Output {
+            type Output = Quantity<<ArrayBase<S, D> as $trt<F>>::Output>;
+            fn $mth(self, other: Quantity<F>) -> Self::Output {
                 Quantity {
                     value: self $operator other.value,
                     unit: other.unit.powi($exp),
@@ -398,13 +381,12 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<'a, F, U, S: RawData, D> $trt<Quantity<F, U>> for &'a ArrayBase<S, D>
+        impl<'a, F, S: RawData, D> $trt<Quantity<F>> for &'a ArrayBase<S, D>
         where
             &'a ArrayBase<S, D>: $trt<F>,
-            U: Unit,
         {
-            type Output = Quantity<<&'a ArrayBase<S, D> as $trt<F>>::Output, U>;
-            fn $mth(self, other: Quantity<F, U>) -> Self::Output {
+            type Output = Quantity<<&'a ArrayBase<S, D> as $trt<F>>::Output>;
+            fn $mth(self, other: Quantity<F>) -> Self::Output {
                 Quantity {
                     value: self $operator other.value,
                     unit: other.unit,
@@ -412,23 +394,21 @@ macro_rules! impl_mul_op {
             }
         }
 
-        impl<F, F2, U> $trt_assign<Quantity<F2, U>> for Quantity<F, U>
+        impl<F, F2> $trt_assign<Quantity<F2>> for Quantity<F>
         where
             F: $trt_assign<F2>,
-            U: $trt_assign,
         {
-            fn $mth_assign(&mut self, other: Quantity<F2, U>) {
+            fn $mth_assign(&mut self, other: Quantity<F2>) {
                 self.value $op_assign other.value;
                 self.unit $op_assign other.unit;
             }
         }
 
-        impl<'a, F, F2, U> $trt_assign<&'a Quantity<F2, U>> for Quantity<F, U>
+        impl<'a, F, F2> $trt_assign<&'a Quantity<F2>> for Quantity<F>
         where
             F: $trt_assign<&'a F2>,
-            U: $trt_assign + Copy,
         {
-            fn $mth_assign(&mut self, other: &'a Quantity<F2, U>) {
+            fn $mth_assign(&mut self, other: &'a Quantity<F2>) {
                 self.value $op_assign &other.value;
                 self.unit $op_assign other.unit;
             }
@@ -441,13 +421,12 @@ impl_mul_op!(Div, /, div, DivAssign, /=, div_assign, -1);
 
 macro_rules! impl_add_op {
     ($trt:ident, $operator:tt, $mth:ident, $trt_assign:ident, $op_assign:tt, $mth_assign:ident) => {
-        impl<F, F2, U> $trt<Quantity<F2, U>> for Quantity<F, U>
+        impl<F, F2> $trt<Quantity<F2>> for Quantity<F>
         where
             F: $trt<F2>,
-            U: PartialEq + fmt::Display,
         {
-            type Output = Quantity<<F as $trt<F2>>::Output, U>;
-            fn $mth(self, other: Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<F as $trt<F2>>::Output>;
+            fn $mth(self, other: Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: self.value $operator other.value,
                     unit: if self.unit == other.unit {
@@ -459,13 +438,12 @@ macro_rules! impl_add_op {
             }
         }
 
-        impl<'a, F, F2, U> $trt<Quantity<F2, U>> for &'a Quantity<F, U>
+        impl<'a, F, F2> $trt<Quantity<F2>> for &'a Quantity<F>
         where
             &'a F: $trt<F2>,
-            U: Copy + PartialEq + fmt::Display,
         {
-            type Output = Quantity<<&'a F as $trt<F2>>::Output, U>;
-            fn $mth(self, other: Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<&'a F as $trt<F2>>::Output>;
+            fn $mth(self, other: Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: &self.value $operator other.value,
                     unit: if self.unit == other.unit {
@@ -477,13 +455,12 @@ macro_rules! impl_add_op {
             }
         }
 
-        impl<'a, F, F2, U> $trt<&'a Quantity<F2, U>> for Quantity<F, U>
+        impl<'a, F, F2> $trt<&'a Quantity<F2>> for Quantity<F>
         where
             F: $trt<&'a F2>,
-            U: PartialEq + fmt::Display,
         {
-            type Output = Quantity<<F as $trt<&'a F2>>::Output, U>;
-            fn $mth(self, other: &'a Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<F as $trt<&'a F2>>::Output>;
+            fn $mth(self, other: &'a Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: self.value $operator &other.value,
                     unit: if self.unit == other.unit {
@@ -495,13 +472,12 @@ macro_rules! impl_add_op {
             }
         }
 
-        impl<'a, 'b, F, F2, U> $trt<&'b Quantity<F2, U>> for &'a Quantity<F, U>
+        impl<'a, 'b, F, F2> $trt<&'b Quantity<F2>> for &'a Quantity<F>
         where
             &'a F: $trt<&'b F2>,
-            U: Copy + PartialEq + fmt::Display,
         {
-            type Output = Quantity<<&'a F as $trt<&'b F2>>::Output, U>;
-            fn $mth(self, other: &'b Quantity<F2, U>) -> Self::Output {
+            type Output = Quantity<<&'a F as $trt<&'b F2>>::Output>;
+            fn $mth(self, other: &'b Quantity<F2>) -> Self::Output {
                 Quantity {
                     value: &self.value $operator &other.value,
                     unit: if self.unit == other.unit {
@@ -513,12 +489,11 @@ macro_rules! impl_add_op {
             }
         }
 
-        impl<F, F2, U> $trt_assign<Quantity<F2, U>> for Quantity<F, U>
+        impl<F, F2> $trt_assign<Quantity<F2>> for Quantity<F>
         where
             F: $trt_assign<F2>,
-            U: PartialEq + fmt::Display,
         {
-            fn $mth_assign(&mut self, other: Quantity<F2, U>) {
+            fn $mth_assign(&mut self, other: Quantity<F2>) {
                 if self.unit != other.unit {
                     panic!("Inconsistent units {} {} {}", self.unit, stringify!($op_assign), other.unit)
                 }
@@ -526,12 +501,11 @@ macro_rules! impl_add_op {
             }
         }
 
-        impl<'a, F, F2, U> $trt_assign<&'a Quantity<F2, U>> for Quantity<F, U>
+        impl<'a, F, F2> $trt_assign<&'a Quantity<F2>> for Quantity<F>
         where
             F: $trt_assign<&'a F2>,
-            U: PartialEq + fmt::Display,
         {
-            fn $mth_assign(&mut self, other: &'a Quantity<F2, U>) {
+            fn $mth_assign(&mut self, other: &'a Quantity<F2>) {
                 if self.unit != other.unit {
                     panic!("Inconsistent units {} {} {}", self.unit, stringify!($op_assign), other.unit)
                 }
@@ -544,7 +518,7 @@ macro_rules! impl_add_op {
 impl_add_op!(Add, +, add, AddAssign, += , add_assign);
 impl_add_op!(Sub, -, sub, SubAssign, -= , sub_assign);
 
-impl<F: PartialEq, U: PartialEq + fmt::Display> PartialEq for Quantity<F, U> {
+impl<F: PartialEq> PartialEq for Quantity<F> {
     fn eq(&self, other: &Self) -> bool {
         if self.unit.eq(&other.unit) {
             self.value.eq(&other.value)
@@ -554,7 +528,7 @@ impl<F: PartialEq, U: PartialEq + fmt::Display> PartialEq for Quantity<F, U> {
     }
 }
 
-impl<F: PartialOrd, U: PartialEq + fmt::Display> PartialOrd for Quantity<F, U> {
+impl<F: PartialOrd> PartialOrd for Quantity<F> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         if self.unit.eq(&other.unit) {
             self.value.partial_cmp(&other.value)
@@ -564,7 +538,7 @@ impl<F: PartialOrd, U: PartialEq + fmt::Display> PartialOrd for Quantity<F, U> {
     }
 }
 
-impl<F: AbsDiffEq, U: PartialEq + fmt::Display> AbsDiffEq for Quantity<F, U> {
+impl<F: AbsDiffEq> AbsDiffEq for Quantity<F> {
     type Epsilon = <F as AbsDiffEq>::Epsilon;
 
     fn default_epsilon() -> Self::Epsilon {
@@ -580,7 +554,7 @@ impl<F: AbsDiffEq, U: PartialEq + fmt::Display> AbsDiffEq for Quantity<F, U> {
     }
 }
 
-impl<F: RelativeEq, U: PartialEq + fmt::Display> RelativeEq for Quantity<F, U> {
+impl<F: RelativeEq> RelativeEq for Quantity<F> {
     fn default_max_relative() -> Self::Epsilon {
         <F as RelativeEq>::default_max_relative()
     }
@@ -600,7 +574,7 @@ impl<F: RelativeEq, U: PartialEq + fmt::Display> RelativeEq for Quantity<F, U> {
 }
 
 /// # Methods for Scalar Quantities
-impl<U: Unit> QuantityScalar<U> {
+impl SINumber {
     /// Calculate the integer power of self.
     ///
     /// # Example
@@ -695,10 +669,7 @@ impl<U: Unit> QuantityScalar<U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn max(&self, other: Self) -> Result<Self, QuantityError>
-    where
-        U: PartialEq + Clone,
-    {
+    pub fn max(&self, other: Self) -> Result<Self, QuantityError> {
         if self.unit == other.unit {
             Ok(Self {
                 value: self.value.max(other.value),
@@ -728,10 +699,7 @@ impl<U: Unit> QuantityScalar<U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn min(&self, other: Self) -> Result<Self, QuantityError>
-    where
-        U: PartialEq + Clone,
-    {
+    pub fn min(&self, other: Self) -> Result<Self, QuantityError> {
         if self.unit == other.unit {
             Ok(Self {
                 value: self.value.min(other.value),
@@ -755,10 +723,7 @@ impl<U: Unit> QuantityScalar<U> {
     /// let t = -50.0 * KELVIN;
     /// assert_relative_eq!(t.abs(), &(50.0 * KELVIN));
     /// ```
-    pub fn abs(&self) -> Self
-    where
-        U: Clone,
-    {
+    pub fn abs(&self) -> Self {
         Self {
             value: self.value.abs(),
             unit: self.unit,
@@ -793,7 +758,7 @@ impl<U: Unit> QuantityScalar<U> {
 }
 
 /// # Methods for n-Dimensional Array Quantities
-impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
+impl<D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>> {
     /// Return the sum of all elements in the array.
     ///
     /// # Example
@@ -805,8 +770,8 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     /// let x = arr1(&[1.5, 2.5]) * BAR;
     /// assert_relative_eq!(x.sum(), &(4.0 * BAR));
     /// ```
-    pub fn sum(&self) -> QuantityScalar<U> {
-        QuantityScalar {
+    pub fn sum(&self) -> SINumber {
+        SINumber {
             value: self.value.sum(),
             unit: self.unit,
         }
@@ -833,7 +798,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Return an uniquely owned copy of the array.
-    pub fn to_owned(&self) -> QuantityArray<U, D> {
+    pub fn to_owned(&self) -> SIArray<D> {
         Quantity {
             value: self.value.to_owned(),
             unit: self.unit,
@@ -844,8 +809,8 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     ///
     /// The `Index` trait can not be implemented, because a new instance has to be created,
     /// when indexing a quantity array. This serves as replacement for it.
-    pub fn get<I: NdIndex<D>>(&self, index: I) -> QuantityScalar<U> {
-        QuantityScalar {
+    pub fn get<I: NdIndex<D>>(&self, index: I) -> SINumber {
+        SINumber {
             value: *self.value.index(index),
             unit: self.unit,
         }
@@ -855,7 +820,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     pub fn try_set<I: NdIndex<D>>(
         &mut self,
         index: I,
-        scalar: QuantityScalar<U>,
+        scalar: SINumber,
     ) -> Result<(), QuantityError>
     where
         S: DataMut,
@@ -873,11 +838,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Returns a view restricted to index along the axis, with the axis removed.
-    pub fn index_axis(
-        &self,
-        axis: Axis,
-        index: usize,
-    ) -> Quantity<ArrayView<'_, f64, D::Smaller>, U>
+    pub fn index_axis(&self, axis: Axis, index: usize) -> Quantity<ArrayView<'_, f64, D::Smaller>>
     where
         D: RemoveAxis,
     {
@@ -888,7 +849,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Insert new array axis at axis and return the result.
-    pub fn insert_axis(self, axis: Axis) -> Quantity<ArrayBase<S, D::Larger>, U> {
+    pub fn insert_axis(self, axis: Axis) -> Quantity<ArrayBase<S, D::Larger>> {
         Quantity {
             value: self.value.insert_axis(axis),
             unit: self.unit,
@@ -896,7 +857,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Return sum along axis.
-    pub fn sum_axis(&self, axis: Axis) -> Quantity<Array<f64, D::Smaller>, U>
+    pub fn sum_axis(&self, axis: Axis) -> Quantity<Array<f64, D::Smaller>>
     where
         D: RemoveAxis,
     {
@@ -907,10 +868,10 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Return a vector of scalar quantities for each element of `self`.
-    pub fn to_vec(&self) -> Vec<QuantityScalar<U>> {
+    pub fn to_vec(&self) -> Vec<SINumber> {
         self.value
             .iter()
-            .map(|v| QuantityScalar {
+            .map(|v| SINumber {
                 value: *v,
                 unit: self.unit,
             })
@@ -918,22 +879,22 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Create an array with values created by the function f.
-    pub fn from_shape_fn<Sh, F>(shape: Sh, mut f: F) -> QuantityArray<U, D>
+    pub fn from_shape_fn<Sh, F>(shape: Sh, mut f: F) -> SIArray<D>
     where
         Sh: ShapeBuilder<Dim = D>,
-        F: FnMut(D::Pattern) -> QuantityScalar<U>,
+        F: FnMut(D::Pattern) -> SINumber,
     {
-        let mut unit = U::DIMENSIONLESS;
+        let mut unit = SIUnit::DIMENSIONLESS;
         let value = Array::from_shape_fn(shape, |x| {
             let q = f(x);
-            if unit != U::DIMENSIONLESS && unit != q.unit {
+            if unit != SIUnit::DIMENSIONLESS && unit != q.unit {
                 panic!("Inconsistent units {} and {}", unit, q.unit);
             } else {
                 unit = q.unit;
             }
             q.value
         });
-        QuantityArray { value, unit }
+        SIArray { value, unit }
     }
 
     /// Calculate the integer power of self.
@@ -946,7 +907,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     /// let x = arr1(&[3.0, 5.0]) * METER;
     /// assert_relative_eq!(x.powi(2), &(arr1(&[9.0, 25.0]) * METER * METER));
     /// ```
-    pub fn powi(&self, i: i32) -> QuantityArray<U, D> {
+    pub fn powi(&self, i: i32) -> SIArray<D> {
         Quantity {
             value: self.value.mapv(|x| x.powi(i)),
             unit: self.unit.powi(i),
@@ -967,7 +928,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn sqrt(&self) -> Result<QuantityArray<U, D>, QuantityError> {
+    pub fn sqrt(&self) -> Result<SIArray<D>, QuantityError> {
         Ok(Quantity {
             value: self.value.mapv(|x| x.sqrt()),
             unit: self.unit.sqrt()?,
@@ -988,7 +949,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn cbrt(&self) -> Result<QuantityArray<U, D>, QuantityError> {
+    pub fn cbrt(&self) -> Result<SIArray<D>, QuantityError> {
         Ok(Quantity {
             value: self.value.mapv(|x| x.cbrt()),
             unit: self.unit.cbrt()?,
@@ -1009,7 +970,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn root(&self, i: i32) -> Result<QuantityArray<U, D>, QuantityError> {
+    pub fn root(&self, i: i32) -> Result<SIArray<D>, QuantityError> {
         Ok(Quantity {
             value: self.value.mapv(|x| x.powf(1.0 / i as f64)),
             unit: self.unit.root(i)?,
@@ -1018,7 +979,7 @@ impl<U: Unit, D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>, U> {
 }
 
 /// # Methods for 1-Dimensional Array Quantities
-impl<U: Unit> QuantityArray1<U> {
+impl SIArray1 {
     /// Create a one-dimensional array with n evenly spaced elements from `start` to `end` (inclusive) if `start` and `end` have the same unit.
     ///
     /// # Example
@@ -1033,11 +994,7 @@ impl<U: Unit> QuantityArray1<U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn linspace(
-        start: QuantityScalar<U>,
-        end: QuantityScalar<U>,
-        n: usize,
-    ) -> Result<Self, QuantityError> {
+    pub fn linspace(start: SINumber, end: SINumber, n: usize) -> Result<Self, QuantityError> {
         if start.has_unit(&end) {
             Ok(Quantity {
                 value: Array1::linspace(start.value, end.value, n),
@@ -1066,11 +1023,7 @@ impl<U: Unit> QuantityArray1<U> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn logspace(
-        start: QuantityScalar<U>,
-        end: QuantityScalar<U>,
-        n: usize,
-    ) -> Result<Self, QuantityError> {
+    pub fn logspace(start: SINumber, end: SINumber, n: usize) -> Result<Self, QuantityError> {
         if start.has_unit(&end) {
             Ok(Quantity {
                 value: Array1::logspace(10.0, start.value.log10(), end.value.log10(), n),
@@ -1086,21 +1039,21 @@ impl<U: Unit> QuantityArray1<U> {
     }
 
     /// Create a one-dimensional array from a vector of scalar quantities.
-    pub fn from_vec(vec: Vec<QuantityScalar<U>>) -> Self {
+    pub fn from_vec(vec: Vec<SINumber>) -> Self {
         Self::from_shape_fn(vec.len(), |i| vec[i])
     }
 }
 
-pub struct QuantityIter<I, U> {
+pub struct QuantityIter<I> {
     inner: I,
-    unit: U,
+    unit: SIUnit,
 }
 
-impl<'a, I: Iterator<Item = &'a f64>, U: Copy> Iterator for QuantityIter<I, U> {
-    type Item = QuantityScalar<U>;
+impl<'a, I: Iterator<Item = &'a f64>> Iterator for QuantityIter<I> {
+    type Item = SINumber;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.inner.next().map(|value| QuantityScalar {
+        self.inner.next().map(|value| SINumber {
             value: *value,
             unit: self.unit,
         })
@@ -1111,31 +1064,29 @@ impl<'a, I: Iterator<Item = &'a f64>, U: Copy> Iterator for QuantityIter<I, U> {
     }
 }
 
-impl<'a, I: Iterator<Item = &'a f64> + ExactSizeIterator, U: Copy> ExactSizeIterator
-    for QuantityIter<I, U>
-{
+impl<'a, I: Iterator<Item = &'a f64> + ExactSizeIterator> ExactSizeIterator for QuantityIter<I> {
     fn len(&self) -> usize {
         self.inner.len()
     }
 }
 
-impl<'a, I: Iterator<Item = &'a f64> + DoubleEndedIterator, U: Copy> DoubleEndedIterator
-    for QuantityIter<I, U>
+impl<'a, I: Iterator<Item = &'a f64> + DoubleEndedIterator> DoubleEndedIterator
+    for QuantityIter<I>
 {
     fn next_back(&mut self) -> Option<Self::Item> {
-        self.inner.next_back().map(|value| QuantityScalar {
+        self.inner.next_back().map(|value| SINumber {
             value: *value,
             unit: self.unit,
         })
     }
 }
 
-impl<'a, F, U: Copy> IntoIterator for &'a Quantity<F, U>
+impl<'a, F> IntoIterator for &'a Quantity<F>
 where
     &'a F: IntoIterator<Item = &'a f64>,
 {
-    type Item = QuantityScalar<U>;
-    type IntoIter = QuantityIter<<&'a F as IntoIterator>::IntoIter, U>;
+    type Item = SINumber;
+    type IntoIter = QuantityIter<<&'a F as IntoIterator>::IntoIter>;
 
     fn into_iter(self) -> Self::IntoIter {
         QuantityIter {
@@ -1145,20 +1096,21 @@ where
     }
 }
 
-impl<U: Unit> FromIterator<QuantityScalar<U>> for QuantityArray1<U> {
+impl FromIterator<SINumber> for SIArray1 {
     fn from_iter<I>(iter: I) -> Self
     where
-        I: IntoIterator<Item = QuantityScalar<U>>,
+        I: IntoIterator<Item = SINumber>,
     {
-        let (value, unit) =
-            iter.into_iter()
-                .fold((Vec::new(), U::DIMENSIONLESS), |(mut value, unit), q| {
-                    value.push(q.value);
-                    if unit != q.unit && unit != U::DIMENSIONLESS {
-                        panic!("Inconsistent units {unit} and {}", q.unit);
-                    }
-                    (value, q.unit)
-                });
+        let (value, unit) = iter.into_iter().fold(
+            (Vec::new(), SIUnit::DIMENSIONLESS),
+            |(mut value, unit), q| {
+                value.push(q.value);
+                if unit != q.unit && unit != SIUnit::DIMENSIONLESS {
+                    panic!("Inconsistent units {unit} and {}", q.unit);
+                }
+                (value, q.unit)
+            },
+        );
         let value = Array1::from_vec(value);
         Self { value, unit }
     }
@@ -1166,7 +1118,7 @@ impl<U: Unit> FromIterator<QuantityScalar<U>> for QuantityArray1<U> {
 
 #[cfg(test)]
 mod test {
-    use crate::si::*;
+    use crate::*;
     use std::iter::once;
 
     #[test]
