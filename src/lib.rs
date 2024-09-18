@@ -10,7 +10,7 @@
 //!
 //! Calculate pressure of an ideal gas.
 //! ```
-//! # use quantity::si::*;
+//! # use quantity::*;
 //! let temperature = 25.0 * CELSIUS;
 //! let volume = 1.5 * METER.powi(3);
 //! let moles = 75.0 * MOL;
@@ -20,7 +20,7 @@
 //!
 //! Calculate the gravitational pull of the moon on the earth.
 //! ```
-//! # use quantity::si::*;
+//! # use quantity::*;
 //! let mass_earth = 5.9724e24 * KILOGRAM;
 //! let mass_moon = 7.346e22 * KILOGRAM;
 //! let distance = 383.398 * KILO * METER;
@@ -30,8 +30,7 @@
 //!
 //! Calculate the pressure distribution in the atmosphere using the barometric formula.
 //! ```
-//! # use quantity::si::*;
-//! # use quantity::QuantityError;
+//! # use quantity::*;
 //! # fn main() -> Result<(), QuantityError> {
 //! let z = SIArray1::linspace(1.0 * METER, 70.0 * KILO * METER, 10)?;
 //! let g = 9.81 * METER / SECOND.powi(2);
@@ -72,7 +71,7 @@ mod linalg;
 #[cfg(feature = "python")]
 pub mod python;
 mod si;
-use si::*;
+pub use si::*;
 mod si_fmt;
 
 /// Error type used to indicate unit conversion failures.
@@ -133,7 +132,7 @@ impl<F> Quantity<F> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::*;
+    /// # use quantity::*;
     /// # use quantity::QuantityError;
     /// let p = 5.0 * NEWTON/METER.powi(2);
     /// assert!(p.has_unit(&BAR));
@@ -146,7 +145,7 @@ impl<F> Quantity<F> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::PASCAL;
+    /// # use quantity::PASCAL;
     /// # use quantity::QuantityError;
     /// # use approx::assert_relative_eq;
     /// # fn main() -> Result<(), QuantityError> {
@@ -173,7 +172,7 @@ impl<F> Quantity<F> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::PASCAL;
+    /// # use quantity::PASCAL;
     /// # use quantity::QuantityError;
     /// # use approx::{assert_relative_eq, assert_ulps_eq};
     /// # fn main() -> Result<(), QuantityError> {
@@ -200,7 +199,7 @@ impl<F> Quantity<F> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::{BAR, PASCAL};
+    /// # use quantity::{BAR, PASCAL};
     /// # use quantity::QuantityError;
     /// # use approx::{assert_relative_eq, assert_ulps_eq};
     /// # fn main() -> Result<(), QuantityError> {
@@ -579,7 +578,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use approx::assert_relative_eq;
     /// let x = 5.0 * METER;
     /// assert_relative_eq!(x.powi(2), &(25.0 * METER * METER));
@@ -595,7 +594,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use quantity::QuantityError;
     /// # use approx::assert_relative_eq;
     /// # fn main() -> Result<(), QuantityError> {
@@ -616,7 +615,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use quantity::QuantityError;
     /// # use approx::assert_relative_eq;
     /// # fn main() -> Result<(), QuantityError> {
@@ -637,7 +636,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use quantity::QuantityError;
     /// # use approx::assert_relative_eq;
     /// # fn main() -> Result<(), QuantityError> {
@@ -658,7 +657,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::{KILO, PASCAL, BAR, KELVIN};
+    /// # use quantity::{KILO, PASCAL, BAR, KELVIN};
     /// # use quantity::QuantityError;
     /// # use approx::assert_relative_eq;
     /// # fn main() -> Result<(), QuantityError> {
@@ -688,7 +687,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::{KILO, PASCAL, BAR, KELVIN};
+    /// # use quantity::{KILO, PASCAL, BAR, KELVIN};
     /// # use quantity::QuantityError;
     /// # use approx::assert_relative_eq;
     /// # fn main() -> Result<(), QuantityError> {
@@ -718,7 +717,7 @@ impl SINumber {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::KELVIN;
+    /// # use quantity::KELVIN;
     /// # use approx::assert_relative_eq;
     /// let t = -50.0 * KELVIN;
     /// assert_relative_eq!(t.abs(), &(50.0 * KELVIN));
@@ -763,7 +762,7 @@ impl<D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::BAR;
+    /// # use quantity::BAR;
     /// # use quantity::QuantityError;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
@@ -901,7 +900,7 @@ impl<D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
     /// let x = arr1(&[3.0, 5.0]) * METER;
@@ -918,7 +917,7 @@ impl<D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use quantity::QuantityError;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
@@ -939,7 +938,7 @@ impl<D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use quantity::QuantityError;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
@@ -960,7 +959,7 @@ impl<D: Dimension, S: Data<Elem = f64>> Quantity<ArrayBase<S, D>> {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::METER;
+    /// # use quantity::METER;
     /// # use quantity::QuantityError;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
@@ -984,7 +983,7 @@ impl SIArray1 {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::{SIArray1, METER};
+    /// # use quantity::{SIArray1, METER};
     /// # use quantity::QuantityError;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
@@ -1013,7 +1012,7 @@ impl SIArray1 {
     ///
     /// # Example
     /// ```
-    /// # use quantity::si::{SIArray1, METER};
+    /// # use quantity::{SIArray1, METER};
     /// # use quantity::QuantityError;
     /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
