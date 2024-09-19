@@ -82,7 +82,7 @@
 //! [YOCTO] | $\text{y}$ | $10^{-24}$ | | [YOTTA] | $\text{Y}$ | $10^{24}$
 //! [RONTO] | $\text{r}$ | $10^{-27}$ | | [RONNA] | $\text{R}$ | $10^{27}$
 //! [QUECTO] | $\text{q}$ | $10^{-30}$ | | [QUETTA] | $\text{Q}$ | $10^{30}$
-use super::{Quantity, QuantityError, Unit};
+use super::{QuantityError, SIArray, SINumber};
 use ang::{Angle, Degrees, Radians};
 use ndarray::*;
 use serde::{Deserialize, Serialize};
@@ -94,16 +94,6 @@ use std::ops::{Div, DivAssign, Mul, MulAssign};
 /// Representation of a unit as a combination of SI base units.
 #[derive(Hash, PartialEq, Eq, Debug, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct SIUnit(pub(crate) [i8; 7]);
-
-pub type SINumber = Quantity<f64, SIUnit>;
-pub type SIArray<D> = Quantity<Array<f64, D>, SIUnit>;
-pub type SIArray0 = SIArray<Ix0>;
-pub type SIArray1 = SIArray<Ix1>;
-pub type SIArray2 = SIArray<Ix2>;
-pub type SIArray3 = SIArray<Ix3>;
-pub type SIArray4 = SIArray<Ix4>;
-pub type SIArray5 = SIArray<Ix5>;
-pub type SIArray6 = SIArray<Ix6>;
 
 impl SIUnit {
     /// Return the underlying unit vector.
@@ -117,25 +107,14 @@ impl SIUnit {
     }
 }
 
-impl<T> Quantity<T, SIUnit> {
-    /// Split an SI quantity into its value and unit vector.
-    pub fn into_raw_parts(self) -> (T, [i8; 7]) {
-        (self.value, self.unit.0)
+impl SIUnit {
+    pub const DIMENSIONLESS: Self = SIUnit([0; 7]);
+
+    pub fn is_dimensionless(&self) -> bool {
+        self == &Self::DIMENSIONLESS
     }
 
-    /// Create an SI quantity from its value and unit vector.
-    pub fn from_raw_parts(value: T, unit: [i8; 7]) -> Self {
-        Quantity {
-            value,
-            unit: SIUnit(unit),
-        }
-    }
-}
-
-impl Unit for SIUnit {
-    const DIMENSIONLESS: Self = SIUnit([0; 7]);
-
-    fn powi(&self, i: i32) -> Self {
+    pub fn powi(&self, i: i32) -> Self {
         let i8 = i as i8;
         Self([
             self.0[0] * i8,
@@ -148,15 +127,15 @@ impl Unit for SIUnit {
         ])
     }
 
-    fn sqrt(&self) -> Result<Self, QuantityError> {
+    pub fn sqrt(&self) -> Result<Self, QuantityError> {
         self.root(2)
     }
 
-    fn cbrt(&self) -> Result<Self, QuantityError> {
+    pub fn cbrt(&self) -> Result<Self, QuantityError> {
         self.root(3)
     }
 
-    fn root(&self, i: i32) -> Result<Self, QuantityError> {
+    pub fn root(&self, i: i32) -> Result<Self, QuantityError> {
         let i8 = i as i8;
         if self.0.iter().all(|u| u.rem(i8) == 0) {
             Ok(Self([
@@ -577,6 +556,7 @@ impl Debye {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::SIArray1;
     use std::fmt;
 
     #[test]

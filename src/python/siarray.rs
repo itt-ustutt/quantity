@@ -1,6 +1,6 @@
 use super::PyCelsius;
 use crate::si::*;
-use crate::{QuantityError, Unit};
+use crate::{QuantityError, SIArray1, SIArray2, SIArray3, SIArray4};
 use bincode::{deserialize, serialize};
 use ndarray::{arr1, Array};
 use numpy::prelude::*;

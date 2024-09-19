@@ -1,5 +1,4 @@
-use super::si::*;
-use ndarray::prelude::*;
+use super::*;
 use regex::Regex;
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -139,8 +138,8 @@ impl fmt::Display for SIUnit {
 }
 
 impl SIUnit {
-    pub fn to_latex(&self) -> String {
-        match DERIVED_UNITS.get(self) {
+    pub fn to_latex(self) -> String {
+        match DERIVED_UNITS.get(&self) {
             Some((_, _, _, symbols, exponents)) => unit_to_latex(symbols, exponents, None),
             None => unit_to_latex(&UNIT_SYMBOLS, &self.0, None),
         }
@@ -207,7 +206,7 @@ impl fmt::Display for Debye {
 }
 
 impl Debye {
-    pub fn to_latex(&self) -> String {
+    pub fn to_latex(self) -> String {
         format!("{}\\,\\mathrm{{De}}", float_to_latex(self.0))
     }
 }
