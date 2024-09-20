@@ -6,7 +6,7 @@ use numpy::{IntoPyArray, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, P
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
-use pyo3::types::PyNotImplemented;
+use pyo3::types::{PyNotImplemented, PyTuple};
 use pyo3::{PyErr, PyTypeInfo};
 use thiserror::Error;
 
@@ -29,7 +29,7 @@ pub enum QuantityError {
     DebyePower,
 }
 
-#[pyclass]
+#[pyclass(module = "si_units2")]
 #[derive(Clone)]
 pub struct PySIObject {
     value: PyObject,
@@ -69,19 +69,21 @@ impl From<QuantityError> for PyErr {
 
 #[pymethods]
 impl PySIObject {
-    // #[new]
-    // // Required for pickling SINumbers
-    // pub fn py_new(py: Python) -> Self {
-    //     Self::new(0.0.into_py(py), SIUnit::DIMENSIONLESS)
-    // }
+    #[new]
+    // Required for pickling SINumbers
+    pub fn py_new(py: Python) -> Self {
+        Self::new(0.0.into_py(py), SIUnit::DIMENSIONLESS)
+    }
 
-    // fn __setstate__(&mut self, state: &Bound<'_, PyBytes>) {
-    //     *self = deserialize(state.as_bytes()).unwrap();
-    // }
+    fn __setstate__(&mut self, state: &Bound<'_, PyTuple>) -> PyResult<()> {
+        self.value = state.get_item(0)?.unbind();
+        self.unit = SIUnit::from_raw_parts(state.get_item(1)?.extract::<[i8; 7]>()?);
+        Ok(())
+    }
 
-    // fn __getstate__<'py>(&self, py: Python<'py>) -> Bound<'py, PyBytes> {
-    //     PyBytes::new_bound(py, &serialize(self).unwrap())
-    // }
+    fn __getstate__<'py>(&self, py: Python<'py>) -> (&Bound<'py, PyAny>, [i8; 7]) {
+        self._into_raw_parts(py)
+    }
 
     fn _into_raw_parts<'py>(&self, py: Python<'py>) -> (&Bound<'py, PyAny>, [i8; 7]) {
         (self.value.bind(py), self.unit.into_raw_parts())
@@ -521,6 +523,7 @@ pub const QUETTA: f64 = 1e30;
 pub fn si_units2(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
 
+    m.add_class::<PySIObject>()?;
     m.add_class::<SIArray1>()?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
