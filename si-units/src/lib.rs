@@ -23,8 +23,6 @@ pub enum QuantityError {
     InconsistentUnits { unit1: SIUnit, unit2: SIUnit },
     #[error("Unit exponents are not multiples of index")]
     InvalidRoot,
-    #[error("Roots are only implemented for scalar quantities")]
-    InvalidRootType,
     #[error("Debye can only be raised to even powers")]
     DebyePower,
 }
@@ -141,12 +139,13 @@ impl PySIObject {
     /// >>> m2 = METER**2
     /// >>> m2.sqrt()
     /// 1  m
-    pub fn sqrt(&self, py: Python) -> Result<Self, QuantityError> {
-        if let Ok(v) = self.value.extract::<f64>(py) {
-            Ok(Self::new(v.sqrt().into_py(py), self.unit.sqrt()?))
+    pub fn sqrt(&self, py: Python) -> PyResult<Self> {
+        let value = if let Ok(v) = self.value.extract::<f64>(py) {
+            v.sqrt().into_py(py)
         } else {
-            Err(QuantityError::InvalidRootType)
-        }
+            self.value.call_method0(py, "sqrt")?
+        };
+        Ok(Self::new(value, self.unit.sqrt()?))
     }
 
     /// Try to calculate the cubic root of self.
@@ -158,12 +157,13 @@ impl PySIObject {
     /// >>> m3 = METER**3
     /// >>> m3.cbrt()
     /// 1  m
-    pub fn cbrt(&self, py: Python) -> Result<Self, QuantityError> {
-        if let Ok(v) = self.value.extract::<f64>(py) {
-            Ok(Self::new(v.cbrt().into_py(py), self.unit.cbrt()?))
+    pub fn cbrt(&self, py: Python) -> PyResult<Self> {
+        let value = if let Ok(v) = self.value.extract::<f64>(py) {
+            v.cbrt().into_py(py)
         } else {
-            Err(QuantityError::InvalidRootType)
-        }
+            self.value.call_method0(py, "cbrt")?
+        };
+        Ok(Self::new(value, self.unit.cbrt()?))
     }
 
     /// Test if the quantity has the same unit as the argument.
