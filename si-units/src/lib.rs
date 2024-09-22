@@ -520,7 +520,7 @@ pub const RONNA: f64 = 1e27;
 pub const QUETTA: f64 = 1e30;
 
 #[pymodule]
-pub fn si_units2(m: &Bound<'_, PyModule>) -> PyResult<()> {
+pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
 
     m.add_class::<PySIObject>()?;
