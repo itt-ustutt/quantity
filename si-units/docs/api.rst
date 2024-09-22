@@ -105,8 +105,5 @@ Datatypes
 .. autosummary::
     :toctree: generated/
 
-    SINumber
+    PySIObject
     SIArray1
-    SIArray2
-    SIArray3
-    SIArray4

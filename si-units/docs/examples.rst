@@ -71,8 +71,8 @@ This example demonstrates how dimensioned arrays can be constructed using numpy.
     z = 62222.3333333333   p =     0.0549875048
     z = 70000.0000000000   p =     0.0215180823
 
-Using `numpy` Functions
-~~~~~~~~~~~~~~~~~~~~~~~
+Using `numpy` or `torch` Functions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Functions such as `exp`, `sqrt` and `cbrt` work with methods or the equivalent numpy functions.
 
@@ -84,13 +84,13 @@ Functions such as `exp`, `sqrt` and `cbrt` work with methods or the equivalent n
     >>> sqm.sqrt()   # this is equivalent
     1  m
 
-This also works with numpy.ndarray's.
+This also works with torch.Tensor's.
 
     >>> from si_units import *
-    >>> import numpy as np
-    >>> ms = np.array([2.0, 3.0, 4.0]) * METER
+    >>> import torch
+    >>> ms = torch.tensor([2.0, 3.0, 4.0]) * METER
     >>> sqms = ms**2
     >>> sqms
-    [4, 9, 16] m²
+    tensor([ 4.,  9., 16.]) m²
     >>> sqms.sqrt()
-    [2, 3, 4] m
+    tensor([2., 3., 4.]) m
