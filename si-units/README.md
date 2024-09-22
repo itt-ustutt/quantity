@@ -1,14 +1,12 @@
 # si-units
 
-[![crate](https://img.shields.io/crates/v/quantity.svg)](https://crates.io/crates/quantity)
-[![documentation](https://docs.rs/quantity/badge.svg)](https://docs.rs/quantity)
 [![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity/index.html)
 [![PyPI version](https://badge.fury.io/py/si_units.svg)](https://badge.fury.io/py/si_units)
 
-Representation of SI unit valued scalars and arrays. Python bindings to the [quantity](https://crates.io/crates/quantity) Rust library.
+Representation of quantities with SI units. 
 
 The package is written with flexibility in mind and is able to represent arbitrarily complex units.
-Additional to simple scalar quantities, it also provides utilities for vector valued quantities based on numpy, where all entries share the same unit.
+In addition to simple scalar quantities, it can be used to decorate any complex data type (numpy arrays, PyTorch tensors) to provide unit checks.
 
 ## Installation and Usage
 
@@ -45,7 +43,6 @@ import numpy as np
 ms = np.linspace(2.0, 4.0, 3) * METER
 sqms = ms**2
 print(sqms) # [4, 9, 16] m²
-print(sqms.sqrt()) # [2, 3, 4] m
 ```
 
 ## Documentation
