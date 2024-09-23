@@ -119,7 +119,7 @@
 //! let m = 28.949 * GRAM / MOL;
 //! let t = 10.0 * CELSIUS;
 //! let p0 = BAR;
-//! let pressure = (-z.clone() * m * g).convert_into(RGAS * t).mapv(f64::exp) * p0;
+//! let pressure = (-z.clone() * m * g).convert_to(RGAS * t).mapv(f64::exp) * p0;
 //! for i in 0..10 {
 //!     println!("z = {:8.5}   p = {:9.5}", z.get(i), pressure.get(i));
 //! }
