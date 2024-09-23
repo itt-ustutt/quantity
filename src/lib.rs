@@ -140,7 +140,7 @@ use ang::{Angle, Degrees, Radians};
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use num_traits::Zero;
 use std::marker::PhantomData;
-use std::ops::{Div, Mul, Sub};
+use std::ops::{Div, Mul};
 use typenum::{ATerm, Diff, Integer, Negate, Quot, Sum, TArr, N1, N2, P1, P3, Z0};
 
 mod array;
@@ -437,20 +437,17 @@ impl<T> Dimensionless<T> {
 }
 
 impl<T, U> Quantity<T, U> {
+    pub fn new(value: T) -> Self {
+        Self(value, PhantomData)
+    }
+
     /// Convert a quantity into the given unit and return it
     /// as a float or array.
-    pub fn convert_into<T2>(self, unit: Quantity<T2, U>) -> Quot<T, T2>
+    pub fn convert_to<T2>(&self, unit: Quantity<T2, U>) -> Quot<&T, T2>
     where
-        T: Div<T2>,
-        U: Sub<U, Output = _Dimensionless>,
+        for<'a> &'a T: Div<T2>,
     {
-        (self / unit).into_value()
-    }
-}
-
-impl<T> From<T> for Dimensionless<T> {
-    fn from(value: T) -> Self {
-        Quantity(value, PhantomData)
+        &self.0 / unit.0
     }
 }
 

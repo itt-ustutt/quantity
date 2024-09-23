@@ -1,0 +1,13 @@
+[package]
+name = "extend_quantity"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "extend_quantity"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.21.0", features = ["extension-module", "abi3-py39"] }
+quantity = { version = "*", path = "../../", features = ["python"] }
+ndarray = "0.15"
