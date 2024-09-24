@@ -35,6 +35,11 @@ impl<
     }
 }
 
+#[cfg(feature = "python")]
+pub(crate) trait PrintUnit {
+    const UNIT: &'static str;
+}
+
 macro_rules! impl_fmt {
     ($t:ident, $l:ident, $m:ident, $i:ident, $theta:ident, $n:ident, $unit:expr, $symbol:expr, $has_prefix:expr) => {
         impl<T> fmt::LowerExp for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>>
@@ -78,6 +83,11 @@ macro_rules! impl_fmt {
                     write!(f, " {}{}", prefix, $symbol)
                 }
             }
+        }
+
+        #[cfg(feature = "python")]
+        impl<T> PrintUnit for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>> {
+            const UNIT: &'static str = $symbol;
         }
     };
 }

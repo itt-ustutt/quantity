@@ -1,3 +1,5 @@
+use crate::fmt::PrintUnit;
+
 use super::{Quantity, SIUnit};
 use ndarray::{Array, Dimension};
 use numpy::{IntoPyArray, PyReadonlyArray};
@@ -56,6 +58,8 @@ impl<
         N: Integer,
         J: Integer,
     > FromPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+where
+    Self: PrintUnit,
 {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
         let (value, unit_from) = ob
@@ -65,9 +69,11 @@ impl<
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
         } else {
-            Err(PyErr::new::<PyValueError, _>(
-                "`identifier` must be a SMILES code or `Identifier` object.".to_string(),
-            ))
+            Err(PyErr::new::<PyValueError, _>(format!(
+                "Wrong units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )))
         }
     }
 }
@@ -83,6 +89,8 @@ impl<
         J: Integer,
         D: Dimension,
     > FromPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
+where
+    Self: PrintUnit,
 {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
         let (value, unit_from) = ob
@@ -93,9 +101,11 @@ impl<
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
         } else {
-            Err(PyErr::new::<PyValueError, _>(
-                "`identifier` must be a SMILES code or `Identifier` object.".to_string(),
-            ))
+            Err(PyErr::new::<PyValueError, _>(format!(
+                "Wrong units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )))
         }
     }
 }
