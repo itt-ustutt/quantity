@@ -59,24 +59,28 @@ impl Debye {
     }
 }
 
-#[pyclass(name = "Angle", module = "si_units")]
+#[pyclass(module = "si_units")]
 #[derive(Clone, Copy)]
 pub struct PyAngle(pub(crate) Angle<f64>);
 
-impl From<Angle> for PyAngle {
-    fn from(angle: Angle) -> Self {
-        Self(angle)
-    }
-}
-
-impl From<PyAngle> for Angle {
-    fn from(angle: PyAngle) -> Self {
-        angle.0
-    }
-}
-
 #[pymethods]
 impl PyAngle {
+    #[staticmethod]
+    fn _from_raw_parts(value: f64, degrees: bool) -> Self {
+        if degrees {
+            Self(Angle::Degrees(value))
+        } else {
+            Self(Angle::Radians(value))
+        }
+    }
+
+    fn _into_raw_parts(&self) -> (f64, bool) {
+        match self.0 {
+            Angle::Degrees(d) => (d, true),
+            Angle::Radians(d) => (d, false),
+        }
+    }
+
     fn __repr__(&self) -> PyResult<String> {
         Ok(self.0.to_string())
     }
