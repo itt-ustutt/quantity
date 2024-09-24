@@ -22,7 +22,6 @@ rustdoc-args = ["--html-in-header", "./src/docs-header.html"]
 [dependencies]
 ndarray = { version = "0.15", features = ["approx-0_5"] }
 approx = "0.5"
-ang = "0.6"
 num-traits = "0.2"
 typenum = "1.17"
 pyo3 = { version = "0.21", optional = true }

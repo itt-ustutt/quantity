@@ -136,7 +136,6 @@
 //! ```
 
 #![warn(clippy::all)]
-use ang::{Angle, Degrees, Radians};
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use num_traits::Zero;
 use std::marker::PhantomData;
@@ -318,11 +317,6 @@ pub const HOUR: Time = Quantity(3600.0, PhantomData);
 pub const LITER: Volume = Quantity(1e-3, PhantomData);
 /// Additional unit minute $\\left(1\\,\text{min}=60,\text{s}\\right)$
 pub const MINUTE: Time = Quantity(60.0, PhantomData);
-
-/// Angle unit radian $\\left(\text{rad}\\right)$
-pub const RADIANS: Angle = Radians(1.0);
-/// Angle unit degree $\\left(1^\\circ=\frac{\pi}{180}\\,\text{rad}\\approx 0.0174532925\\,\text{rad}\\right)$
-pub const DEGREES: Angle = Degrees(1.0);
 
 /// Boltzmann constant $\\left(k_\text{B}=1.380649\times 10^{-23}\\,\\frac{\text{J}}{\text{K}}\\right)$
 pub const KB: Entropy = Quantity(1.380649e-23, PhantomData);
