@@ -1,9 +1,8 @@
 use crate::QuantityError;
-use serde::{Deserialize, Serialize};
 use std::ops::{Div, DivAssign, Mul, MulAssign, Rem};
 
 /// Representation of a unit as a combination of SI base units.
-#[derive(Hash, PartialEq, Eq, Debug, Clone, Copy, Serialize, Deserialize, Default)]
+#[derive(Hash, PartialEq, Eq, Debug, Clone, Copy)]
 pub struct SIUnit(pub(crate) [i8; 7]);
 
 impl SIUnit {
