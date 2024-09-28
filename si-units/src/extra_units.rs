@@ -65,6 +65,11 @@ pub struct PyAngle(pub(crate) Angle<f64>);
 
 #[pymethods]
 impl PyAngle {
+    #[new]
+    fn new() -> Self {
+        Self(Angle::Radians(0.0))
+    }
+
     #[staticmethod]
     fn _from_raw_parts(value: f64, degrees: bool) -> Self {
         if degrees {
@@ -79,6 +84,15 @@ impl PyAngle {
             Angle::Degrees(d) => (d, true),
             Angle::Radians(d) => (d, false),
         }
+    }
+
+    fn __setstate__(&mut self, state: (f64, bool)) {
+        let (value, degrees) = state;
+        *self = Self::_from_raw_parts(value, degrees)
+    }
+
+    fn __getstate__(&self) -> (f64, bool) {
+        self._into_raw_parts()
     }
 
     fn __repr__(&self) -> PyResult<String> {
