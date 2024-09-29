@@ -2,18 +2,14 @@
 
 [![crate](https://img.shields.io/crates/v/quantity.svg)](https://crates.io/crates/quantity)
 [![documentation](https://docs.rs/quantity/badge.svg)](https://docs.rs/quantity)
-[![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity/index.html)
-[![PyPI version](https://badge.fury.io/py/si_units.svg)](https://badge.fury.io/py/si_units)
 
-Representation of quantities, i.e. of unit valued scalars and arrays. Rust library with Python bindings.
+Representation of quantites, i.e. of unit valued scalars and arrays.
 
-As opposed to other implementations, this crate does not attempt to achieve compile time checks on units.
-It is written with flexibility in mind and is able to represent arbitrarily complex units.
-Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the [ndarray](https://github.com/rust-ndarray/ndarray) crate, where all entries share the same unit.
+The units are checked at compile time and can be arbitrarily complex. Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the [ndarray] crate, where all entries share the same unit.
+
+The crate is published together with the standalone Python package [si-units](si-units). Together with [PyO3](https://github.com/PyO3/pyo3), the data types defined in the Rust crate can be directly used in a Python interface. See the [example](example/README.md) for details.
 
 ## Installation and Usage
-
-### Rust
 
 Add this to your `Cargo.toml`:
 
@@ -21,10 +17,6 @@ Add this to your `Cargo.toml`:
 [dependencies]
 quantity = "0.8"
 ```
-
-## Python package
-
-Python bindings for the SI functionalities are published under the name [si-units](https://pypi.org/project/si-units/) on PyPI.
 
 ## Examples
 
@@ -85,13 +77,13 @@ To build the project including the bindings to python, we use [maturin](https://
 When developing, use
 
 ```
-maturin develop --release -m si-units/Cargo.toml
+maturin develop --release
 ```
 
 To build the python wheels, use
 
 ```
-maturin build --release -m si-units/Cargo.toml
+maturin build --release
 ```
 
 To build the documentation you need `sphinx` and some additional packages. From the root directory, type

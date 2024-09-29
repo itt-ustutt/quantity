@@ -1,6 +1,6 @@
 //! Representation of quantites, i.e. of unit valued scalars and arrays.
 //!
-//! The units are checked at compile time and can be arbitrarily copmlex. Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the [ndarray] crate, where all entries share the same unit.
+//! The units are checked at compile time and can be arbitrarily complex. Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the [ndarray] crate, where all entries share the same unit.
 //!
 //! For details on the available methods, see the documentation of the [Quantity] struct.
 //!
