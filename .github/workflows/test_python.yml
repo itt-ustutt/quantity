@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install python dependencies
-        run: pip install numpy pytest maturin
+        run: pip install numpy pytest pytest-readme maturin
       - name: Build wheels for extend-quantity
         working-directory: ./example/extend_quantity
         run: |
