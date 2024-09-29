@@ -23,17 +23,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install python dependencies
-        run: pip install numpy pytest
-      - name: Build wheels
-        uses: messense/maturin-action@v1
-        with:
-          working-directory: ./example
-          manylinux: auto
-          command: build
-          args: --release --out dist
-      - name: Install module
-        working-directory: ./example
-        run: pip install si-units --no-index --find-links dist --force-reinstall
+        run: pip install numpy pytest maturin
+      - name: Build wheels for extend-quantity
+        working-directory: ./example/extend_quantity
+        run: |
+          maturin build --release --out dist
+          pip install extend_quantity --no-index --find-links dist --force-reinstall
+      - name: Build wheels for si-units
+        run: |
+          maturin build --release --out dist
+          pip install si-units --no-index --find-links dist --force-reinstall
       - name: Test with pytest
         working-directory: ./example
         run: pytest --doctest-modules
