@@ -59,7 +59,7 @@ impl Debye {
     }
 }
 
-#[pyclass(module = "si_units")]
+#[pyclass(name = "Angle", module = "si_units")]
 #[derive(Clone, Copy)]
 pub struct PyAngle(pub(crate) Angle<f64>);
 

@@ -6,3 +6,5 @@ si-units/docs/generated
 /venv
 .ipynb_checkpoints
 *.ipynb
+__pycache__
+test_readme.py

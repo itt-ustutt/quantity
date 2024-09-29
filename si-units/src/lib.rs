@@ -27,7 +27,7 @@ pub enum QuantityError {
     DebyePower,
 }
 
-#[pyclass(module = "si_units")]
+#[pyclass(name = "SIObject", module = "si_units")]
 #[derive(Clone)]
 pub struct PySIObject {
     value: PyObject,

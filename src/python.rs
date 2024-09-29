@@ -7,11 +7,11 @@ use pyo3::{exceptions::PyValueError, prelude::*};
 use std::{marker::PhantomData, sync::LazyLock};
 use typenum::Integer;
 
-static PYSIOBJECT: LazyLock<PyObject> = LazyLock::new(|| {
+static SIOBJECT: LazyLock<PyObject> = LazyLock::new(|| {
     Python::with_gil(|py| {
         PyModule::import_bound(py, "si_units")
             .unwrap()
-            .getattr("PySIObject")
+            .getattr("SIObject")
             .unwrap()
             .unbind()
     })
@@ -22,7 +22,7 @@ impl<T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer,
 {
     fn into_py(self, py: Python<'_>) -> PyObject {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
-        PYSIOBJECT
+        SIOBJECT
             .call_method1(py, "_from_raw_parts", (self.0, unit))
             .unwrap()
     }
@@ -42,7 +42,7 @@ impl<
     fn into_py(self, py: Python<'_>) -> PyObject {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         let value = self.0.into_pyarray_bound(py).into_any();
-        PYSIOBJECT
+        SIOBJECT
             .call_method1(py, "_from_raw_parts", (value, unit))
             .unwrap()
     }
