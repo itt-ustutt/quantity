@@ -12,28 +12,23 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-    defaults:
-      run:
-        working-directory: ./app
-
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Python ${{ matrix.python-version }}
+      - name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
       - name: Install python dependencies
-        run: pip install numpy pytest
+        run: |
+          pip install sphinx sphinx-rtd-theme numpydoc numpy torch
       - name: Build wheels
-        working-directory: ./example
         uses: messense/maturin-action@v1
         with:
           manylinux: auto
-          command: develop
-          args: --release
-      - name: Test with pytest
-        working-directory: ./example
-        run: pytest --doctest-modules
+          command: build
+          args: --release --out dist -m si-units/Cargo.toml
+      - name: Install module
+        run: |
+          pip install si-units --no-index --find-links dist --force-reinstall
+      - name: Run doctests
+        run: sphinx-build si-units/docs/ public/ -b doctest
