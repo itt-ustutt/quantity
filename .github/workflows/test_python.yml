@@ -1,4 +1,4 @@
-name: Test Documentation
+name: Test Python extension package
 
 on:
   push:
@@ -28,9 +28,9 @@ jobs:
       - name: Install python dependencies
         run: pip install numpy pytest
       - name: Build wheels
-        working-directory: ./example
         uses: messense/maturin-action@v1
         with:
+          working-directory: ./example
           manylinux: auto
           command: develop
           args: --release
