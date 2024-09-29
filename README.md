@@ -7,7 +7,7 @@ Representation of quantites, i.e. of unit valued scalars and arrays.
 
 The units are checked at compile time and can be arbitrarily complex. Additional to simple scalar quantities, it also provides utilities for vector valued quantities, based on the [ndarray] crate, where all entries share the same unit.
 
-The crate is published together with the standalone Python package [si-units](si-units). Together with [PyO3](https://github.com/PyO3/pyo3), the data types defined in the Rust crate can be directly used in a Python interface. See the [example](example/README.md) for details.
+The crate is published together with the standalone Python package [si-units](si-units). Together with [PyO3](https://github.com/PyO3/pyo3), the data types defined in the Rust crate can be directly used in a Python interface. See the [example](example/extend_quantity/README.md) for details.
 
 ## Installation and Usage
 

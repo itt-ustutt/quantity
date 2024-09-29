@@ -34,5 +34,5 @@ jobs:
           maturin build --release --out dist
           pip install si-units --no-index --find-links dist --force-reinstall
       - name: Test with pytest
-        working-directory: ./example
+        working-directory: ./example/extend_quantity
         run: pytest --doctest-modules
