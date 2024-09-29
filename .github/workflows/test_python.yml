@@ -32,6 +32,7 @@ jobs:
           command: build
           args: --release --out dist
       - name: Install module
+        working-directory: ./example
         run: pip install si-units --no-index --find-links dist --force-reinstall
       - name: Test with pytest
         working-directory: ./example
