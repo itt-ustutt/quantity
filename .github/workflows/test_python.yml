@@ -29,8 +29,10 @@ jobs:
         with:
           working-directory: ./example
           manylinux: auto
-          command: develop
-          args: --release
+          command: build
+          args: --release --out dist
+      - name: Install module
+        run: pip install si-units --no-index --find-links dist --force-reinstall
       - name: Test with pytest
         working-directory: ./example
         run: pytest --doctest-modules
