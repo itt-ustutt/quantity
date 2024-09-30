@@ -27,7 +27,7 @@ pub enum QuantityError {
     DebyePower,
 }
 
-#[pyclass(module = "si_units2")]
+#[pyclass(name = "SIObject", module = "si_units")]
 #[derive(Clone)]
 pub struct PySIObject {
     value: PyObject,
@@ -524,6 +524,7 @@ pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
 
     m.add_class::<PySIObject>()?;
+    m.add_class::<PyAngle>()?;
     m.add_class::<SIArray1>()?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
