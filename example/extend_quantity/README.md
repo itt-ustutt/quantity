@@ -1,5 +1,5 @@
 # Example: Extend the quantity and si-units packages
-This example crate shows how to build a rust/PyO3 crate that uses the data types from the [quantity](../README.md) crate in Rust in a Python package. In the python interface, data types are converted to classes from the [si-units](../si-units/README.md) Python package.
+This example crate shows how to build a rust/PyO3 crate that uses the data types from the [quantity](../README.md) crate in Rust to build a Python package. In the Python interface, data types are converted to classes from the [si-units](../si-units/README.md) Python package.
 
 ## Installation
 ```
