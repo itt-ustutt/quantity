@@ -28,7 +28,6 @@ pub enum QuantityError {
 }
 
 #[pyclass(name = "SIObject", module = "si_units")]
-#[derive(Clone)]
 pub struct PySIObject {
     value: PyObject,
     unit: SIUnit,
@@ -176,7 +175,7 @@ impl PySIObject {
     /// Returns
     /// -------
     /// bool
-    pub fn has_unit(&self, other: Self) -> bool {
+    pub fn has_unit(&self, other: PyRef<'_, Self>) -> bool {
         self.unit.eq(&other.unit)
     }
 
@@ -204,7 +203,8 @@ impl PySIObject {
     }
 
     fn __mul__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (rhs_value, unit) = if let Ok(r) = rhs.extract::<Self>() {
+        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>() {
+            let r = r.borrow();
             (r.value.bind(rhs.py()).clone(), self.unit * r.unit)
         } else {
             (rhs.clone(), self.unit)
@@ -220,7 +220,8 @@ impl PySIObject {
     }
 
     fn __rmul__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (lhs_value, unit) = if let Ok(l) = lhs.extract::<Self>() {
+        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>() {
+            let l = l.borrow();
             (l.value.bind(lhs.py()).clone(), l.unit * self.unit)
         } else {
             (lhs.clone(), self.unit)
@@ -236,7 +237,8 @@ impl PySIObject {
     }
 
     fn __truediv__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (rhs_value, unit) = if let Ok(r) = rhs.extract::<Self>() {
+        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>() {
+            let r = r.borrow();
             (r.value.bind(rhs.py()).clone(), self.unit / r.unit)
         } else {
             (rhs.clone(), self.unit)
@@ -252,7 +254,8 @@ impl PySIObject {
     }
 
     fn __rtruediv__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (lhs_value, unit) = if let Ok(l) = lhs.extract::<Self>() {
+        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>() {
+            let l = l.borrow();
             (l.value.bind(lhs.py()).clone(), l.unit / self.unit)
         } else {
             (lhs.clone(), self.unit.recip())
@@ -331,7 +334,7 @@ impl<T> SIObject<T> {
 impl<'py> FromPyObject<'py> for SINumber {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
         let py = ob.py();
-        let ob = ob.extract::<PySIObject>()?;
+        let ob = ob.downcast::<PySIObject>()?.borrow();
         let value = ob.value.extract::<f64>(py)?;
         let unit = ob.unit;
         Ok(SINumber { value, unit })
@@ -345,12 +348,12 @@ struct SIArray1;
 impl SIArray1 {
     #[staticmethod]
     #[expect(clippy::new_ret_no_self)]
-    fn new(value: Bound<'_, PyAny>) -> PyResult<PySIObject> {
+    fn new(value: Bound<'_, PyAny>) -> PyResult<Bound<'_, PySIObject>> {
         let py = value.py();
         if let Ok(v) = value.extract::<SINumber>() {
             let value = arr1(&[1.0]) * v.value;
             let value = value.into_pyarray_bound(py).into_any().unbind();
-            Ok(PySIObject::new(value, v.unit))
+            Bound::new(py, PySIObject::new(value, v.unit))
         } else if let Ok(v) = value.extract::<Vec<SINumber>>() {
             let mut unit = SIUnit::DIMENSIONLESS;
             let (value, units): (Vec<_>, Vec<_>) = v.into_iter().map(|v| (v.value, v.unit)).unzip();
@@ -366,9 +369,9 @@ impl SIArray1 {
             }
             let value: Array1<_> = Array1::from_vec(value);
             let value = value.into_pyarray_bound(py).into_any().unbind();
-            Ok(PySIObject::new(value, unit))
+            Bound::new(py, PySIObject::new(value, unit))
         } else {
-            value.extract::<PySIObject>()
+            Ok(value.downcast_into::<PySIObject>()?)
         }
     }
 
