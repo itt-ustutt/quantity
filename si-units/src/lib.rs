@@ -326,9 +326,7 @@ struct SIArray1;
 
 #[pymethods]
 impl SIArray1 {
-    #[staticmethod]
-    #[expect(clippy::new_ret_no_self)]
-    fn new(value: Bound<'_, PyAny>) -> PyResult<Bound<'_, PySIObject>> {
+    fn __call__<'py>(&self, value: Bound<'py, PyAny>) -> PyResult<Bound<'py, PySIObject>> {
         let py = value.py();
         if let Ok(v) = value.extract::<SINumber>() {
             let value = arr1(&[1.0]) * v.value;
@@ -508,7 +506,7 @@ pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     m.add_class::<PySIObject>()?;
     m.add_class::<PyAngle>()?;
-    m.add_class::<SIArray1>()?;
+    m.add("SIArray1", SIArray1)?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
     add_constant(m, "METER", 1.0, _METER)?;
