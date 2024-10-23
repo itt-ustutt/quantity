@@ -1,5 +1,7 @@
 use super::Quantity;
+#[cfg(feature = "approx")]
 use approx::{AbsDiffEq, RelativeEq};
+#[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, DataMut, DataOwned, Dimension};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
@@ -77,6 +79,7 @@ where
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<U, S: Data<Elem = f64>, D: Dimension> Mul<Quantity<f64, U>> for &ArrayBase<S, D> {
     type Output = Quantity<Array<f64, D>, U>;
     fn mul(self, other: Quantity<f64, U>) -> Self::Output {
@@ -84,6 +87,7 @@ impl<U, S: Data<Elem = f64>, D: Dimension> Mul<Quantity<f64, U>> for &ArrayBase<
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<U, S: DataOwned<Elem = f64> + DataMut, D: Dimension> Mul<Quantity<f64, U>>
     for ArrayBase<S, D>
 {
@@ -175,6 +179,7 @@ where
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<U: Neg, S: Data<Elem = f64>, D: Dimension> Div<Quantity<f64, U>> for &ArrayBase<S, D> {
     type Output = Quantity<Array<f64, D>, Negate<U>>;
     fn div(self, other: Quantity<f64, U>) -> Self::Output {
@@ -182,6 +187,7 @@ impl<U: Neg, S: Data<Elem = f64>, D: Dimension> Div<Quantity<f64, U>> for &Array
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<U: Neg, S: DataOwned<Elem = f64> + DataMut, D: Dimension> Div<Quantity<f64, U>>
     for ArrayBase<S, D>
 {
@@ -479,6 +485,7 @@ impl<T: PartialOrd, U> PartialOrd for Quantity<T, U> {
     }
 }
 
+#[cfg(feature = "approx")]
 impl<T: AbsDiffEq, U> AbsDiffEq for Quantity<T, U> {
     type Epsilon = T::Epsilon;
 
@@ -491,6 +498,7 @@ impl<T: AbsDiffEq, U> AbsDiffEq for Quantity<T, U> {
     }
 }
 
+#[cfg(feature = "approx")]
 impl<T: RelativeEq, U> RelativeEq for Quantity<T, U> {
     fn default_max_relative() -> Self::Epsilon {
         T::default_max_relative()

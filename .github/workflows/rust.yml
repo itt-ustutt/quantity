@@ -12,6 +12,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        features: ["", "ndarray", "approx", "ndarray approx", "python", "python_numpy", "num-dual"]
 
     steps:
       - uses: actions/checkout@v4
