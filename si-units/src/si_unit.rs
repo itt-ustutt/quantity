@@ -6,18 +6,6 @@ use std::ops::{Div, DivAssign, Mul, MulAssign, Rem};
 pub struct SIUnit(pub(crate) [i8; 7]);
 
 impl SIUnit {
-    /// Return the underlying unit vector.
-    pub fn into_raw_parts(self) -> [i8; 7] {
-        self.0
-    }
-
-    /// Build a unit from the underlying unit vector.
-    pub fn from_raw_parts(unit: [i8; 7]) -> Self {
-        Self(unit)
-    }
-}
-
-impl SIUnit {
     pub const DIMENSIONLESS: Self = SIUnit([0; 7]);
 
     pub fn is_dimensionless(&self) -> bool {

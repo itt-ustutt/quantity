@@ -6,7 +6,7 @@ use numpy::{IntoPyArray, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, P
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
-use pyo3::types::{PyNotImplemented, PyTuple};
+use pyo3::types::PyNotImplemented;
 use pyo3::{PyErr, PyTypeInfo};
 use thiserror::Error;
 
@@ -27,7 +27,7 @@ pub enum QuantityError {
     DebyePower,
 }
 
-#[pyclass(name = "SIObject", module = "si_units")]
+#[pyclass(name = "SIObject", module = "si_units", frozen)]
 pub struct PySIObject {
     value: PyObject,
     unit: SIUnit,
@@ -67,28 +67,12 @@ impl From<QuantityError> for PyErr {
 #[pymethods]
 impl PySIObject {
     #[new]
-    // Required for pickling SINumbers
-    pub fn py_new(py: Python) -> Self {
-        Self::new(0.0.into_py(py), SIUnit::DIMENSIONLESS)
+    pub fn py_new(value: Bound<'_, PyAny>, unit: [i8; 7]) -> Self {
+        Self::new(value.unbind(), SIUnit(unit))
     }
 
-    fn __setstate__(&mut self, state: &Bound<'_, PyTuple>) -> PyResult<()> {
-        self.value = state.get_item(0)?.unbind();
-        self.unit = SIUnit::from_raw_parts(state.get_item(1)?.extract::<[i8; 7]>()?);
-        Ok(())
-    }
-
-    fn __getstate__<'py>(&self, py: Python<'py>) -> (&Bound<'py, PyAny>, [i8; 7]) {
-        self._into_raw_parts(py)
-    }
-
-    fn _into_raw_parts<'py>(&self, py: Python<'py>) -> (&Bound<'py, PyAny>, [i8; 7]) {
-        (self.value.bind(py), self.unit.into_raw_parts())
-    }
-
-    #[staticmethod]
-    fn _from_raw_parts(value: Bound<'_, PyAny>, unit: [i8; 7]) -> Self {
-        Self::new(value.unbind(), SIUnit::from_raw_parts(unit))
+    fn __getnewargs__<'py>(&self, py: Python<'py>) -> (&Bound<'py, PyAny>, [i8; 7]) {
+        (self.value.bind(py), self.unit.0)
     }
 
     fn __repr__(&self, py: Python) -> PyResult<String> {
@@ -203,8 +187,7 @@ impl PySIObject {
     }
 
     fn __mul__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>() {
-            let r = r.borrow();
+        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>().map(Bound::get) {
             (r.value.bind(rhs.py()).clone(), self.unit * r.unit)
         } else {
             (rhs.clone(), self.unit)
@@ -220,8 +203,7 @@ impl PySIObject {
     }
 
     fn __rmul__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>() {
-            let l = l.borrow();
+        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>().map(Bound::get) {
             (l.value.bind(lhs.py()).clone(), l.unit * self.unit)
         } else {
             (lhs.clone(), self.unit)
@@ -237,8 +219,7 @@ impl PySIObject {
     }
 
     fn __truediv__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>() {
-            let r = r.borrow();
+        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>().map(Bound::get) {
             (r.value.bind(rhs.py()).clone(), self.unit / r.unit)
         } else {
             (rhs.clone(), self.unit)
@@ -254,8 +235,7 @@ impl PySIObject {
     }
 
     fn __rtruediv__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>() {
-            let l = l.borrow();
+        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>().map(Bound::get) {
             (l.value.bind(lhs.py()).clone(), l.unit / self.unit)
         } else {
             (lhs.clone(), self.unit.recip())
@@ -302,7 +282,7 @@ impl PySIObject {
         Ok(Self::new(value, self.unit))
     }
 
-    fn __setitem__(&mut self, py: Python, idx: isize, value: SINumber) -> PyResult<()> {
+    fn __setitem__(&self, py: Python, idx: isize, value: SINumber) -> PyResult<()> {
         if self.unit == value.unit {
             self.value
                 .call_method1(py, "__setitem__", (idx, value.value))?;
