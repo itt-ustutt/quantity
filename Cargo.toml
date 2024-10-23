@@ -26,6 +26,7 @@ num-traits = "0.2"
 typenum = "1.17"
 pyo3 = { version = "0.22", optional = true }
 numpy = { version = "0.22", optional = true }
+num-dual = { version = "0.10", optional = true }
 
 [features]
 default = []
