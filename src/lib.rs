@@ -443,6 +443,15 @@ impl<T, U> Quantity<T, U> {
     {
         &self.0 / unit.0
     }
+
+    /// Convert a quantity into the given unit and return it
+    /// as a float or array.
+    pub fn convert_into<T2>(self, unit: Quantity<T2, U>) -> Quot<T, T2>
+    where
+        T: Div<T2>,
+    {
+        self.0 / unit.0
+    }
 }
 
 impl<U> Zero for Quantity<f64, U> {
@@ -452,5 +461,17 @@ impl<U> Zero for Quantity<f64, U> {
 
     fn is_zero(&self) -> bool {
         self.0.is_zero()
+    }
+}
+
+#[cfg(feature = "num-dual")]
+mod num_dual {
+    use super::Quantity;
+    use num_dual::DualNum;
+
+    impl<D: DualNum<f64>, U> Quantity<D, U> {
+        pub fn re(&self) -> Quantity<f64, U> {
+            Quantity::new(self.0.re())
+        }
     }
 }
