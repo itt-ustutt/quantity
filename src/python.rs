@@ -58,9 +58,14 @@ where
     Self: PrintUnit,
 {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
-        let (value, unit_from) = ob
-            .call_method0("__getnewargs__")?
-            .extract::<(f64, [i8; 7])>()?;
+        let Ok(raw) = ob.call_method0("__getnewargs__") else {
+            return Err(PyErr::new::<PyValueError, _>(format!(
+                "Missing units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )));
+        };
+        let (value, unit_from) = raw.extract::<(f64, [i8; 7])>()?;
         let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
@@ -89,9 +94,14 @@ where
     Self: PrintUnit,
 {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
-        let (value, unit_from) = ob
-            .call_method0("__getnewargs__")?
-            .extract::<(PyReadonlyArray<f64, D>, [i8; 7])>()?;
+        let Ok(raw) = ob.call_method0("__getnewargs__") else {
+            return Err(PyErr::new::<PyValueError, _>(format!(
+                "Missing units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )));
+        };
+        let (value, unit_from) = raw.extract::<(PyReadonlyArray<f64, D>, [i8; 7])>()?;
         let value = value.as_array().to_owned();
         let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         if unit_into == unit_from {
