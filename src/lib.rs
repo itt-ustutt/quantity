@@ -113,7 +113,8 @@
 //! Calculate the pressure distribution in the atmosphere using the barometric formula.
 //! Array operations require the `ndarray` feature.
 //! ```
-//! #![cfg(feature = "ndarray")]
+//! # #[cfg(feature = "ndarray")]
+//! # {
 //! # use quantity::*;
 //! # use typenum::P2;
 //! let z = Length::linspace(1.0 * METER, 70.0 * KILO * METER, 10);
@@ -135,6 +136,7 @@
 //! // z = 54.44467 km   p = 140.51557  Pa
 //! // z = 62.22233 km   p =  54.98750  Pa
 //! // z = 70.00000 km   p =  21.51808  Pa
+//! # }
 //! ```
 
 #![warn(clippy::all)]
