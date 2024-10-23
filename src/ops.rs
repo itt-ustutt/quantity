@@ -341,7 +341,6 @@ impl<U> Quantity<f64, U> {
     /// # Example
     /// ```
     /// # use quantity::METER;
-    /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
     /// # use typenum::P2;
     /// let x = 3.0 * METER;
@@ -359,7 +358,6 @@ impl<U> Quantity<f64, U> {
     /// # Example
     /// ```
     /// # use quantity::METER;
-    /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
     /// let x = 9.0 * METER * METER;
     /// assert_relative_eq!(x.sqrt(), 3.0 * METER);
@@ -376,7 +374,6 @@ impl<U> Quantity<f64, U> {
     /// # Example
     /// ```
     /// # use quantity::METER;
-    /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
     /// let x = 27.0 * METER * METER * METER;
     /// assert_relative_eq!(x.cbrt(), 3.0 * METER);
@@ -393,7 +390,6 @@ impl<U> Quantity<f64, U> {
     /// # Example
     /// ```
     /// # use quantity::METER;
-    /// # use ndarray::arr1;
     /// # use approx::assert_relative_eq;
     /// # use typenum::P4;
     /// let x = 81.0 * METER * METER * METER * METER;

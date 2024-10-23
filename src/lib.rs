@@ -111,7 +111,9 @@
 //! ```
 //!
 //! Calculate the pressure distribution in the atmosphere using the barometric formula.
+//! Array operations require the `ndarray` feature.
 //! ```
+//! #![cfg(feature = "ndarray")]
 //! # use quantity::*;
 //! # use typenum::P2;
 //! let z = Length::linspace(1.0 * METER, 70.0 * KILO * METER, 10);
