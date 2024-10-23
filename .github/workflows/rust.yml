@@ -19,6 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build
-        run: cargo build --release --features ${{ matrix.features }}
+        run: cargo build --release --features "${{ matrix.features }}"
       - name: Run tests
-        run: cargo test --release --features ${{ matrix.features }}
+        run: cargo test --release --features "${{ matrix.features }}"
