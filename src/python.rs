@@ -22,9 +22,7 @@ impl<T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer,
 {
     fn into_py(self, py: Python<'_>) -> PyObject {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
-        SIOBJECT
-            .call_method1(py, "_from_raw_parts", (self.0, unit))
-            .unwrap()
+        SIOBJECT.call1(py, (self.0, unit)).unwrap()
     }
 }
 
@@ -42,9 +40,7 @@ impl<
     fn into_py(self, py: Python<'_>) -> PyObject {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         let value = self.0.into_pyarray_bound(py).into_any();
-        SIOBJECT
-            .call_method1(py, "_from_raw_parts", (value, unit))
-            .unwrap()
+        SIOBJECT.call1(py, (value, unit)).unwrap()
     }
 }
 
@@ -63,7 +59,7 @@ where
 {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
         let (value, unit_from) = ob
-            .call_method0("_into_raw_parts")?
+            .call_method0("__getnewargs__")?
             .extract::<(f64, [i8; 7])>()?;
         let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         if unit_into == unit_from {
@@ -94,7 +90,7 @@ where
 {
     fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
         let (value, unit_from) = ob
-            .call_method0("_into_raw_parts")?
+            .call_method0("__getnewargs__")?
             .extract::<(PyReadonlyArray<f64, D>, [i8; 7])>()?;
         let value = value.as_array().to_owned();
         let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
