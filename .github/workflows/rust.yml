@@ -1,4 +1,4 @@
-name: Test
+name: Build and test Rust crate
 
 on:
   push:
@@ -12,10 +12,23 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        features: ["", "ndarray", "approx", "ndarray approx", "python", "python_numpy", "num-dual"]
 
     steps:
       - uses: actions/checkout@v4
       - name: Build
-        run: cargo build --release
+        run: cargo build --release --features "${{ matrix.features }}"
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Run tests
-        run: cargo test --release
+        run: cargo test --release --features approx
+  test_ndarray:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests (ndarray)
+        run: cargo test --release --features "ndarray approx"

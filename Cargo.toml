@@ -20,14 +20,15 @@ exclude = ["/.github/*", "*.ipynb", "/docs"]
 rustdoc-args = ["--html-in-header", "./src/docs-header.html"]
 
 [dependencies]
-ndarray = { version = "0.16", features = ["approx"] }
-approx = "0.5"
-num-traits = "0.2"
 typenum = "1.17"
+ndarray = { version = "0.16", optional = true}
+approx = { version = "0.5", optional = true }
 pyo3 = { version = "0.22", optional = true }
 numpy = { version = "0.22", optional = true }
 num-dual = { version = "0.10", optional = true }
 
 [features]
 default = []
-python = ["pyo3", "numpy"]
+python = ["pyo3"]
+python_numpy = ["python", "numpy", "ndarray"]
+approx = ["dep:approx", "ndarray?/approx"]

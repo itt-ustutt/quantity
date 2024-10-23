@@ -1,4 +1,5 @@
 use super::*;
+#[cfg(feature = "ndarray")]
 use ndarray::{Array, Dimension};
 use std::collections::HashMap;
 use std::fmt;
@@ -35,7 +36,7 @@ impl<
     }
 }
 
-#[cfg(feature = "python")]
+#[cfg(feature = "pyo3")]
 pub(crate) trait PrintUnit {
     const UNIT: &'static str;
 }
@@ -64,6 +65,7 @@ macro_rules! impl_fmt {
             }
         }
 
+        #[cfg(feature = "ndarray")]
         impl<D: Dimension> fmt::Display
             for Quantity<Array<f64, D>, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>>
         {
@@ -179,6 +181,7 @@ static PREFIX_SYMBOLS: LazyLock<HashMap<i8, &'static str>> = LazyLock::new(|| {
 #[cfg(test)]
 mod tests {
     use crate::*;
+    #[cfg(feature = "ndarray")]
     use ndarray::arr1;
 
     #[test]
@@ -193,6 +196,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "ndarray")]
     fn test_fmt_arr() {
         assert_eq!(
             format!("{}", arr1(&[273.15, 323.15]) * KELVIN),

@@ -1,7 +1,8 @@
-use crate::fmt::PrintUnit;
-
 use super::{Quantity, SIUnit};
+use crate::fmt::PrintUnit;
+#[cfg(feature = "ndarray")]
 use ndarray::{Array, Dimension};
+#[cfg(feature = "ndarray")]
 use numpy::{IntoPyArray, PyReadonlyArray};
 use pyo3::{exceptions::PyValueError, prelude::*};
 use std::{marker::PhantomData, sync::LazyLock};
@@ -26,6 +27,7 @@ impl<T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer,
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<
         T: Integer,
         L: Integer,
@@ -74,6 +76,7 @@ where
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<
         'py,
         T: Integer,

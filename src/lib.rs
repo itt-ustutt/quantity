@@ -111,7 +111,10 @@
 //! ```
 //!
 //! Calculate the pressure distribution in the atmosphere using the barometric formula.
+//! Array operations require the `ndarray` feature.
 //! ```
+//! # #[cfg(feature = "ndarray")]
+//! # {
 //! # use quantity::*;
 //! # use typenum::P2;
 //! let z = Length::linspace(1.0 * METER, 70.0 * KILO * METER, 10);
@@ -133,15 +136,17 @@
 //! // z = 54.44467 km   p = 140.51557  Pa
 //! // z = 62.22233 km   p =  54.98750  Pa
 //! // z = 70.00000 km   p =  21.51808  Pa
+//! # }
 //! ```
 
 #![warn(clippy::all)]
+#[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
-use num_traits::Zero;
 use std::marker::PhantomData;
 use std::ops::{Div, Mul};
 use typenum::{ATerm, Diff, Integer, Negate, Quot, Sum, TArr, N1, N2, P1, P3, Z0};
 
+#[cfg(feature = "ndarray")]
 mod array;
 mod fmt;
 mod ops;
@@ -399,6 +404,7 @@ impl Mul<CELSIUS> for f64 {
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<S: Data<Elem = f64>, D: Dimension> Mul<CELSIUS> for ArrayBase<S, D> {
     type Output = Temperature<Array<f64, D>>;
     #[allow(clippy::suspicious_arithmetic_impl)]
@@ -415,6 +421,7 @@ impl Div<CELSIUS> for Temperature<f64> {
     }
 }
 
+#[cfg(feature = "ndarray")]
 impl<D: Dimension> Div<CELSIUS> for Temperature<Array<f64, D>> {
     type Output = Array<f64, D>;
     #[allow(clippy::suspicious_arithmetic_impl)]
@@ -451,16 +458,6 @@ impl<T, U> Quantity<T, U> {
         T: Div<T2>,
     {
         self.0 / unit.0
-    }
-}
-
-impl<U> Zero for Quantity<f64, U> {
-    fn zero() -> Self {
-        Quantity(0.0, PhantomData)
-    }
-
-    fn is_zero(&self) -> bool {
-        self.0.is_zero()
     }
 }
 
