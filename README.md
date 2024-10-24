@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```
 [dependencies]
-quantity = "0.8"
+quantity = "0.9"
 ```
 
 ## Examples
