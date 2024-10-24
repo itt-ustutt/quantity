@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2024-10-24
+### Changed
+- Reimplemented `si-units` Python package independent of `quantity` crate in and more "pythonic" fashion. [#63](https://github.com/itt-ustutt/quantity/pull/63)
+- Reimplemented `quantity` to compile-time checked units using the `typenum` crate. [#64](https://github.com/itt-ustutt/quantity/pull/64)
+- Hide non-essential dependencies behind features `ndarray`, `approx`, `num-dual`, `python`, `python_numpy`. [#70](https://github.com/itt-ustutt/quantity/pull/70)
+- Implemented angles based on the `Quantity` struct rather than the `ang` crate. [#72](https://github.com/itt-ustutt/quantity/pull/72)
+
+### Added
+- Added basic support for the combination of structs in the `num-dual` crate with units. [#66](https://github.com/itt-ustutt/quantity/pull/66)
+
+### Packaging
+- Update `pyo3` and `numpy` dependencies to 0.22. [#65](https://github.com/itt-ustutt/quantity/pull/65)
+
 ## [0.8.0] - 2024-04-11
 ### Packaging
 - Updated `pyo3` and `numpy` dependencies to 0.21 and adjusted to the new `Bound` API.
