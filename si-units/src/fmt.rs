@@ -212,6 +212,18 @@ impl Debye {
     }
 }
 
+impl fmt::Display for Angle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}°", self.0.to_degrees())
+    }
+}
+
+impl Angle {
+    pub fn to_latex(self) -> String {
+        format!("{}°", float_to_latex(self.0.to_degrees()))
+    }
+}
+
 const UNIT_SYMBOLS: [&str; 7] = ["m", "kg", "s", "A", "mol", "K", "cd"];
 
 const METER: SINumber = SINumber::new(1.0, _METER);
