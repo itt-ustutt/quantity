@@ -118,7 +118,7 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           pip install --upgrade twine
-          twine upload --skip-existing dist/*
+          twine upload --skip-existing wheels/*
 
   build-documentation:
     runs-on: ubuntu-latest
@@ -153,7 +153,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: documentation
           path: public
