@@ -1,4 +1,4 @@
-use super::{Quantity, SIUnit};
+use super::{Angle, Quantity, SIUnit};
 use crate::fmt::PrintUnit;
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, Dimension};
@@ -120,5 +120,36 @@ where
                 ob.call_method0("__repr__")?
             )))
         }
+    }
+}
+
+static ANGLE: LazyLock<PyObject> = LazyLock::new(|| {
+    Python::with_gil(|py| {
+        PyModule::import_bound(py, "si_units")
+            .unwrap()
+            .getattr("Angle")
+            .unwrap()
+            .unbind()
+    })
+});
+
+impl IntoPy<PyObject> for Angle {
+    fn into_py(self, py: Python<'_>) -> PyObject {
+        ANGLE.call1(py, (self.0,)).unwrap()
+    }
+}
+
+impl<'py> FromPyObject<'py> for Angle {
+    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+        let Ok(value) = ob
+            .call_method0("__getnewargs__")
+            .and_then(|raw| raw.extract::<f64>())
+        else {
+            return Err(PyErr::new::<PyValueError, _>(format!(
+                "Missing units! Expected angle, got {}.",
+                ob.call_method0("__repr__")?
+            )));
+        };
+        Ok(Quantity(value, PhantomData))
     }
 }

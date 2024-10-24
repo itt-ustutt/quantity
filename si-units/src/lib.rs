@@ -1,6 +1,5 @@
 #![warn(clippy::all)]
 #![allow(non_snake_case)]
-use ang::{Degrees, Radians};
 use ndarray::{arr1, Array1, ArrayView};
 use numpy::{IntoPyArray, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray4};
 use pyo3::basic::CompareOp;
@@ -13,7 +12,7 @@ use thiserror::Error;
 mod si_unit;
 use si_unit::SIUnit;
 mod extra_units;
-use extra_units::{Celsius, Debye, PyAngle};
+use extra_units::{Angle, Celsius, Debye};
 mod fmt;
 
 /// Error type used to indicate unit conversion failures.
@@ -505,7 +504,7 @@ pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
 
     m.add_class::<PySIObject>()?;
-    m.add_class::<PyAngle>()?;
+    m.add_class::<Angle>()?;
     m.add("SIArray1", SIArray1)?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
@@ -546,12 +545,12 @@ pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("CELSIUS", Celsius)?;
     add_constant(m, "DAY", 86400.0, _SECOND)?;
     m.add("DEBYE", Debye(1.0))?;
-    m.add("DEGREES", PyAngle(Degrees(1.0)))?;
+    m.add("DEGREES", Angle(1.0_f64.to_radians()))?;
     add_constant(m, "GRAM", 1e-3, _KILOGRAM)?;
     add_constant(m, "HOUR", 3600.0, _SECOND)?;
     add_constant(m, "LITER", 1e-3, _CUBIC_METER)?;
     add_constant(m, "MINUTE", 60.0, _SECOND)?;
-    m.add("RADIANS", PyAngle(Radians(1.0)))?;
+    m.add("RADIANS", Angle(1.0))?;
 
     add_constant(m, "G", 6.6743e-11, SIUnit([3, -1, -2, 0, 0, 0, 0]))?;
     let rgas = 1.380649e-23 * 6.02214076e23;

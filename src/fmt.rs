@@ -178,6 +178,12 @@ static PREFIX_SYMBOLS: LazyLock<HashMap<i8, &'static str>> = LazyLock::new(|| {
     m
 });
 
+impl fmt::Display for Angle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}°", self.0.to_degrees())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::*;

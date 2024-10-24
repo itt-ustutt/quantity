@@ -21,10 +21,22 @@ fn ideal_gas_array(
     moles * RGAS * temperature / volume
 }
 
+#[pyfunction]
+fn law_of_cosines1(a: Length, b: Length, gamma: Angle) -> Length {
+    (a * a + b * b - 2.0 * a * b * gamma.cos()).sqrt()
+}
+
+#[pyfunction]
+fn law_of_cosines2(a: Length, b: Length, c: Length) -> Angle {
+    Angle::acos((a * a + b * b - c * c).convert_into(2.0 * a * b))
+}
+
 #[pymodule]
 fn extend_quantity(m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(bar, m)?)?;
     m.add_function(wrap_pyfunction!(ideal_gas, m)?)?;
     m.add_function(wrap_pyfunction!(ideal_gas_array, m)?)?;
+    m.add_function(wrap_pyfunction!(law_of_cosines1, m)?)?;
+    m.add_function(wrap_pyfunction!(law_of_cosines2, m)?)?;
     Ok(())
 }

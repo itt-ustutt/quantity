@@ -138,7 +138,9 @@
 //! // z = 70.00000 km   p =  21.51808  Pa
 //! # }
 //! ```
-
+//! ## Feature flags
+//! Interoperability with other crates can be achieved by activating the following features:
+#![doc = document_features::document_features!()]
 #![warn(clippy::all)]
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
@@ -427,6 +429,46 @@ impl<D: Dimension> Div<CELSIUS> for Temperature<Array<f64, D>> {
     #[allow(clippy::suspicious_arithmetic_impl)]
     fn div(self, _: CELSIUS) -> Self::Output {
         self.0 - 273.15
+    }
+}
+
+#[derive(Clone, Copy)]
+#[doc(hidden)]
+pub struct Radians;
+pub type Angle<T = f64> = Quantity<T, Radians>;
+
+/// Angle unit radians $\\left(\text{rad}\\right)$
+pub const RADIANS: Angle = Quantity(1.0, PhantomData);
+/// Angle unit degrees $\\left(1°=\\frac{\\pi}{180}\text{rad}\\right)$
+pub const DEGREES: Angle = Quantity(std::f64::consts::PI / 180., PhantomData);
+
+impl Angle {
+    pub fn sin(self) -> f64 {
+        self.0.sin()
+    }
+
+    pub fn cos(self) -> f64 {
+        self.0.cos()
+    }
+
+    pub fn tan(self) -> f64 {
+        self.0.tan()
+    }
+
+    pub fn asin(x: f64) -> Self {
+        Quantity(x.asin(), PhantomData)
+    }
+
+    pub fn acos(x: f64) -> Self {
+        Quantity(x.acos(), PhantomData)
+    }
+
+    pub fn atan(x: f64) -> Self {
+        Quantity(x.atan(), PhantomData)
+    }
+
+    pub fn atan2(y: f64, x: f64) -> Self {
+        Quantity(y.atan2(x), PhantomData)
     }
 }
 

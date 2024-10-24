@@ -1,8 +1,7 @@
 use crate::{PySIObject, QuantityError, _JOULE, _KELVIN, _METER};
-use ang::Angle;
 use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
-use pyo3::types::PyNotImplemented;
+use pyo3::types::{PyFloat, PyNotImplemented};
 use pyo3::PyTypeInfo;
 
 #[pyclass(module = "si_units")]
@@ -37,15 +36,12 @@ impl Debye {
         format!("${}$", self.to_latex())
     }
 
-    fn __repr__(&self) -> PyResult<String> {
-        Ok(self.0.to_string())
+    fn __repr__(&self) -> String {
+        self.to_string()
     }
 
-    fn __rmul__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        if let Ok(l) = lhs.extract::<f64>() {
-            return Ok(Bound::new(lhs.py(), Debye(l * self.0))?.into_any());
-        };
-        Err(PyErr::new::<PyTypeError, _>("not implemented!".to_string()))
+    fn __rmul__(&self, lhs: f64) -> Self {
+        Self(lhs * self.0)
     }
 
     fn __pow__(&self, py: Python, n: i32, _mod: Option<u32>) -> PyResult<PySIObject> {
@@ -59,44 +55,27 @@ impl Debye {
     }
 }
 
-#[pyclass(name = "Angle", module = "si_units")]
+#[pyclass(module = "si_units")]
 #[derive(Clone, Copy)]
-pub struct PyAngle(pub(crate) Angle<f64>);
+pub struct Angle(pub(crate) f64);
 
 #[pymethods]
-impl PyAngle {
+impl Angle {
     #[new]
-    fn new() -> Self {
-        Self(Angle::Radians(0.0))
+    fn new(value: f64) -> Self {
+        Self(value)
     }
 
-    #[staticmethod]
-    fn _from_raw_parts(value: f64, degrees: bool) -> Self {
-        if degrees {
-            Self(Angle::Degrees(value))
-        } else {
-            Self(Angle::Radians(value))
-        }
+    fn __getnewargs__(&self) -> f64 {
+        self.0
     }
 
-    fn _into_raw_parts(&self) -> (f64, bool) {
-        match self.0 {
-            Angle::Degrees(d) => (d, true),
-            Angle::Radians(d) => (d, false),
-        }
+    fn _repr_latex_(&self) -> String {
+        format!("${}$", self.to_latex())
     }
 
-    fn __setstate__(&mut self, state: (f64, bool)) {
-        let (value, degrees) = state;
-        *self = Self::_from_raw_parts(value, degrees)
-    }
-
-    fn __getstate__(&self) -> (f64, bool) {
-        self._into_raw_parts()
-    }
-
-    fn __repr__(&self) -> PyResult<String> {
-        Ok(self.0.to_string())
+    fn __repr__(&self) -> String {
+        self.to_string()
     }
 
     fn __add__(&self, rhs: Self) -> Self {
@@ -115,11 +94,32 @@ impl PyAngle {
         Self(lhs * self.0)
     }
 
-    fn __truediv__(&self, rhs: f64) -> Self {
-        Self(self.0 / rhs)
+    fn __truediv__<'py>(&self, rhs: Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
+        if let Ok(r) = rhs.extract::<f64>() {
+            Ok(Bound::new(rhs.py(), Self(self.0 / r))?.into_any())
+        } else if let Ok(r) = rhs.extract::<Self>() {
+            Ok(PyFloat::new_bound(rhs.py(), self.0 / r.0).into_any())
+        } else {
+            Err(PyErr::new::<PyTypeError, _>(format!(
+                "Can't divide angle by {}",
+                rhs
+            )))
+        }
     }
 
     fn __neg__(&self) -> Self {
         Self(-self.0)
+    }
+
+    fn sin(&self) -> f64 {
+        self.0.sin()
+    }
+
+    fn cos(&self) -> f64 {
+        self.0.cos()
+    }
+
+    fn tan(&self) -> f64 {
+        self.0.tan()
     }
 }

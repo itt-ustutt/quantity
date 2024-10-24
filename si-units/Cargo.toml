@@ -21,13 +21,11 @@ name = "si_units"
 crate-type = ["cdylib"]
 
 [dependencies]
-ang = "0.6"
 ndarray = "0.16"
-pyo3 = { version = "0.22", features = [
-    "extension-module",
-    "abi3",
-    "abi3-py37",
-] }
 numpy = "0.22"
 thiserror = "1.0"
 regex = "1.10"
+
+[dependencies.pyo3]
+version = "0.22"
+features = ["extension-module", "abi3", "abi3-py37"]
