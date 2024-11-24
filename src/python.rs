@@ -41,6 +41,7 @@ impl<
 
 #[cfg(feature = "ndarray")]
 impl<
+        'py,
         T: Integer,
         L: Integer,
         M: Integer,
@@ -49,12 +50,16 @@ impl<
         N: Integer,
         J: Integer,
         D: Dimension,
-    > IntoPy<PyObject> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
+    > IntoPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 {
-    fn into_py(self, py: Python<'_>) -> PyObject {
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
-        let value = self.0.into_pyarray_bound(py).into_any();
-        SIOBJECT.call1(py, (value, unit)).unwrap()
+        let value = self.0.into_pyarray(py).into_any();
+        SIOBJECT.bind(py).call1((value, unit))
     }
 }
 

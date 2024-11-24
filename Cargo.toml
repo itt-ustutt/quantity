@@ -20,6 +20,9 @@ exclude = ["/.github/*", "*.ipynb", "/docs"]
 features = ["python_numpy", "num-dual", "approx"]
 rustdoc-args = ["--html-in-header", "./src/docs-header.html"]
 
+[workspace]
+members = ["si-units", "example/extend_quantity"]
+
 [dependencies]
 typenum = "1.17"
 document-features = "0.2"
@@ -27,7 +30,7 @@ document-features = "0.2"
 ndarray = { version = "0.16", optional = true }
 approx = { version = "0.5", optional = true }
 pyo3 = { version = "0.23", optional = true }
-numpy = { git = "https://github.com/Icxolu/rust-numpy", branch = "pyo3-0.23", optional = true }
+numpy = { git = "https://github.com/pyo3/rust-numpy", optional = true }
 # numpy = { version = "0.22", optional = true }
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
 num-dual = { version = "0.10", optional = true }
