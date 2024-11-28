@@ -5,7 +5,7 @@ use numpy::{IntoPyArray, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, P
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
-use pyo3::types::PyNotImplemented;
+use pyo3::types::{PyFloat, PyNotImplemented};
 use pyo3::{PyErr, PyTypeInfo};
 use thiserror::Error;
 
@@ -220,6 +220,16 @@ impl PySIObject {
     fn __truediv__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
         let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>().map(Bound::get) {
             (r.value.bind(rhs.py()).clone(), self.unit / r.unit)
+        } else if rhs.downcast::<Celsius>().is_ok() {
+            return if self.unit == _KELVIN {
+                let delta = PyFloat::new_bound(rhs.py(), 273.15);
+                self.value.bind(rhs.py()).call_method1("__sub__", (&delta,))
+            } else {
+                Err(QuantityError::InconsistentUnits {
+                    unit1: self.unit,
+                    unit2: _KELVIN,
+                })?
+            };
         } else {
             (rhs.clone(), self.unit)
         };
