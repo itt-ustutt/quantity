@@ -1,7 +1,7 @@
 #![warn(clippy::all)]
 #![allow(non_snake_case)]
-use ndarray::{arr1, Array1, ArrayView};
-use numpy::{IntoPyArray, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray4};
+use ndarray::{arr1, Array1};
+use numpy::IntoPyArray;
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
@@ -77,14 +77,6 @@ impl PySIObject {
     fn __repr__(&self, py: Python) -> PyResult<String> {
         if let Ok(v) = self.value.extract::<f64>(py) {
             Ok(SINumber::new(v, self.unit).to_string())
-        } else if let Ok(v) = self.value.extract::<PyReadonlyArray1<f64>>(py) {
-            Ok(SIArray::new(v.as_array(), self.unit).to_string())
-        } else if let Ok(v) = self.value.extract::<PyReadonlyArray2<f64>>(py) {
-            Ok(SIArray::new(v.as_array(), self.unit).to_string())
-        } else if let Ok(v) = self.value.extract::<PyReadonlyArray3<f64>>(py) {
-            Ok(SIArray::new(v.as_array(), self.unit).to_string())
-        } else if let Ok(v) = self.value.extract::<PyReadonlyArray4<f64>>(py) {
-            Ok(SIArray::new(v.as_array(), self.unit).to_string())
         } else {
             let value = self
                 .value
@@ -312,7 +304,6 @@ pub struct SIObject<T> {
 }
 
 pub type SINumber = SIObject<f64>;
-pub type SIArray<'a, D> = SIObject<ArrayView<'a, f64, D>>;
 
 impl<T> SIObject<T> {
     pub const fn new(value: T, unit: SIUnit) -> Self {

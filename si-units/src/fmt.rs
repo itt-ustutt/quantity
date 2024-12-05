@@ -1,5 +1,4 @@
 use super::*;
-use ndarray::Dimension;
 use regex::Regex;
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -184,19 +183,6 @@ fn unit_to_latex_product(vec: Vec<(&str, i8)>) -> Option<String> {
                 .collect::<Vec<String>>()
                 .join(""),
         ),
-    }
-}
-
-impl<D: Dimension> fmt::Display for SIArray<'_, D> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match DERIVED_UNITS.get(&self.unit) {
-            Some((unit, symbol, _, _, _)) => {
-                write!(f, "{} {}", &self.value / unit.value, symbol)
-            }
-            None => {
-                write!(f, "{} {}", self.value, self.unit)
-            }
-        }
     }
 }
 
@@ -390,20 +376,3 @@ static PREFIX_SYMBOLS: LazyLock<HashMap<i8, &'static str>> = LazyLock::new(|| {
     m.insert(24, "Y");
     m
 });
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_fmt_si() {
-//         assert_eq!(format!("{:.3}", RGAS), "8.314  J/mol/K");
-//     }
-
-//     #[test]
-//     fn test_fmt_zero() {
-//         assert_eq!(format!("{}", 0.0 * KELVIN), "0 K");
-//         assert_eq!(format!("{:.2}", 0.0 * PASCAL), "0.00  Pa");
-//         assert_eq!((0.0 * KELVIN).to_latex(), "0\\,\\mathrm{K}");
-//     }
-// }
