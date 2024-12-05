@@ -1,6 +1,6 @@
 [package]
 name = "quantity"
-version = "0.9.1"
+version = "0.10.0"
 authors = [
     "Philipp Rehner <prehner@ethz.ch>",
     "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
@@ -32,7 +32,7 @@ approx = { version = "0.5", optional = true }
 pyo3 = { version = "0.23", optional = true }
 numpy = { version = "0.23", optional = true }
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
-num-dual = { version = "0.10", optional = true }
+num-dual = { version = "0.11", optional = true }
 
 [features]
 default = []

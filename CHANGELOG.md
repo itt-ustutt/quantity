@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2024-12-05
+### Packaging
+- Update `pyo3` and `numpy` dependencies to 0.23. [#76](https://github.com/itt-ustutt/quantity/pull/76)
+
 ## [0.9.1] - 2024-11-28
 ### Fixed
 - Added division by `CELSIUS` in Python. [#74](https://github.com/itt-ustutt/quantity/pull/74)
