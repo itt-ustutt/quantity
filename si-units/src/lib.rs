@@ -123,7 +123,7 @@ impl PySIObject {
     /// 1  m
     pub fn sqrt(&self, py: Python) -> PyResult<Self> {
         let value = if let Ok(v) = self.value.extract::<f64>(py) {
-            v.sqrt().into_py(py)
+            PyFloat::new(py, v.sqrt()).into_any().unbind()
         } else {
             self.value.call_method0(py, "sqrt")?
         };
@@ -141,7 +141,7 @@ impl PySIObject {
     /// 1  m
     pub fn cbrt(&self, py: Python) -> PyResult<Self> {
         let value = if let Ok(v) = self.value.extract::<f64>(py) {
-            v.cbrt().into_py(py)
+            PyFloat::new(py, v.cbrt()).into_any().unbind()
         } else {
             self.value.call_method0(py, "cbrt")?
         };
@@ -195,7 +195,7 @@ impl PySIObject {
             .value
             .bind(rhs.py())
             .call_method1("__mul__", (&rhs_value,))?;
-        if PyNotImplemented::is_exact_type_of_bound(&value) {
+        if PyNotImplemented::is_exact_type_of(&value) {
             value = rhs_value.call_method1("__rmul__", (&self.value,))?;
         }
         Self::new_unit_checked(value, unit)
@@ -211,7 +211,7 @@ impl PySIObject {
             .value
             .bind(lhs.py())
             .call_method1("__rmul__", (&lhs_value,))?;
-        if PyNotImplemented::is_exact_type_of_bound(&value) {
+        if PyNotImplemented::is_exact_type_of(&value) {
             value = lhs_value.call_method1("__mul__", (&self.value,))?;
         }
         Self::new_unit_checked(value, unit)
@@ -222,7 +222,7 @@ impl PySIObject {
             (r.value.bind(rhs.py()).clone(), self.unit / r.unit)
         } else if rhs.downcast::<Celsius>().is_ok() {
             return if self.unit == _KELVIN {
-                let delta = PyFloat::new_bound(rhs.py(), 273.15);
+                let delta = PyFloat::new(rhs.py(), 273.15);
                 self.value.bind(rhs.py()).call_method1("__sub__", (&delta,))
             } else {
                 Err(QuantityError::InconsistentUnits {
@@ -237,7 +237,7 @@ impl PySIObject {
             .value
             .bind(rhs.py())
             .call_method1("__truediv__", (&rhs_value,))?;
-        if PyNotImplemented::is_exact_type_of_bound(&value) {
+        if PyNotImplemented::is_exact_type_of(&value) {
             value = rhs_value.call_method1("__rtruediv__", (&self.value,))?;
         }
         Self::new_unit_checked(value, unit)
@@ -253,7 +253,7 @@ impl PySIObject {
             .value
             .bind(lhs.py())
             .call_method1("__rtruediv__", (&lhs_value,))?;
-        if PyNotImplemented::is_exact_type_of_bound(&value) {
+        if PyNotImplemented::is_exact_type_of(&value) {
             value = lhs_value.call_method1("__truediv__", (&self.value,))?;
         }
         Self::new_unit_checked(value, unit)
@@ -339,7 +339,7 @@ impl SIArray1 {
         let py = value.py();
         if let Ok(v) = value.extract::<SINumber>() {
             let value = arr1(&[1.0]) * v.value;
-            let value = value.into_pyarray_bound(py).into_any().unbind();
+            let value = value.into_pyarray(py).into_any().unbind();
             Bound::new(py, PySIObject::new(value, v.unit))
         } else if let Ok(v) = value.extract::<Vec<SINumber>>() {
             let mut unit = SIUnit::DIMENSIONLESS;
@@ -355,7 +355,7 @@ impl SIArray1 {
                 }
             }
             let value: Array1<_> = Array1::from_vec(value);
-            let value = value.into_pyarray_bound(py).into_any().unbind();
+            let value = value.into_pyarray(py).into_any().unbind();
             Bound::new(py, PySIObject::new(value, unit))
         } else {
             Ok(value.downcast_into::<PySIObject>()?)
@@ -386,7 +386,7 @@ impl SIArray1 {
     ) -> Result<PySIObject, QuantityError> {
         if start.unit == end.unit {
             let value = Array1::linspace(start.value, end.value, n);
-            let value = value.into_pyarray_bound(py).into_any().unbind();
+            let value = value.into_pyarray(py).into_any().unbind();
             Ok(PySIObject::new(value, start.unit))
         } else {
             Err(QuantityError::InconsistentUnits {
@@ -420,7 +420,7 @@ impl SIArray1 {
     ) -> Result<PySIObject, QuantityError> {
         if start.unit == end.unit {
             let value = Array1::logspace(10.0, start.value.log10(), end.value.log10(), n);
-            let value = value.into_pyarray_bound(py).into_any().unbind();
+            let value = value.into_pyarray(py).into_any().unbind();
             Ok(PySIObject::new(value, start.unit))
         } else {
             Err(QuantityError::InconsistentUnits {
@@ -594,5 +594,6 @@ pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
 }
 
 fn add_constant(m: &Bound<'_, PyModule>, name: &str, value: f64, unit: SIUnit) -> PyResult<()> {
-    m.add(name, PySIObject::new(value.into_py(m.py()), unit))
+    let value = PyFloat::new(m.py(), value).into_any().unbind();
+    m.add(name, PySIObject::new(value, unit))
 }

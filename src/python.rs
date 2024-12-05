@@ -10,7 +10,7 @@ use typenum::Integer;
 
 static SIOBJECT: LazyLock<PyObject> = LazyLock::new(|| {
     Python::with_gil(|py| {
-        PyModule::import_bound(py, "si_units")
+        PyModule::import(py, "si_units")
             .unwrap()
             .getattr("SIObject")
             .unwrap()
@@ -18,17 +18,30 @@ static SIOBJECT: LazyLock<PyObject> = LazyLock::new(|| {
     })
 });
 
-impl<T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    IntoPy<PyObject> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+        'py,
+        T: Integer,
+        L: Integer,
+        M: Integer,
+        I: Integer,
+        THETA: Integer,
+        N: Integer,
+        J: Integer,
+    > IntoPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
 {
-    fn into_py(self, py: Python<'_>) -> PyObject {
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
-        SIOBJECT.call1(py, (self.0, unit)).unwrap()
+        SIOBJECT.bind(py).call1((self.0, unit))
     }
 }
 
 #[cfg(feature = "ndarray")]
 impl<
+        'py,
         T: Integer,
         L: Integer,
         M: Integer,
@@ -37,12 +50,16 @@ impl<
         N: Integer,
         J: Integer,
         D: Dimension,
-    > IntoPy<PyObject> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
+    > IntoPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 {
-    fn into_py(self, py: Python<'_>) -> PyObject {
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
-        let value = self.0.into_pyarray_bound(py).into_any();
-        SIOBJECT.call1(py, (value, unit)).unwrap()
+        let value = self.0.into_pyarray(py).into_any();
+        SIOBJECT.bind(py).call1((value, unit))
     }
 }
 
@@ -125,7 +142,7 @@ where
 
 static ANGLE: LazyLock<PyObject> = LazyLock::new(|| {
     Python::with_gil(|py| {
-        PyModule::import_bound(py, "si_units")
+        PyModule::import(py, "si_units")
             .unwrap()
             .getattr("Angle")
             .unwrap()
@@ -133,9 +150,12 @@ static ANGLE: LazyLock<PyObject> = LazyLock::new(|| {
     })
 });
 
-impl IntoPy<PyObject> for Angle {
-    fn into_py(self, py: Python<'_>) -> PyObject {
-        ANGLE.call1(py, (self.0,)).unwrap()
+impl<'py> IntoPyObject<'py> for Angle {
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+        ANGLE.bind(py).call1((self.0,))
     }
 }
 

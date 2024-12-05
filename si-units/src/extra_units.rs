@@ -11,10 +11,9 @@ pub struct Celsius;
 #[pymethods]
 impl Celsius {
     fn __rmul__(&self, lhs: &Bound<'_, PyAny>) -> PyResult<PySIObject> {
-        let delta: Py<PyAny> = 273.15.into_py(lhs.py());
-        let delta = delta.bind(lhs.py());
-        let mut value = lhs.call_method1("__add__", (delta,))?;
-        if PyNotImplemented::is_exact_type_of_bound(&value) {
+        let delta = PyFloat::new(lhs.py(), 273.15);
+        let mut value = lhs.call_method1("__add__", (&delta,))?;
+        if PyNotImplemented::is_exact_type_of(&value) {
             value = delta.call_method1("__add__", (lhs,))?;
         }
         Ok(PySIObject::new(value.unbind(), _KELVIN))
@@ -48,9 +47,10 @@ impl Debye {
         if n % 2 == 1 {
             Err(QuantityError::DebyePower)?
         } else {
-            let value = (self.0.powi(2) * 1e-19 * 1e-30).powi(n / 2);
+            let value = PyFloat::new(py, (self.0.powi(2) * 1e-19 * 1e-30).powi(n / 2));
+            let value = value.into_any().unbind();
             let unit = (_JOULE * _METER.powi(3)).powi(n / 2);
-            Ok(PySIObject::new(value.into_py(py), unit))
+            Ok(PySIObject::new(value, unit))
         }
     }
 }
@@ -98,7 +98,7 @@ impl Angle {
         if let Ok(r) = rhs.extract::<f64>() {
             Ok(Bound::new(rhs.py(), Self(self.0 / r))?.into_any())
         } else if let Ok(r) = rhs.extract::<Self>() {
-            Ok(PyFloat::new_bound(rhs.py(), self.0 / r.0).into_any())
+            Ok(PyFloat::new(rhs.py(), self.0 / r.0).into_any())
         } else {
             Err(PyErr::new::<PyTypeError, _>(format!(
                 "Can't divide angle by {}",
