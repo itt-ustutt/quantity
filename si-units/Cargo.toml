@@ -22,7 +22,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ndarray = "0.16"
-numpy = { git = "https://github.com/pyo3/rust-numpy" }
+numpy = "0.23"
 thiserror = "2.0"
 regex = "1.10"
 
