@@ -222,7 +222,7 @@ impl PySIObject {
             (r.value.bind(rhs.py()).clone(), self.unit / r.unit)
         } else if rhs.downcast::<Celsius>().is_ok() {
             return if self.unit == _KELVIN {
-                let delta = PyFloat::new_bound(rhs.py(), 273.15);
+                let delta = PyFloat::new(rhs.py(), 273.15);
                 self.value.bind(rhs.py()).call_method1("__sub__", (&delta,))
             } else {
                 Err(QuantityError::InconsistentUnits {
