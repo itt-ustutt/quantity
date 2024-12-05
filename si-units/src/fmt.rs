@@ -187,7 +187,7 @@ fn unit_to_latex_product(vec: Vec<(&str, i8)>) -> Option<String> {
     }
 }
 
-impl<'a, D: Dimension> fmt::Display for SIArray<'a, D> {
+impl<D: Dimension> fmt::Display for SIArray<'_, D> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match DERIVED_UNITS.get(&self.unit) {
             Some((unit, symbol, _, _, _)) => {
