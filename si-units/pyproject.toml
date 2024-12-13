@@ -1,0 +1,46 @@
+[project]
+name = "si-units"
+version = "0.10.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Philipp Rehner", email = "prehner@ethz.ch" },
+    { name = "Gernot Bauer", email = "bauer@itt.uni-stuttgart.de" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "maturin>=1.0",
+    "numpy>=2.2",
+]
+
+[tool.maturin]
+module-name = "si_units._core"
+python-packages = ["si_units"]
+python-source = "src"
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "mkdocs-material>=9.5.48",
+    "mkdocstrings>=0.27.0",
+    "mkdocstrings-python>=1.12.2",
+    "ruff>=0.8.3",
+]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.lint]
+extend-select = [
+  "D",   # pydocstyle
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google" # https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 80

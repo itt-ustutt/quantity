@@ -26,7 +26,7 @@ pub enum QuantityError {
     DebyePower,
 }
 
-#[pyclass(name = "SIObject", module = "si_units", frozen)]
+#[pyclass(name = "SIObject", module = "si_units._core", frozen)]
 pub struct PySIObject {
     value: PyObject,
     unit: SIUnit,
@@ -104,15 +104,6 @@ impl PySIObject {
         })
     }
 
-    /// Try to calculate the square root of self.
-    ///
-    /// Examples
-    /// --------
-    ///
-    /// >>> import si
-    /// >>> m2 = METER**2
-    /// >>> m2.sqrt()
-    /// 1  m
     pub fn sqrt(&self, py: Python) -> PyResult<Self> {
         let value = if let Ok(v) = self.value.extract::<f64>(py) {
             PyFloat::new(py, v.sqrt()).into_any().unbind()
@@ -122,15 +113,6 @@ impl PySIObject {
         Ok(Self::new(value, self.unit.sqrt()?))
     }
 
-    /// Try to calculate the cubic root of self.
-    ///
-    /// Examples
-    /// --------
-    ///
-    /// >>> import si
-    /// >>> m3 = METER**3
-    /// >>> m3.cbrt()
-    /// 1  m
     pub fn cbrt(&self, py: Python) -> PyResult<Self> {
         let value = if let Ok(v) = self.value.extract::<f64>(py) {
             PyFloat::new(py, v.cbrt()).into_any().unbind()
@@ -140,16 +122,6 @@ impl PySIObject {
         Ok(Self::new(value, self.unit.cbrt()?))
     }
 
-    /// Test if the quantity has the same unit as the argument.
-    ///
-    /// Parameters
-    /// ----------
-    /// other : SINumber
-    ///     The unit that is compared.
-    ///
-    /// Returns
-    /// -------
-    /// bool
     pub fn has_unit(&self, other: PyRef<'_, Self>) -> bool {
         self.unit.eq(&other.unit)
     }
@@ -321,7 +293,7 @@ impl<'py> FromPyObject<'py> for SINumber {
     }
 }
 
-#[pyclass]
+#[pyclass(name = "SIArray1", module = "si_units._core", frozen)]
 struct SIArray1;
 
 #[pymethods]
@@ -353,21 +325,6 @@ impl SIArray1 {
         }
     }
 
-    /// Create a linearly spaced SIArray.
-    ///
-    /// Parameters
-    /// ----------
-    /// start: SINumber
-    ///     The lowest value of the Array.
-    /// end: SINumber
-    ///     The highest value of the Array.
-    /// n: int
-    ///     The number of points.
-    ///
-    /// Returns
-    /// -------
-    /// SIArray1
-    ///
     #[staticmethod]
     fn linspace(
         py: Python,
@@ -387,21 +344,6 @@ impl SIArray1 {
         }
     }
 
-    /// Create a logarithmically spaced SIArray.
-    ///
-    /// Parameters
-    /// ----------
-    /// start: SINumber
-    ///     The lowest value of the Array.
-    /// end: SINumber
-    ///     The highest value of the Array.
-    /// n: int
-    ///     The number of points.
-    ///
-    /// Returns
-    /// -------
-    /// SIArray1
-    ///
     #[staticmethod]
     fn logspace(
         py: Python,
@@ -501,12 +443,12 @@ pub const RONNA: f64 = 1e27;
 pub const QUETTA: f64 = 1e30;
 
 #[pymodule]
-pub fn si_units(m: &Bound<'_, PyModule>) -> PyResult<()> {
+pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
 
     m.add_class::<PySIObject>()?;
     m.add_class::<Angle>()?;
-    m.add("SIArray1", SIArray1)?;
+    m.add_class::<SIArray1>()?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
     add_constant(m, "METER", 1.0, _METER)?;

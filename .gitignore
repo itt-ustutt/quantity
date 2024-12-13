@@ -3,8 +3,12 @@ Cargo.lock
 *.so
 si-units/docs/_build
 si-units/docs/generated
-/venv
 .ipynb_checkpoints
 *.ipynb
 __pycache__
 test_readme.py
+*.lock
+
+# venv
+/venv
+.venv
