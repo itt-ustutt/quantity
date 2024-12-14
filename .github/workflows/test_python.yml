@@ -30,6 +30,7 @@ jobs:
           maturin build --release --out dist
           pip install extend_quantity --no-index --find-links dist --force-reinstall
       - name: Build wheels for si-units
+        working-directory: ./si-units
         run: |
           maturin build --release --out dist
           pip install si-units --no-index --find-links dist --force-reinstall

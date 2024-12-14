@@ -5,13 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 authors = [
     { name = "Philipp Rehner", email = "prehner@ethz.ch" },
-    { name = "Gernot Bauer", email = "bauer@itt.uni-stuttgart.de" }
+    { name = "Gernot Bauer", email = "bauer@itt.uni-stuttgart.de" },
 ]
-requires-python = ">=3.10"
-dependencies = [
-    "maturin>=1.0",
-    "numpy>=2.2",
-]
+requires-python = ">=3.9"
 
 [tool.maturin]
 module-name = "si_units._core"
@@ -36,7 +32,7 @@ line-length = 80
 
 [tool.ruff.lint]
 extend-select = [
-  "D",   # pydocstyle
+    "D", # pydocstyle
 ]
 
 [tool.ruff.lint.pydocstyle]
