@@ -20,8 +20,10 @@ Examples:
 # from si_units._core import SIObject
 from si_units._core import (
     SIObject,
-    SIArray1,
     Angle,
+    array1,
+    linspace,
+    logspace,
     SECOND,
     METER,
     KILOGRAM,
@@ -94,8 +96,10 @@ from si_units._core import (
 
 __all__ = [
     "SIObject",
-    "SIArray1",
     "Angle",
+    "array1",
+    "linspace",
+    "logspace",
     "SECOND",
     "METER",
     "KILOGRAM",

@@ -1,14 +1,22 @@
 **/target
 Cargo.lock
 *.so
-si-units/docs/_build
-si-units/docs/generated
+
+# jupyter notebook
 .ipynb_checkpoints
 *.ipynb
+
 __pycache__
 test_readme.py
 *.lock
+*.py[oc]
+*.egg-info
 
 # venv
-/venv
 .venv
+
+# generated
+build/
+dist/
+wheels/
+site/

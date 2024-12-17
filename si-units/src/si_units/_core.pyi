@@ -17,7 +17,7 @@ class SIObject:
         Warning: Don't use the default constructor 
             This constructor should not be used to construct a quantity.
             Instead, multiply the value (float or array of floats)
-            by the appropriate unit.
+            by the appropriate unit. See example below.
 
         Args:
             value:
@@ -27,6 +27,14 @@ class SIObject:
 
         Raises:
             RuntimeError: When unit has the wrong format.
+
+        Examples:
+            >>> import si_units as si
+            >>> # don't do this:
+            >>> two_meters_init = si.SIObject(2.0, [1, 0, 0, 0, 0, 0, 0])
+            >>> # instead, do this:
+            >>> two_meters_mul = 2.0 * si.METER
+            >>> assert two_meters_init == two_meters_mul
         """
         ...
 
@@ -59,8 +67,8 @@ class SIObject:
         
         Examples:
             >>> from si_units import METER
-            >>> volume = METER**2
-            >>> length = volume.sqrt()
+            >>> volume = METER**3
+            >>> length = volume.cbrt()
         """
         ...
 
@@ -75,60 +83,55 @@ class SIObject:
         """
         ...
 
-class SIArray1:
-    """Builder for SIObjects with numpy.narray as value storage."""
+def array1(value: SIObject | list[SIObject]) -> SIObject:
+    """Build SIObject from scalar or list.
 
-    def __call__(self, value: SIObject | list[SIObject]) -> SIObject:
-        """Build SIObject from scalar or list.
+    When the input is a scalar, it is stored in an array with a single element.
 
-        Args:
-            value: Values to store. Must all have the same unit.
+    Args:
+        value: Values to store. Must all have the same unit.
 
-        Returns:
-            The quantity with values stored within array, even
-            if value is given as a scalar.
+    Returns:
+        The quantity with values stored within array, 
+            even if value is given as a scalar.
 
-        Raises:
-            RuntimeError: If the elements of value have different units.
-        """
-        ...
+    Raises:
+        RuntimeError: If the elements of value have different units.
+    """
+    ...
 
-    @staticmethod
-    def linspace(start: SIObject, end: SIObject, n: int) -> SIObject:
-        """Linearly spaced quantities.
+def linspace(start: SIObject, end: SIObject, n: int) -> SIObject:
+    """Linearly spaced quantities.
 
-        Args:
-            start: Lowest value.
-            end: Highest value.
-            n: The (positive) number of points.
+    Args:
+        start: Lowest value.
+        end: Highest value.
+        n: The (positive) number of points.
 
-        Returns:
-            Linearly spaced values with the same unit.
+    Returns:
+        Linearly spaced values with the same unit.
 
-        Raises:
-            RuntimeError:
-                If start and end values are not scalars and if they don't have
-                the same unit.
-                If n is not positive.
-        """
-        ...
+    Raises:
+        RuntimeError:
+            If start and end values are not scalars, if they don't have
+            the same unit, or if n is not positive.
+    """
+    ...
 
-    @staticmethod
-    def logspace(start: SIObject, end: SIObject, n: int) -> SIObject:
-        """Logarithmically spaced quantities.
+def logspace(start: SIObject, end: SIObject, n: int) -> SIObject:
+    """Logarithmically spaced quantities.
 
-        Args:
-            start: Lowest value.
-            end: Highest value.
-            n: The (positive) number of points.
+    Args:
+        start: Lowest value.
+        end: Highest value.
+        n: The (positive) number of points.
 
-        Returns:
-            Logarithmically spaced values with the same unit.
+    Returns:
+        Logarithmically spaced values with the same unit.
 
-        Raises:
-            RuntimeError:
-                If start and end values are not scalars and if they don't have
-                the same unit.
-                If n is not positive.
-        """
-        ...
+    Raises:
+        RuntimeError:
+            If start and end values are not scalars, if they don't have
+            the same unit, or if n is not positive.
+    """
+    ...

@@ -4,6 +4,23 @@ This package provides representations of quantities with SI units.
 It is written with flexibility in mind and is able to represent arbitrarily complex units.
 In addition to simple scalar quantities, it can be used to decorate any complex data type (numpy arrays, PyTorch tensors) to provide unit checks.
 
+## Installation
+
+You can install `si-units` from pypi using `pip`:
+
+```
+pip install si-units
+```
+
+## Build from source
+
+To build the code from source, you need the [rust compiler](https://www.rust-lang.org/tools/install) and [maturin](https://github.com/PyO3/maturin).
+You can then install the latest master directly from github:
+
+```
+pip install git+https://github.com/itt-ustutt/quantity
+```
+
 ## Usage
 
 ```py title="Ideal gas pressure" linenums="1"
@@ -34,7 +51,7 @@ print(sqms)
 ```
 
 When you divide a quantity by its unit, the value
-(i.e. `float` for scalars or `numpy.ndarray[flaot]` for arrays) is returned.
+(i.e. `float` for scalars or `numpy.ndarray[float]` for arrays) is returned.
 You can use this to convert units:
 
 ```py title="Unit conversion" linenums="1"
@@ -57,20 +74,3 @@ V = 8.9e+06 A^3
 ```
 
 See [Examples](examples.md) section for more use cases.
-
-## Installation
-
-You can install `si-units` from pypi using `pip`:
-
-```
-pip install si-units
-```
-
-## Build from source
-
-To build the code from source, you need the [rust compiler](https://www.rust-lang.org/tools/install) and [maturin](https://github.com/PyO3/maturin).
-You can then install the latest master directly from github:
-
-```
-pip install git+https://github.com/itt-ustutt/quantity
-```

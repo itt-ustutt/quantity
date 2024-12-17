@@ -293,74 +293,69 @@ impl<'py> FromPyObject<'py> for SINumber {
     }
 }
 
-#[pyclass(name = "SIArray1", module = "si_units._core", frozen)]
-struct SIArray1;
-
-#[pymethods]
-impl SIArray1 {
-    fn __call__<'py>(&self, value: Bound<'py, PyAny>) -> PyResult<Bound<'py, PySIObject>> {
-        let py = value.py();
-        if let Ok(v) = value.extract::<SINumber>() {
-            let value = arr1(&[1.0]) * v.value;
-            let value = value.into_pyarray(py).into_any().unbind();
-            Bound::new(py, PySIObject::new(value, v.unit))
-        } else if let Ok(v) = value.extract::<Vec<SINumber>>() {
-            let mut unit = SIUnit::DIMENSIONLESS;
-            let (value, units): (Vec<_>, Vec<_>) = v.into_iter().map(|v| (v.value, v.unit)).unzip();
-            for u in units {
-                if unit != SIUnit::DIMENSIONLESS && unit != u {
-                    Err(QuantityError::InconsistentUnits {
-                        unit1: unit,
-                        unit2: u,
-                    })?;
-                } else {
-                    unit = u
-                }
+#[pyfunction]
+fn array1<'py>(value: Bound<'py, PyAny>) -> PyResult<Bound<'py, PySIObject>> {
+    let py = value.py();
+    if let Ok(v) = value.extract::<SINumber>() {
+        let value = arr1(&[1.0]) * v.value;
+        let value = value.into_pyarray(py).into_any().unbind();
+        Bound::new(py, PySIObject::new(value, v.unit))
+    } else if let Ok(v) = value.extract::<Vec<SINumber>>() {
+        let mut unit = SIUnit::DIMENSIONLESS;
+        let (value, units): (Vec<_>, Vec<_>) = v.into_iter().map(|v| (v.value, v.unit)).unzip();
+        for u in units {
+            if unit != SIUnit::DIMENSIONLESS && unit != u {
+                Err(QuantityError::InconsistentUnits {
+                    unit1: unit,
+                    unit2: u,
+                })?;
+            } else {
+                unit = u
             }
-            let value: Array1<_> = Array1::from_vec(value);
-            let value = value.into_pyarray(py).into_any().unbind();
-            Bound::new(py, PySIObject::new(value, unit))
-        } else {
-            Ok(value.downcast_into::<PySIObject>()?)
         }
+        let value: Array1<_> = Array1::from_vec(value);
+        let value = value.into_pyarray(py).into_any().unbind();
+        Bound::new(py, PySIObject::new(value, unit))
+    } else {
+        Ok(value.downcast_into::<PySIObject>()?)
     }
+}
 
-    #[staticmethod]
-    fn linspace(
-        py: Python,
-        start: SINumber,
-        end: SINumber,
-        n: usize,
-    ) -> Result<PySIObject, QuantityError> {
-        if start.unit == end.unit {
-            let value = Array1::linspace(start.value, end.value, n);
-            let value = value.into_pyarray(py).into_any().unbind();
-            Ok(PySIObject::new(value, start.unit))
-        } else {
-            Err(QuantityError::InconsistentUnits {
-                unit1: start.unit,
-                unit2: end.unit,
-            })
-        }
+#[pyfunction]
+fn linspace(
+    py: Python,
+    start: SINumber,
+    end: SINumber,
+    n: usize,
+) -> Result<PySIObject, QuantityError> {
+    if start.unit == end.unit {
+        let value = Array1::linspace(start.value, end.value, n);
+        let value = value.into_pyarray(py).into_any().unbind();
+        Ok(PySIObject::new(value, start.unit))
+    } else {
+        Err(QuantityError::InconsistentUnits {
+            unit1: start.unit,
+            unit2: end.unit,
+        })
     }
+}
 
-    #[staticmethod]
-    fn logspace(
-        py: Python,
-        start: SINumber,
-        end: SINumber,
-        n: usize,
-    ) -> Result<PySIObject, QuantityError> {
-        if start.unit == end.unit {
-            let value = Array1::logspace(10.0, start.value.log10(), end.value.log10(), n);
-            let value = value.into_pyarray(py).into_any().unbind();
-            Ok(PySIObject::new(value, start.unit))
-        } else {
-            Err(QuantityError::InconsistentUnits {
-                unit1: start.unit,
-                unit2: end.unit,
-            })
-        }
+#[pyfunction]
+fn logspace(
+    py: Python,
+    start: SINumber,
+    end: SINumber,
+    n: usize,
+) -> Result<PySIObject, QuantityError> {
+    if start.unit == end.unit {
+        let value = Array1::logspace(10.0, start.value.log10(), end.value.log10(), n);
+        let value = value.into_pyarray(py).into_any().unbind();
+        Ok(PySIObject::new(value, start.unit))
+    } else {
+        Err(QuantityError::InconsistentUnits {
+            unit1: start.unit,
+            unit2: end.unit,
+        })
     }
 }
 
@@ -448,7 +443,9 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     m.add_class::<PySIObject>()?;
     m.add_class::<Angle>()?;
-    m.add_class::<SIArray1>()?;
+    m.add_function(wrap_pyfunction!(array1, m)?)?;
+    m.add_function(wrap_pyfunction!(linspace, m)?)?;
+    m.add_function(wrap_pyfunction!(logspace, m)?)?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
     add_constant(m, "METER", 1.0, _METER)?;
