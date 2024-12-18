@@ -294,7 +294,7 @@ impl<'py> FromPyObject<'py> for SINumber {
 }
 
 #[pyfunction]
-fn array1<'py>(value: Bound<'py, PyAny>) -> PyResult<Bound<'py, PySIObject>> {
+fn array<'py>(value: Bound<'py, PyAny>) -> PyResult<Bound<'py, PySIObject>> {
     let py = value.py();
     if let Ok(v) = value.extract::<SINumber>() {
         let value = arr1(&[1.0]) * v.value;
@@ -443,7 +443,7 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     m.add_class::<PySIObject>()?;
     m.add_class::<Angle>()?;
-    m.add_function(wrap_pyfunction!(array1, m)?)?;
+    m.add_function(wrap_pyfunction!(array, m)?)?;
     m.add_function(wrap_pyfunction!(linspace, m)?)?;
     m.add_function(wrap_pyfunction!(logspace, m)?)?;
 

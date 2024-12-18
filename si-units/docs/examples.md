@@ -103,7 +103,7 @@ is a one-dimensional array.
 ```py linenums="1"
 import si_units as si
 # from a list of SIObjects
-temperatures = si.array1([298.15 * si.KELVIN, 313.15 * si.KELVIN])
+temperatures = si.array([298.15 * si.KELVIN, 313.15 * si.KELVIN])
 # linearly spaced
 heights = si.linspace(15 * si.CENTI * si.METER, 15 * si.METER, 1000)
 # log-spaced

@@ -10,7 +10,7 @@
         attributes: false
         functions: true
 
-::: si_units._core.array1
+::: si_units._core.array
     options:
           show_symbol_type_heading: true
 ::: si_units._core.linspace

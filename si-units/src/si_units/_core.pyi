@@ -83,7 +83,7 @@ class SIObject:
         """
         ...
 
-def array1(value: SIObject | list[SIObject]) -> SIObject:
+def array(value: SIObject | list[SIObject]) -> SIObject:
     """Build SIObject from scalar or list.
 
     When the input is a scalar, it is stored in an array with a single element.

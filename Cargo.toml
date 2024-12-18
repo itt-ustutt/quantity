@@ -1,18 +1,3 @@
-[workspace]
-resolver = "2"
-members = ["si-units", "example/extend_quantity"]
-
-[workspace.package]
-version = "0.10.0"
-authors = [
-    "Philipp Rehner <prehner@ethz.ch>",
-    "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
-]
-edition = "2021"
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/itt-ustutt/quantity"
-
-
 [package]
 name = "quantity"
 version = "0.10.0"

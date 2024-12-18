@@ -14,12 +14,31 @@ pip install si-units
 
 ## Build from source
 
-To build the code from source, you need the [rust compiler](https://www.rust-lang.org/tools/install) and [maturin](https://github.com/PyO3/maturin).
-You can then install the latest master directly from github:
+To build the code from source, you need the [rust compiler](https://www.rust-lang.org/tools/install).
+
+### maturin
+
+With [maturin](https://github.com/PyO3/maturin) installed:
 
 ```
-pip install git+https://github.com/itt-ustutt/quantity
+git clone https://github.com/itt-ustutt/quantity
+cd quantity/si-units
+maturin build --release
 ```
+
+You can then install the generated wheel (placed in `quantity/target/wheels`) into your Python environment.
+
+### uv
+
+You can use [uv](https://github.com/astral-sh/uv) to build the wheel:
+
+```
+git clone https://github.com/itt-ustutt/quantity
+cd quantity/si-units
+uv build
+```
+
+You can then install the generated wheel (placed in `dist/`) into your Python environment.
 
 ## Usage
 
