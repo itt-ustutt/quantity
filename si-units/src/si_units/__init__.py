@@ -15,13 +15,13 @@ Examples:
     >>> moles = 75.0 * MOL
     >>> pressure = moles * RGAS * temperature / volume
     >>> print(f"The pressure is {pressure / BAR:.2f} bar")
-    "The pressure is 1.24 bar"
+    The pressure is 1.24 bar
 """
 # from si_units._core import SIObject
 from si_units._core import (
     SIObject,
     Angle,
-    array1,
+    array,
     linspace,
     logspace,
     SECOND,
@@ -97,7 +97,7 @@ from si_units._core import (
 __all__ = [
     "SIObject",
     "Angle",
-    "array1",
+    "array",
     "linspace",
     "logspace",
     "SECOND",
