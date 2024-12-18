@@ -294,7 +294,7 @@ impl<'py> FromPyObject<'py> for SINumber {
 }
 
 #[pyfunction]
-fn array<'py>(value: Bound<'py, PyAny>) -> PyResult<Bound<'py, PySIObject>> {
+fn array(value: Bound<'_, PyAny>) -> PyResult<Bound<'_, PySIObject>> {
     let py = value.py();
     if let Ok(v) = value.extract::<SINumber>() {
         let value = arr1(&[1.0]) * v.value;
