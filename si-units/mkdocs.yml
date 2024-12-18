@@ -58,7 +58,7 @@ plugins:
       handlers:
         python:
           paths: [src]
-          docstring_style: goodle
+          docstring_style: google
           show_signature_annotations: true
           options:
             find_stubs_package: true
