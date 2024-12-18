@@ -20,6 +20,8 @@ exclude = ["/.github/*", "*.ipynb", "/docs"]
 features = ["python_numpy", "num-dual", "approx"]
 rustdoc-args = ["--html-in-header", "./src/docs-header.html"]
 
+[workspace]
+members = ["si-units", "example/extend_quantity"]
 
 [dependencies]
 typenum = "1.17"
