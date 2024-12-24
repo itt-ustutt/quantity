@@ -3,7 +3,7 @@
 [![documentation](https://img.shields.io/badge/docs-github--pages-blue)](https://itt-ustutt.github.io/quantity/index.html)
 [![PyPI version](https://badge.fury.io/py/si_units.svg)](https://badge.fury.io/py/si_units)
 
-Representation of quantities with SI units. 
+Representation of quantities with SI units.
 
 The package is written with flexibility in mind and is able to represent arbitrarily complex units.
 In addition to simple scalar quantities, it can be used to decorate any complex data type (numpy arrays, PyTorch tensors) to provide unit checks.

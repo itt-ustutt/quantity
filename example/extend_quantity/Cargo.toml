@@ -8,6 +8,6 @@ name = "extend_quantity"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.23.0", features = ["extension-module", "abi3-py39"] }
+pyo3 = { version = "0.23", features = ["extension-module", "abi3-py39"] }
 quantity = { version = "*", path = "../../", features = ["python_numpy"] }
 ndarray = "0.16"
