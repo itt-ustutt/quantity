@@ -1,0 +1,49 @@
+name: Release Documentation
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build-documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - name: Install python dependencies
+        run: |
+          pip install mkdocs-material mkdocstrings-python
+      - name: Build Wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          manylinux: auto
+          command: build
+          args: --release --out dist -m si-units/Cargo.toml
+      - name: Install module
+        run: |
+          pip install si-units --no-index --find-links dist --force-reinstall
+      - name: Build documentation
+        run: mkdocs build -f si-units/mkdocs.yml -d ../public
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: public
+
+  release-documentation:
+    needs: [build-documentation]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: public
+      - name: Deploy documentation to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
