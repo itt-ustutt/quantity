@@ -26,23 +26,23 @@ jobs:
   macos:
     strategy:
       matrix:
-        target: [x86_64, aarch64]
+        target: [ {arch: x64, target: x86_64}, {arch: arm64, target: aarch64} ]
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.11
-          architecture: ${{ matrix.target }}
-      - name: Build wheels - ${{ matrix.target }}
+          architecture: ${{ matrix.target.arch }}
+      - name: Build wheels - ${{ matrix.target.target }}
         uses: PyO3/maturin-action@v1
         with:
-          target: ${{ matrix.target }}
+          target: ${{ matrix.target.target }}
           args: --release --out dist -m si-units/Cargo.toml
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-macos-${{ matrix.target }}
+          name: wheel-macos-${{ matrix.target.target }}
           path: dist
   windows:
     runs-on: windows-latest
