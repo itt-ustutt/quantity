@@ -64,38 +64,12 @@ for i in 0..10 {
 // z = 70.00000 km   p =  21.51808  Pa
 ```
 
+## Python Package
+
+For information on how to install, use and build the Python package, see [here](si-units).
+
 ## Documentation
 
 For the rust documentation, see [here](https://docs.rs/quantity).
 
 For the python documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
-
-## Development
-
-To build the project including the bindings to python, we use [maturin](https://github.com/PyO3/maturin).
-
-When developing, use
-
-```
-maturin develop --release
-```
-
-To build the python wheels, use
-
-```
-maturin build --release
-```
-
-To build the documentation you need `sphinx` and some additional packages. From the root directory, type
-
-```
-cd si-units/docs
-make html
-```
-
-To run the doctests, from the root directory, type
-
-```
-cd si-units/docs
-make doctest
-```

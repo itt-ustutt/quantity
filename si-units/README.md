@@ -10,17 +10,15 @@ In addition to simple scalar quantities, it can be used to decorate any complex 
 
 ## Installation and Usage
 
-You can install the python package from source (you need a rust compiler for that):
-
-```
-pip install git+https://github.com/itt-ustutt/quantity
-```
-
-or get the compiled files from PyPI
+You can install the package from PyPI
 
 ```
 pip install si-units
 ```
+
+For the documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
+
+To build the wheel or documentation locally, see below.
 
 ## Examples
 
@@ -45,6 +43,42 @@ sqms = ms**2
 print(sqms) # [4, 9, 16] m²
 ```
 
-## Documentation
+## Building from Source
 
-For the documentation, see [here](https://itt-ustutt.github.io/quantity/index.html).
+You need a rust compiler to build the wheel locally.
+To build the bindings to python, we use [maturin](https://github.com/PyO3/maturin).
+
+Use
+
+``` bash
+# in si-units
+maturin develop --release
+```
+
+to build the package locally.
+
+To build the python wheels, use
+
+```bash
+maturin build --release
+```
+
+## Building the Documentation
+
+To build the documentation you need `mkdocs-material` and `mkdocstrings-python`. Installing these packages (e.g. using `uv` or `pip`) will also install the needed dependencies. 
+During development, use
+
+```bash
+# in si-units
+mkdocs serve
+```
+
+to run a local development server.
+
+To build the documentation for deployment, use
+
+```bash
+# in si-units
+mkdocs build
+```
+
