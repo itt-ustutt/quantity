@@ -1,0 +1,84 @@
+theme:
+  name: material
+  font:
+    text: Fira Sans
+    code: Fira Sans Mono
+  features:
+    - navigation.sections
+    - toc.integrate
+    - header.autohide
+    - content.code.copy
+  palette:
+    # Palette toggle for automatic mode
+    - media: '(prefers-color-scheme)'
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: black
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: black
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  icon:
+    repo: fontawesome/brands/github
+
+site_name: si-units
+site_url: https://itt-ustutt.github.io/quantity
+
+repo_url: https://github.com/itt-ustutt/quantity/tree/master/si-units
+
+markdown_extensions:
+  - pymdownx.arithmatex: # Render LaTeX via MathJax
+      generic: true
+  - pymdownx.superfences # Seems to enable syntax highlighting when used with the Material theme.
+  - pymdownx.details # Allowing hidden expandable regions denoted by ???
+  - pymdownx.snippets: # Include one Markdown file into another
+      base_path: docs
+  - admonition
+  - tables
+
+extra_javascript:
+  - javascript/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+plugins:
+  - search # default search plugin; needs manually re-enabling when using any other plugins
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          docstring_style: google
+          show_signature_annotations: true
+          options:
+            find_stubs_package: true
+            heading_level: 3
+            show_root_heading: true
+            show_root_full_path: false
+            docstring_section_style: spacy
+            merge_init_into_class: true
+            show_docstring_description: true
+            annotations_path: brief
+            docstring_options:
+              ignore_init_summary: false
+              trim_doctest_flags: true
+
+nav:
+  - Introduction: 'index.md'
+  - Examples: 'examples.md'
+  - API:
+      - Classes & Functions: 'api.md'
+      - Units, Constants, Prefixes: 
+        - Base Units: 'base.md'
+        - Derived Units & Constants: 'derived.md'
+        - Prefixes: 'prefixes.md'

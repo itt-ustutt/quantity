@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +30,7 @@ jobs:
           maturin build --release --out dist
           pip install extend_quantity --no-index --find-links dist --force-reinstall
       - name: Build wheels for si-units
+        working-directory: ./si-units
         run: |
           maturin build --release --out dist
           pip install si-units --no-index --find-links dist --force-reinstall
