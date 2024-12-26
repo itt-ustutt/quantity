@@ -1,6 +1,0 @@
-﻿si\_units.SIArray1
-==================
-
-.. currentmodule:: si_units
-
-.. autodata:: SIArray1
