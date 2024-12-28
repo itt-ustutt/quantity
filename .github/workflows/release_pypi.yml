@@ -2,7 +2,7 @@ name: Release PyPI
 
 on:
   push:
-    tags: ["s-units-v*"]
+    tags: ["si-units-v*"]
 
 jobs:
   linux:
