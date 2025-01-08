@@ -1,8 +1,8 @@
 def test_scalar():
     """
     >>> from extend_quantity import ideal_gas
-    >>> from si_units import KELVIN, LITER, MOL
-    >>> ideal_gas(300 * KELVIN, 5 * LITER, 10 * MOL)
+    >>> import si_units as si
+    >>> ideal_gas(300 * si.KELVIN, 5 * si.LITER, 10 * si.MOL)
     4.9886775708919435 MPa
     """
 
@@ -10,11 +10,11 @@ def test_scalar():
 def test_array():
     """
     >>> from extend_quantity import ideal_gas_array
-    >>> from si_units import CELSIUS, METER, MOL, SIArray1
+    >>> import si_units as si
     >>> import numpy as np
-    >>> T = np.array([25, 45]) * CELSIUS
-    >>> V = np.array([3, 5]) * METER**3
-    >>> N = SIArray1.linspace(MOL, 2*MOL, 2)
+    >>> T = np.array([25, 45]) * si.CELSIUS
+    >>> V = np.array([3, 5]) * si.METER**3
+    >>> N = si.linspace(si.MOL, 2*si.MOL, 2)
     >>> ideal_gas_array(T, V, N)
-    [826.3190098674627, 1058.0985127861811] Pa
+    array([ 826.31900987, 1058.09851279]) Pa
     """
