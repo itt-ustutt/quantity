@@ -613,7 +613,7 @@ uv build
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="n">temperature</span> <span class="o">=</span> <span class="mf">25.0</span> <span class="o">*</span> <span class="n">CELSIUS</span>
 <span class="n">volume</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
 <span class="n">moles</span> <span class="o">=</span> <span class="mf">75.0</span> <span class="o">*</span> <span class="n">MOL</span>
@@ -627,8 +627,8 @@ uv build
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">METER</span>
 <span class="n">sqms</span> <span class="o">=</span> <span class="n">ms</span><span class="o">**</span><span class="mi">2</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sqms</span><span class="p">)</span>
@@ -649,7 +649,7 @@ You can use this to convert units:</p>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="n">MOL</span><span class="p">,</span> <span class="n">METER</span><span class="p">,</span> <span class="n">ANGSTROM</span><span class="p">,</span> <span class="n">NAV</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="kn">import</span> <span class="n">MOL</span><span class="p">,</span> <span class="n">METER</span><span class="p">,</span> <span class="n">ANGSTROM</span><span class="p">,</span> <span class="n">NAV</span>
 
 <span class="n">molar_density</span> <span class="o">=</span> <span class="mi">3000</span> <span class="o">*</span> <span class="n">MOL</span> <span class="o">/</span> <span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
 <span class="n">particle_density</span> <span class="o">=</span> <span class="n">molar_density</span> <span class="o">*</span> <span class="n">NAV</span>

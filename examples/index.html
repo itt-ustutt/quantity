@@ -596,7 +596,7 @@ While it is possible to construct a <code>SIObject</code> by providing a value a
 it is not recommendend because it is not very readable and prone to error:
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="n">mass</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">SIObject</span><span class="p">(</span><span class="mf">125.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -607,7 +607,7 @@ defined in the package and multiply it by the value.
 Here we use <code>KILOGRAM</code> to yield the same result as above:</p>
 <p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="n">mass</span> <span class="o">=</span> <span class="mf">125.0</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KILOGRAM</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -618,7 +618,7 @@ The following again yields the same result using the <code>KILO</code>
 prefix together with <code>GRAM</code>:</p>
 <p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="n">mass</span> <span class="o">=</span> <span class="mf">125.0</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KILO</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">GRAM</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -630,7 +630,7 @@ to reuse across your code:
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="n">MPA</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">MEGA</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">PASCAL</span>
 <span class="n">KG_M3</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">KILOGRAM</span> <span class="o">/</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
 <span class="n">FS</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">FEMTO</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">SECOND</span>
@@ -643,7 +643,7 @@ to reuse across your code:
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">si_units</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="n">temperature</span> <span class="o">=</span> <span class="mf">298.15</span> <span class="o">*</span> <span class="n">KELVIN</span>
 <span class="n">volume</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
 <span class="n">moles</span> <span class="o">=</span> <span class="mf">75.0</span> <span class="o">*</span> <span class="n">MOL</span>
@@ -663,7 +663,7 @@ into a value of the desired unit:</p>
 <span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span>
-<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="n">temperature</span> <span class="o">=</span> <span class="mf">298.15</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KELVIN</span>
 <span class="n">volume</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="o">**</span><span class="mi">3</span>
 <span class="n">moles</span> <span class="o">=</span> <span class="mf">75.0</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">MOL</span>
@@ -685,7 +685,7 @@ is a one-dimensional array.</p>
 <span class="normal">4</span>
 <span class="normal">5</span>
 <span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="c1"># from a list of SIObjects</span>
 <span class="n">temperatures</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">298.15</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KELVIN</span><span class="p">,</span> <span class="mf">313.15</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KELVIN</span><span class="p">])</span>
 <span class="c1"># linearly spaced</span>
@@ -701,7 +701,7 @@ desired shape and multiply it by an unit.</p>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="n">mass_earth</span> <span class="o">=</span> <span class="mf">5.9724e24</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KILOGRAM</span>
 <span class="n">mass_moon</span> <span class="o">=</span> <span class="mf">7.346e22</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KILOGRAM</span>
 <span class="n">distance</span> <span class="o">=</span> <span class="mf">383.398</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">KILO</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span>
@@ -727,8 +727,8 @@ using <code>numpy.ndarray</code>s. </p>
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
-<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">70.0e3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span>
 <span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span> <span class="o">/</span> <span class="n">si</span><span class="o">.</span><span class="n">SECOND</span><span class="o">**</span><span class="mi">2</span>
@@ -758,7 +758,7 @@ z = 70000.0000000000   p =     0.0215180823
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="c1"># instead of this</span>
 <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">70.0e3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span>
 <span class="c1"># we can also use this</span>
@@ -771,8 +771,8 @@ z = 70000.0000000000   p =     0.0215180823
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">sqm</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="o">**</span><span class="mi">2</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqm</span><span class="p">))</span>
@@ -787,8 +787,8 @@ change the above to an array, numpy will throw an exception:
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">sqm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="o">**</span><span class="mi">2</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqm</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sqm</span><span class="o">.</span><span class="n">sqrt</span><span class="p">())</span>  <span class="c1"># both calls raise an exception</span>
@@ -805,8 +805,8 @@ fine:</p>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">si_units</span> <span class="k">as</span> <span class="nn">si</span>
-<span class="kn">import</span> <span class="nn">torch</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="n">ms</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span>
 <span class="n">sqms</span> <span class="o">=</span> <span class="n">ms</span><span class="o">**</span><span class="mi">2</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sqms</span><span class="p">)</span>
