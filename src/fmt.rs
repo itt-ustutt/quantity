@@ -141,6 +141,7 @@ impl_fmt!(Z0, Z0, P1, Z0, Z0, N1, GRAM / MOL, "g/mol", Some(MEGA));
 impl_fmt!(Z0, P2, Z0, Z0, Z0, Z0, M2, "m²", None);
 impl_fmt!(Z0, P3, Z0, Z0, Z0, Z0, M3, "m³", None);
 impl_fmt!(N1, P3, N1, Z0, Z0, Z0, M3 / KG / SECOND, "m³/kg/s²", None);
+impl_fmt!(N3, P2, P1, Z0, N1, Z0, WATT / KELVIN, "W/K", None);
 
 fn get_prefix(value: f64, has_prefix: Option<f64>) -> (f64, &'static str) {
     if let Some(p) = has_prefix {
