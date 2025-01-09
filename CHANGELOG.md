@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2025-01-09
+### Added
+- Added formatting (and thus Python support) for heat capacity rates. [#81](https://github.com/itt-ustutt/quantity/pull/81)
+
 ## [0.10.0] - 2024-12-05
 ### Packaging
 - Update `pyo3` and `numpy` dependencies to 0.23. [#76](https://github.com/itt-ustutt/quantity/pull/76)
