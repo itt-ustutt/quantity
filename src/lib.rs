@@ -506,11 +506,19 @@ impl<T, U> Quantity<T, U> {
 #[cfg(feature = "num-dual")]
 mod num_dual {
     use super::Quantity;
-    use num_dual::DualNum;
+    use num_dual::{DualNum, Lift};
 
     impl<D: DualNum<f64>, U> Quantity<D, U> {
         pub fn re(&self) -> Quantity<f64, U> {
             Quantity::new(self.0.re())
+        }
+    }
+
+    impl<D, F, T: Lift<D, F>, U> Lift<D, F> for Quantity<T, U> {
+        type Lifted<D2: DualNum<F, Inner = D>> = Quantity<T::Lifted<D2>, U>;
+
+        fn lift<D2: DualNum<F, Inner = D>>(&self) -> Self::Lifted<D2> {
+            Quantity::new(self.0.lift())
         }
     }
 }
