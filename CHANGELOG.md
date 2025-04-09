@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.2] - 2025-04-09
+### Added
+- Added support for the new features in num-dual 0.11.1.
+
 ## [0.10.1] - 2025-01-09
 ### Added
 - Added formatting (and thus Python support) for heat capacity rates. [#81](https://github.com/itt-ustutt/quantity/pull/81)
