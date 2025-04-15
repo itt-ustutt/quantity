@@ -58,9 +58,8 @@ plugins:
       handlers:
         python:
           paths: [src]
-          docstring_style: google
-          show_signature_annotations: true
           options:
+            docstring_style: google
             find_stubs_package: true
             heading_level: 3
             show_root_heading: true
@@ -68,6 +67,7 @@ plugins:
             docstring_section_style: spacy
             merge_init_into_class: true
             show_docstring_description: true
+            show_signature_annotations: true
             annotations_path: brief
             docstring_options:
               ignore_init_summary: false
