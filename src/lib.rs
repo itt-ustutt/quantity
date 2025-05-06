@@ -145,7 +145,7 @@
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use std::marker::PhantomData;
-use std::ops::{Div, Mul};
+use std::ops::{Deref, Div, Mul};
 use typenum::{ATerm, Diff, Integer, Negate, Quot, Sum, TArr, N1, N2, P1, P3, Z0};
 
 #[cfg(feature = "ndarray")]
@@ -503,6 +503,14 @@ impl<T, U> Quantity<T, U> {
     }
 }
 
+impl<T> Deref for Dimensionless<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 #[cfg(feature = "num-dual")]
 mod num_dual {
     use super::Quantity;
@@ -520,5 +528,17 @@ mod num_dual {
         fn lift<D2: DualNum<F, Inner = D>>(&self) -> Self::Lifted<D2> {
             Quantity::new(self.0.lift())
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_deref() {
+        let pressure = 1.0135 * BAR;
+        let x = (pressure / PASCAL).ln();
+        assert_eq!(x, 1.0135e5_f64.ln())
     }
 }
