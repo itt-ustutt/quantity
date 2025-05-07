@@ -119,6 +119,7 @@ const KG: Mass = KILOGRAM;
 const JMK: MolarEntropy = Quantity(1.0, PhantomData);
 const JKGK: SpecificEntropy = Quantity(1.0, PhantomData);
 const WMK: ThermalConductivity = Quantity(1.0, PhantomData);
+const GS: MassFlowRate = Quantity(1e-3, PhantomData);
 
 impl_fmt!(Z0, N3, Z0, Z0, Z0, P1, MOL / M3, "mol/m³", Some(MEGA));
 impl_fmt!(Z0, N2, Z0, Z0, Z0, P1, MOL / M2, "mol/m²", Some(MEGA));
@@ -142,6 +143,10 @@ impl_fmt!(Z0, P2, Z0, Z0, Z0, Z0, M2, "m²", None);
 impl_fmt!(Z0, P3, Z0, Z0, Z0, Z0, M3, "m³", None);
 impl_fmt!(N1, P3, N1, Z0, Z0, Z0, M3 / KG / SECOND, "m³/kg/s²", None);
 impl_fmt!(N3, P2, P1, Z0, N1, Z0, WATT / KELVIN, "W/K", None);
+impl_fmt!(N3, Z0, P1, Z0, N1, Z0, WMK / METER, "W/m²/K", None);
+impl_fmt!(N3, Z0, P1, Z0, Z0, Z0, WATT / M2, "W/m²", None);
+impl_fmt!(N1, Z0, P1, Z0, Z0, Z0, GS, "g/s", Some(MEGA));
+impl_fmt!(N1, N2, P1, Z0, Z0, Z0, GS / M2, "g/m²/s", Some(MEGA));
 
 fn get_prefix(value: f64, has_prefix: Option<f64>) -> (f64, &'static str) {
     if let Some(p) = has_prefix {
@@ -194,6 +199,15 @@ mod tests {
     #[test]
     fn test_fmt_si() {
         assert_eq!(format!("{:.3}", RGAS), "8.314  J/mol/K");
+    }
+
+    #[test]
+    fn test_fmt_kg() {
+        let m = 5.0 * KILOGRAM;
+        let t = 4.0 * SECOND;
+        let a = 0.5 * METER * METER;
+        assert_eq!(format!("{:.3}", m / t), "1.250 kg/s");
+        assert_eq!(format!("{:.3}", m / t / a), "2.500 kg/m²/s");
     }
 
     #[test]
