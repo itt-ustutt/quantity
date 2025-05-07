@@ -252,6 +252,10 @@ pub type _MassFlowRate = Diff<_Mass, _Time>;
 pub type MassFlowRate<T = f64> = Quantity<T, _MassFlowRate>;
 pub type _MoleFlowRate = Diff<_Moles, _Time>;
 pub type MoleFlowRate<T = f64> = Quantity<T, _MoleFlowRate>;
+pub type _MassFlux = Diff<_MassFlowRate, _Area>;
+pub type MassFlux<T = f64> = Quantity<T, _MassFlux>;
+pub type _HeatFlux = Diff<_Power, _Area>;
+pub type HeatFlux<T = f64> = Quantity<T, _HeatFlux>;
 
 pub type _Viscosity = Sum<_Pressure, _Time>;
 pub type Viscosity<T = f64> = Quantity<T, _Viscosity>;
@@ -259,6 +263,10 @@ pub type _Diffusivity = Sum<_Velocity, _Length>;
 pub type Diffusivity<T = f64> = Quantity<T, _Diffusivity>;
 pub type _ThermalConductivity = Diff<_Power, Sum<_Length, _Temperature>>;
 pub type ThermalConductivity<T = f64> = Quantity<T, _ThermalConductivity>;
+pub type _ThermalTransmittance = Diff<_Power, Sum<_Area, _Temperature>>;
+pub type ThermalTransmittance<T = f64> = Quantity<T, _ThermalTransmittance>;
+pub type _ThermalResistance = Negate<_ThermalTransmittance>;
+pub type ThermalResistance<T = f64> = Quantity<T, _ThermalResistance>;
 pub type _SurfaceTension = Diff<_Force, _Length>;
 pub type SurfaceTension<T = f64> = Quantity<T, _SurfaceTension>;
 
