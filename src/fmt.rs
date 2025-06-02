@@ -197,9 +197,10 @@ impl fmt::Display for Angle {
     }
 }
 
-impl fmt::Debug for Angle {
+impl<T: fmt::Debug> fmt::Debug for Angle<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self, f)
+        self.0.fmt(f)?;
+        write!(f, " rad")
     }
 }
 
@@ -257,7 +258,7 @@ mod tests {
     #[test]
     fn test_fmt_angle() {
         assert_eq!(format!("{}", 90.0 * DEGREES), "90°");
-        assert_eq!(format!("{:?}", 45.0 * DEGREES), "45°");
+        assert_eq!(format!("{:.3?}", 45.0 * DEGREES), "0.785 rad");
         assert_eq!(format!("{:.2}", 0.5 * RADIANS), "28.65°");
     }
 }

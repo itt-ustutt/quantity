@@ -25,7 +25,7 @@ members = ["si-units", "example/extend_quantity"]
 
 [dependencies]
 typenum = "1.17"
-num-traits = "0.2.19"
+num-traits = "0.2"
 document-features = "0.2"
 ## Use N-dimensional arrays from the [ndarray] crate as value of a quantity.
 ndarray = { version = "0.16", optional = true }
@@ -36,7 +36,7 @@ numpy = { version = "0.23", optional = true }
 num-dual = { version = "0.11.1", optional = true }
 
 [features]
-default = ["num-dual"]
+default = []
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.
 python = ["pyo3"]
 ## Use scalar and array quantities in Python interfaces through [pyo3], [numpy], and the [si-units](https://pypi.org/project/si-units/) package.
