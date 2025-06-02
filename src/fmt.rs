@@ -36,6 +36,12 @@ impl<
     }
 }
 
+impl<Inner: fmt::Display> fmt::Display for Quantity<Inner, _Dimensionless> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
 #[cfg(feature = "pyo3")]
 pub(crate) trait PrintUnit {
     const UNIT: &'static str;
@@ -186,7 +192,15 @@ static PREFIX_SYMBOLS: LazyLock<HashMap<i8, &'static str>> = LazyLock::new(|| {
 
 impl fmt::Display for Angle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}°", self.0.to_degrees())
+        self.0.to_degrees().fmt(f)?;
+        write!(f, "°")
+    }
+}
+
+impl<T: fmt::Debug> fmt::Debug for Angle<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)?;
+        write!(f, " rad")
     }
 }
 
@@ -230,5 +244,21 @@ mod tests {
     fn test_fmt_zero() {
         assert_eq!(format!("{}", 0.0 * KELVIN), "0 K");
         assert_eq!(format!("{:.2}", 0.0 * PASCAL), "0.00  Pa");
+    }
+
+    #[test]
+    fn test_fmt_dimensionless() {
+        assert_eq!(format!("{}", BAR / PASCAL), format!("{}", 1e5));
+        assert_eq!(
+            format!("{}", RGAS / (JOULE / (MOL * KELVIN))),
+            format!("{}", 8.31446261815324)
+        );
+    }
+
+    #[test]
+    fn test_fmt_angle() {
+        assert_eq!(format!("{}", 90.0 * DEGREES), "90°");
+        assert_eq!(format!("{:.3?}", 45.0 * DEGREES), "0.785 rad");
+        assert_eq!(format!("{:.2}", 0.5 * RADIANS), "28.65°");
     }
 }

@@ -6,10 +6,11 @@ use ndarray::{
 };
 use std::iter::FromIterator;
 use std::marker::PhantomData;
+use std::ops::{Add, Mul, Sub};
 
-impl<U> Quantity<Array1<f64>, U> {
+impl<T: Copy, U> Quantity<Array1<T>, U> {
     /// Create a one-dimensional array from a vector of scalar quantities.
-    pub fn from_vec(v: Vec<Quantity<f64, U>>) -> Self {
+    pub fn from_vec(v: Vec<Quantity<T, U>>) -> Self {
         Self(v.iter().map(|e| e.0).collect(), PhantomData)
     }
 
@@ -23,10 +24,21 @@ impl<U> Quantity<Array1<f64>, U> {
     /// let x = Length::linspace(1.0 * METER, 3.0 * METER, 5);
     /// assert_relative_eq!(x, &(arr1(&[1.0, 1.5, 2.0, 2.5, 3.0]) * METER));
     /// ```
-    pub fn linspace(start: Quantity<f64, U>, end: Quantity<f64, U>, n: usize) -> Self {
-        Self(Array1::linspace(start.0, end.0, n), PhantomData)
+    pub fn linspace(start: Quantity<T, U>, end: Quantity<T, U>, n: usize) -> Self
+    where
+        T: Mul<f64, Output = T> + Sub<Output = T> + Add<Output = T>,
+    {
+        Self(
+            Array1::linspace(0.0, 1.0, n)
+                .into_iter()
+                .map(|x| (end.0 - start.0) * x + start.0)
+                .collect(),
+            PhantomData,
+        )
     }
+}
 
+impl<U> Quantity<Array1<f64>, U> {
     /// Create a one-dimensional array with n logarithmically spaced elements from `start` to `end` (inclusive).
     ///
     /// # Example

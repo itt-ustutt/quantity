@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.4] - 2025-06-02
+### Added
+- Implemented `Display` for `Dimensionless<T>`. [#88](https://github.com/itt-ustutt/quantity/pull/88)
+- Implemented `Debug` for `Angle<T>`. [#88](https://github.com/itt-ustutt/quantity/pull/88)
+- Added  `Quantity<T, U>::inv`. [#88](https://github.com/itt-ustutt/quantity/pull/88)
+
+### Changed
+- Generalized implementation of `Quantity<T, U>::abs` to every type with `T: Signed`. [#88](https://github.com/itt-ustutt/quantity/pull/88)
+- Generalized implementation of `Quantity::from_vec` and `Quantity::linspace`. [#88](https://github.com/itt-ustutt/quantity/pull/88)
+
 ## [0.10.3] - 2025-05-07
 ### Added
 - Implemented `Deref` for `Dimensionless<T>`. [#86](https://github.com/itt-ustutt/quantity/pull/86)
