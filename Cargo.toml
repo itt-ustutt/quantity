@@ -25,6 +25,7 @@ members = ["si-units", "example/extend_quantity"]
 
 [dependencies]
 typenum = "1.17"
+num-traits = "0.2.19"
 document-features = "0.2"
 ## Use N-dimensional arrays from the [ndarray] crate as value of a quantity.
 ndarray = { version = "0.16", optional = true }
@@ -33,7 +34,6 @@ pyo3 = { version = "0.23", optional = true }
 numpy = { version = "0.23", optional = true }
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
 num-dual = { version = "0.11.1", optional = true }
-num-traits = "0.2.19"
 
 [features]
 default = ["num-dual"]
