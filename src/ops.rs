@@ -3,6 +3,7 @@ use super::Quantity;
 use approx::{AbsDiffEq, RelativeEq};
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, DataMut, DataOwned, Dimension};
+use num_traits::{Inv, Signed};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 use typenum::{Diff, Integer, Negate, Prod, Quot, Sum, P2, P3};
@@ -401,7 +402,9 @@ impl<U> Quantity<f64, U> {
     {
         Quantity(self.0.powf(1.0 / R::I32 as f64), PhantomData)
     }
+}
 
+impl<T, U> Quantity<T, U> {
     /// Return the absolute value of `self`.
     ///
     /// # Example
@@ -410,10 +413,31 @@ impl<U> Quantity<f64, U> {
     /// # use approx::assert_relative_eq;
     /// let t = -50.0 * KELVIN;
     /// assert_relative_eq!(t.abs(), &(50.0 * KELVIN));
-    pub fn abs(self) -> Self {
+    pub fn abs(self) -> Self
+    where
+        T: Signed,
+    {
         Self(self.0.abs(), PhantomData)
     }
 
+    /// Return the multiplicative inverse of `self`.
+    ///
+    /// # Example
+    /// ```
+    /// # use quantity::PASCAL;
+    /// # use approx::assert_relative_eq;
+    /// let t = 5.0 * PASCAL;
+    /// assert_relative_eq!(t.inv(), &(0.2/PASCAL));
+    pub fn inv(self) -> Quantity<T, Negate<U>>
+    where
+        T: Inv<Output = T>,
+        U: Neg,
+    {
+        Quantity(self.0.inv(), PhantomData)
+    }
+}
+
+impl<U> Quantity<f64, U> {
     /// Returns a number that represents the sign of `self`.
     ///
     /// - `1.0` if the number is positive, `+0.0` or `INFINITY`
