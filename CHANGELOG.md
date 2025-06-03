@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.5] - 2025-06-03
+### Changed
+- Made all methods (except of `logspace`) of quantity arrays generic with respect to the item type. [#88](https://github.com/itt-ustutt/quantity/pull/88)
+
 ## [0.10.4] - 2025-06-02
 ### Added
 - Implemented `Display` for `Dimensionless<T>`. [#88](https://github.com/itt-ustutt/quantity/pull/88)
