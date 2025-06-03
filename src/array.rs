@@ -4,6 +4,7 @@ use ndarray::{
     Array, Array1, ArrayBase, ArrayView, Axis, Data, DataMut, Dimension, NdIndex, RemoveAxis,
     ShapeBuilder,
 };
+use num_traits::Zero;
 use std::iter::FromIterator;
 use std::marker::PhantomData;
 use std::ops::{Add, Mul, Sub};
@@ -57,9 +58,12 @@ impl<U> Quantity<Array1<f64>, U> {
     }
 }
 
-impl<U, D: Dimension> Quantity<Array<f64, D>, U> {
+impl<T, U, D: Dimension> Quantity<Array<T, D>, U> {
     /// Create an array with all elements set to 0.
-    pub fn zeros<Sh: ShapeBuilder<Dim = D>>(shape: Sh) -> Self {
+    pub fn zeros<Sh: ShapeBuilder<Dim = D>>(shape: Sh) -> Self
+    where
+        T: Clone + Zero,
+    {
         Quantity(Array::zeros(shape), PhantomData)
     }
 
@@ -67,13 +71,13 @@ impl<U, D: Dimension> Quantity<Array<f64, D>, U> {
     pub fn from_shape_fn<Sh, F>(shape: Sh, mut f: F) -> Self
     where
         Sh: ShapeBuilder<Dim = D>,
-        F: FnMut(D::Pattern) -> Quantity<f64, U>,
+        F: FnMut(D::Pattern) -> Quantity<T, U>,
     {
         Quantity(Array::from_shape_fn(shape, |x| f(x).0), PhantomData)
     }
 }
 
-impl<S: Data<Elem = f64>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
+impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     /// Return the total number of elements in the array.
     pub fn len(&self) -> usize {
         self.0.len()
@@ -94,12 +98,18 @@ impl<S: Data<Elem = f64>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     /// let x = arr1(&[1.5, 2.5]) * BAR;
     /// assert_relative_eq!(x.sum(), &(4.0 * BAR));
     /// ```
-    pub fn sum(&self) -> Quantity<f64, U> {
+    pub fn sum(&self) -> Quantity<T, U>
+    where
+        T: Clone + Zero,
+    {
         Quantity(self.0.sum(), PhantomData)
     }
 
     /// Return an uniquely owned copy of the array.
-    pub fn to_owned(&self) -> Quantity<Array<f64, D>, U> {
+    pub fn to_owned(&self) -> Quantity<Array<T, D>, U>
+    where
+        T: Clone,
+    {
         Quantity(self.0.to_owned(), PhantomData)
     }
 
@@ -114,20 +124,17 @@ impl<S: Data<Elem = f64>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Call f by value on each element and create a new array with the new values.
-    pub fn mapv<F, U2>(&self, mut f: F) -> Quantity<Array<f64, D>, U2>
+    pub fn mapv<F, T2, U2>(&self, mut f: F) -> Quantity<Array<T2, D>, U2>
     where
+        T: Clone,
         S: DataMut,
-        F: FnMut(Quantity<f64, U>) -> Quantity<f64, U2>,
+        F: FnMut(Quantity<T, U>) -> Quantity<T2, U2>,
     {
         Quantity(self.0.mapv(|x| f(Quantity(x, PhantomData)).0), PhantomData)
     }
 
     /// Returns a view restricted to index along the axis, with the axis removed.
-    pub fn index_axis(
-        &self,
-        axis: Axis,
-        index: usize,
-    ) -> Quantity<ArrayView<'_, f64, D::Smaller>, U>
+    pub fn index_axis(&self, axis: Axis, index: usize) -> Quantity<ArrayView<'_, T, D::Smaller>, U>
     where
         D: RemoveAxis,
     {
@@ -135,7 +142,7 @@ impl<S: Data<Elem = f64>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Return a producer and iterable that traverses over all 1D lanes pointing in the direction of axis.
-    pub fn lanes_mut(&mut self, axis: Axis) -> LanesMut<f64, D::Smaller>
+    pub fn lanes_mut(&mut self, axis: Axis) -> LanesMut<T, D::Smaller>
     where
         S: DataMut,
     {
@@ -143,8 +150,9 @@ impl<S: Data<Elem = f64>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Return sum along axis.
-    pub fn sum_axis(&self, axis: Axis) -> Quantity<Array<f64, D::Smaller>, U>
+    pub fn sum_axis(&self, axis: Axis) -> Quantity<Array<T, D::Smaller>, U>
     where
+        T: Clone + Zero,
         D: RemoveAxis,
     {
         Quantity(self.0.sum_axis(axis), PhantomData)
@@ -159,12 +167,15 @@ impl<S: Data<Elem = f64>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     ///
     /// The `Index` trait can not be implemented, because a new instance has to be created,
     /// when indexing a quantity array. This serves as replacement for it.
-    pub fn get<I: NdIndex<D>>(&self, index: I) -> Quantity<f64, U> {
-        Quantity(self.0[index], PhantomData)
+    pub fn get<I: NdIndex<D>>(&self, index: I) -> Quantity<T, U>
+    where
+        T: Clone,
+    {
+        Quantity(self.0[index].clone(), PhantomData)
     }
 
     /// Set the element at `index` to `scalar`.
-    pub fn set<I: NdIndex<D>>(&mut self, index: I, value: Quantity<f64, U>)
+    pub fn set<I: NdIndex<D>>(&mut self, index: I, value: Quantity<T, U>)
     where
         S: DataMut,
     {
@@ -177,8 +188,8 @@ pub struct QuantityIter<I, U> {
     unit: PhantomData<U>,
 }
 
-impl<'a, I: Iterator<Item = &'a f64>, U: Copy> Iterator for QuantityIter<I, U> {
-    type Item = Quantity<f64, U>;
+impl<'a, I: Iterator<Item = &'a T>, T: Copy + 'static, U: Copy> Iterator for QuantityIter<I, U> {
+    type Item = Quantity<T, U>;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.inner.next().map(|value| Quantity(*value, PhantomData))
@@ -189,16 +200,16 @@ impl<'a, I: Iterator<Item = &'a f64>, U: Copy> Iterator for QuantityIter<I, U> {
     }
 }
 
-impl<'a, I: Iterator<Item = &'a f64> + ExactSizeIterator, U: Copy> ExactSizeIterator
-    for QuantityIter<I, U>
+impl<'a, I: Iterator<Item = &'a T> + ExactSizeIterator, T: Copy + 'static, U: Copy>
+    ExactSizeIterator for QuantityIter<I, U>
 {
     fn len(&self) -> usize {
         self.inner.len()
     }
 }
 
-impl<'a, I: Iterator<Item = &'a f64> + DoubleEndedIterator, U: Copy> DoubleEndedIterator
-    for QuantityIter<I, U>
+impl<'a, I: Iterator<Item = &'a T> + DoubleEndedIterator, T: Copy + 'static, U: Copy>
+    DoubleEndedIterator for QuantityIter<I, U>
 {
     fn next_back(&mut self) -> Option<Self::Item> {
         self.inner
@@ -207,11 +218,11 @@ impl<'a, I: Iterator<Item = &'a f64> + DoubleEndedIterator, U: Copy> DoubleEnded
     }
 }
 
-impl<'a, F, U: Copy> IntoIterator for &'a Quantity<F, U>
+impl<'a, F, T: Copy + 'static, U: Copy> IntoIterator for &'a Quantity<F, U>
 where
-    &'a F: IntoIterator<Item = &'a f64>,
+    &'a F: IntoIterator<Item = &'a T>,
 {
-    type Item = Quantity<f64, U>;
+    type Item = Quantity<T, U>;
     type IntoIter = QuantityIter<<&'a F as IntoIterator>::IntoIter, U>;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -222,10 +233,10 @@ where
     }
 }
 
-impl<U> FromIterator<Quantity<f64, U>> for Quantity<Array1<f64>, U> {
+impl<T, U> FromIterator<Quantity<T, U>> for Quantity<Array1<T>, U> {
     fn from_iter<I>(iter: I) -> Self
     where
-        I: IntoIterator<Item = Quantity<f64, U>>,
+        I: IntoIterator<Item = Quantity<T, U>>,
     {
         Self(iter.into_iter().map(|v| v.0).collect(), PhantomData)
     }
