@@ -33,10 +33,10 @@ approx = { version = "0.5", optional = true }
 pyo3 = { version = "0.23", optional = true }
 numpy = { version = "0.23", optional = true }
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
-num-dual = { version = "0.11.1", optional = true }
+num-dual = { git = "https://github.com/itt-ustutt/num-dual", branch = "implicit", optional = true }
 
 [features]
-default = []
+default = ["num-dual"]
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.
 python = ["pyo3"]
 ## Use scalar and array quantities in Python interfaces through [pyo3], [numpy], and the [si-units](https://pypi.org/project/si-units/) package.

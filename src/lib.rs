@@ -522,7 +522,7 @@ impl<T> Deref for Dimensionless<T> {
 #[cfg(feature = "num-dual")]
 mod num_dual {
     use super::Quantity;
-    use num_dual::{DualNum, Lift};
+    use num_dual::{DualNum, DualStruct};
 
     impl<D: DualNum<f64>, U> Quantity<D, U> {
         pub fn re(&self) -> Quantity<f64, U> {
@@ -530,8 +530,13 @@ mod num_dual {
         }
     }
 
-    impl<D, F, T: Lift<D, F>, U> Lift<D, F> for Quantity<T, U> {
+    impl<D, F, T: DualStruct<D, F>, U> DualStruct<D, F> for Quantity<T, U> {
+        type Real = Quantity<T::Real, U>;
         type Lifted<D2: DualNum<F, Inner = D>> = Quantity<T::Lifted<D2>, U>;
+
+        fn real(&self) -> Self::Real {
+            Quantity::new(self.0.real())
+        }
 
         fn lift<D2: DualNum<F, Inner = D>>(&self) -> Self::Lifted<D2> {
             Quantity::new(self.0.lift())
@@ -548,5 +553,53 @@ mod test {
         let pressure = 1.0135 * BAR;
         let x = (pressure / PASCAL).ln();
         assert_eq!(x, 1.0135e5_f64.ln())
+    }
+}
+
+#[cfg(test)]
+#[cfg(feature = "num-dual")]
+mod hmm {
+    use super::*;
+    use ::num_dual::{Dual64, DualNum, DualStruct, ImplicitDerivative, ImplicitFunction};
+
+    struct MyArgs<D> {
+        temperature: Temperature<D>,
+    }
+
+    impl<D: DualNum<f64> + Copy> DualStruct<D, f64> for MyArgs<D> {
+        type Real = MyArgs<f64>;
+
+        type Lifted<D2: DualNum<f64, Inner = D>> = MyArgs<D::Lifted<D2>>;
+
+        fn real(&self) -> Self::Real {
+            MyArgs {
+                temperature: self.temperature.real(),
+            }
+        }
+
+        fn lift<D2: DualNum<f64, Inner = D>>(&self) -> Self::Lifted<D2> {
+            MyArgs {
+                temperature: self.temperature.lift(),
+            }
+        }
+    }
+
+    struct AreaImplicit;
+    impl ImplicitFunction<f64> for AreaImplicit {
+        type Parameters<D: DualNum<f64>> = Area<D>;
+        type Variable<D> = D;
+        fn residual<D: DualNum<f64> + Copy>(&area: &Area<D>, x: D) -> D {
+            let l = Length::new(x);
+            (area - l * l).convert_into(area)
+        }
+    }
+
+    #[test]
+    fn test_implicit() {
+        let a = Area::new(Dual64::from(25.0).derivative());
+        let implicit = ImplicitDerivative::new(AreaImplicit, a);
+        let x = implicit.implicit_derivative(5.0);
+        println!("{x}");
+        assert_eq!(x, a.0.sqrt())
     }
 }
