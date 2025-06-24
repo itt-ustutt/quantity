@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.6] - 2025-06-24
+## Changed
+- Updated the optional num-dual dependency to 0.11.2. [#91](https://github.com/itt-ustutt/quantity/pull/91)
+
 ## [0.10.5] - 2025-06-03
 ### Changed
 - Made all methods (except of `logspace`) of quantity arrays generic with respect to the item type. [#88](https://github.com/itt-ustutt/quantity/pull/88)
