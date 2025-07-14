@@ -101,8 +101,7 @@ impl Angle {
             Ok(PyFloat::new(rhs.py(), self.0 / r.0).into_any())
         } else {
             Err(PyErr::new::<PyTypeError, _>(format!(
-                "Can't divide angle by {}",
-                rhs
+                "Can't divide angle by {rhs}"
             )))
         }
     }

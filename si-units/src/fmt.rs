@@ -31,10 +31,10 @@ impl fmt::Display for SINumber {
             let (unit, symbol, has_prefix, _, _) = DERIVED_UNITS.get(&self.unit).unwrap();
             let (value, prefix) = get_prefix(self.value / unit.value, *has_prefix);
             if !((1e-2..1e4).contains(&value.abs()) || value == 0.0) {
-                write!(f, "{:e} {}{}", value, prefix, symbol)
+                write!(f, "{value:e} {prefix}{symbol}")
             } else {
                 value.fmt(f)?;
-                write!(f, " {}{}", prefix, symbol)
+                write!(f, " {prefix}{symbol}")
             }
         } else if !((1e-2..1e4).contains(&self.value.abs()) || self.value == 0.0) {
             write!(f, "{:e} {}", self.value, self.unit)
@@ -81,11 +81,11 @@ fn float_to_latex(f: f64) -> String {
     }
     let e = f.abs().log10().floor() as i32;
     match e {
-        -1 => trim_zeros(format!("{:.5}", f)),
-        0 => trim_zeros(format!("{:.4}", f)),
-        1 => trim_zeros(format!("{:.3}", f)),
-        2 => trim_zeros(format!("{:.2}", f)),
-        3 => trim_zeros(format!("{:.1}", f)),
+        -1 => trim_zeros(format!("{f:.5}")),
+        0 => trim_zeros(format!("{f:.4}")),
+        1 => trim_zeros(format!("{f:.3}")),
+        2 => trim_zeros(format!("{f:.2}")),
+        3 => trim_zeros(format!("{f:.1}")),
         _ => format!(
             "{}\\times10^{{{}}}",
             trim_zeros(format!("{:.4}", f / 10.0f64.powi(e))),
@@ -117,7 +117,7 @@ impl fmt::Display for SIUnit {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match DERIVED_UNITS.get(self) {
             Some((_, symbol, _, _, _)) => {
-                write!(f, "{}", symbol)
+                write!(f, "{symbol}")
             }
             None => {
                 let st = self
@@ -127,11 +127,11 @@ impl fmt::Display for SIUnit {
                     .filter_map(|(&u, &s)| match u {
                         0 => None,
                         1 => Some(s.to_owned()),
-                        _ => Some(format!("{}^{}", s, u)),
+                        _ => Some(format!("{s}^{u}")),
                     })
                     .collect::<Vec<String>>()
                     .join(" ");
-                write!(f, "{}", st)
+                write!(f, "{st}")
             }
         }
     }
@@ -165,9 +165,9 @@ fn unit_to_latex(symbols: &[&str], exponents: &[i8], prefix: Option<&str>) -> St
     let den_st = unit_to_latex_product(den);
     match (num_st, den_st) {
         (None, None) => String::new(),
-        (Some(num), None) => format!("\\mathrm{{{}}}", num),
-        (None, Some(den)) => format!("\\mathrm{{\\frac{{1}}{{{}}}}}", den),
-        (Some(num), Some(den)) => format!("\\mathrm{{\\frac{{{}}}{{{}}}}}", num, den),
+        (Some(num), None) => format!("\\mathrm{{{num}}}"),
+        (None, Some(den)) => format!("\\mathrm{{\\frac{{1}}{{{den}}}}}"),
+        (Some(num), Some(den)) => format!("\\mathrm{{\\frac{{{num}}}{{{den}}}}}"),
     }
 }
 
@@ -178,7 +178,7 @@ fn unit_to_latex_product(vec: Vec<(&str, i8)>) -> Option<String> {
             vec.into_iter()
                 .map(|(s, e)| match e {
                     1 => s.to_string(),
-                    _ => format!("{}^{{{}}}", s, e),
+                    _ => format!("{s}^{{{e}}}"),
                 })
                 .collect::<Vec<String>>()
                 .join(""),
@@ -275,7 +275,7 @@ fn insert_derived_unit(map: &mut HashMap<SIUnit, SIUnitSymbol>, s: &'static str)
     let mut symbols = Vec::new();
     let mut exponents = Vec::new();
     for (i, (o, u)) in o_reg
-        .split(&format!("*{}", s))
+        .split(&format!("*{s}"))
         .zip(u_reg.split(s))
         .enumerate()
     {

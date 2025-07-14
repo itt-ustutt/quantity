@@ -32,7 +32,7 @@ impl<
             .collect::<Vec<String>>()
             .join(" ");
 
-        write!(f, " {}", unit)
+        write!(f, " {unit}")
     }
 }
 
@@ -212,7 +212,7 @@ mod tests {
 
     #[test]
     fn test_fmt_si() {
-        assert_eq!(format!("{:.3}", RGAS), "8.314  J/mol/K");
+        assert_eq!(format!("{RGAS:.3}"), "8.314  J/mol/K");
     }
 
     #[test]
