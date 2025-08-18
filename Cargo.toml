@@ -38,7 +38,7 @@ num-dual = { git = "https://github.com/itt-ustutt/num-dual", branch = "linalg_na
 nshare = { version = "0.10", optional = true }
 
 [features]
-default = ["num-dual", "approx"]
+default = []
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
 num-dual = ["dep:num-dual", "nalgebra"]
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.

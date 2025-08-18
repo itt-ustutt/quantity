@@ -148,13 +148,13 @@ use std::marker::PhantomData;
 use std::ops::{Deref, Div, Mul};
 use typenum::{ATerm, Diff, Integer, Negate, Quot, Sum, TArr, N1, N2, P1, P3, Z0};
 
+#[cfg(feature = "num-dual")]
+pub mod ad;
 #[cfg(feature = "ndarray")]
 mod array;
 mod fmt;
 #[cfg(feature = "nalgebra")]
 mod nalgebra;
-#[cfg(feature = "num-dual")]
-pub mod num_dual;
 mod ops;
 #[cfg(feature = "python")]
 mod python;
