@@ -37,9 +37,6 @@ numpy = { version = "0.25", optional = true }
 num-dual = { git = "https://github.com/itt-ustutt/num-dual", branch = "linalg_nalgebra", optional = true }
 nshare = { version = "0.10", optional = true }
 
-[dev-dependencies]
-approx = { version = "0.5" }
-
 [features]
 default = []
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.

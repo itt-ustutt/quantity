@@ -32,3 +32,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run tests (ndarray)
         run: cargo test --release --features "ndarray approx"
+  test_nalgebra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests (nalgebra)
+        run: cargo test --release --features "nalgebra approx"
+  test_num_dual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests (num-dual)
+        run: cargo test --release --features "num-dual approx"
