@@ -1,9 +1,17 @@
 use super::{Angle, Quantity, SIUnit};
 use crate::fmt::PrintUnit;
+#[cfg(feature = "nalgebra")]
+use nalgebra::{allocator::Allocator, DMatrix, DVector, DefaultAllocator, Dim, OMatrix};
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, Dimension};
+#[cfg(feature = "nalgebra")]
+use nshare::IntoNalgebra;
 #[cfg(feature = "ndarray")]
-use numpy::{IntoPyArray, PyReadonlyArray};
+use numpy::IntoPyArray;
+#[cfg(any(feature = "nalgebra", feature = "ndarray"))]
+use numpy::PyReadonlyArray;
+#[cfg(feature = "nalgebra")]
+use numpy::{PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2, ToPyArray};
 use pyo3::{exceptions::PyValueError, prelude::*};
 use std::{marker::PhantomData, sync::LazyLock};
 use typenum::Integer;
@@ -59,6 +67,33 @@ impl<
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         let value = self.0.into_pyarray(py).into_any();
+        SIOBJECT.bind(py).call1((value, unit))
+    }
+}
+
+#[cfg(feature = "nalgebra")]
+impl<
+        'py,
+        T: Integer,
+        L: Integer,
+        M: Integer,
+        I: Integer,
+        THETA: Integer,
+        N: Integer,
+        J: Integer,
+        R: Dim,
+        C: Dim,
+    > IntoPyObject<'py> for Quantity<OMatrix<f64, R, C>, SIUnit<T, L, M, I, THETA, N, J>>
+where
+    DefaultAllocator: Allocator<R, C>,
+{
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+        let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let value = self.0.to_pyarray(py).into_any();
         SIOBJECT.bind(py).call1((value, unit))
     }
 }
@@ -130,6 +165,82 @@ where
         let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
+        } else {
+            Err(PyErr::new::<PyValueError, _>(format!(
+                "Wrong units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )))
+        }
+    }
+}
+
+#[cfg(feature = "nalgebra")]
+impl<
+        'py,
+        T: Integer,
+        L: Integer,
+        M: Integer,
+        I: Integer,
+        THETA: Integer,
+        N: Integer,
+        J: Integer,
+    > FromPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+where
+    Self: PrintUnit,
+{
+    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+        let Ok((value, unit_from)) = ob.call_method0("__getnewargs__").and_then(|raw| {
+            raw.extract::<(PyReadonlyArray1<f64>, [i8; 7])>()
+                .map(|(m, u)| (m.to_owned_array(), u))
+        }) else {
+            return Err(PyErr::new::<PyValueError, _>(format!(
+                "Missing units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )));
+        };
+        let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        if unit_into == unit_from {
+            Ok(Quantity(value.into_nalgebra(), PhantomData))
+        } else {
+            Err(PyErr::new::<PyValueError, _>(format!(
+                "Wrong units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )))
+        }
+    }
+}
+
+#[cfg(feature = "nalgebra")]
+impl<
+        'py,
+        T: Integer,
+        L: Integer,
+        M: Integer,
+        I: Integer,
+        THETA: Integer,
+        N: Integer,
+        J: Integer,
+    > FromPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+where
+    Self: PrintUnit,
+{
+    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+        let Ok((value, unit_from)) = ob.call_method0("__getnewargs__").and_then(|raw| {
+            raw.extract::<(PyReadonlyArray2<f64>, [i8; 7])>()
+                .map(|(m, u)| (m.to_owned_array(), u))
+        }) else {
+            return Err(PyErr::new::<PyValueError, _>(format!(
+                "Missing units! Expected {}, got {}.",
+                Self::UNIT,
+                ob.call_method0("__repr__")?
+            )));
+        };
+        let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        if unit_into == unit_from {
+            Ok(Quantity(value.into_nalgebra(), PhantomData))
         } else {
             Err(PyErr::new::<PyValueError, _>(format!(
                 "Wrong units! Expected {}, got {}.",

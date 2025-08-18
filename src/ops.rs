@@ -1,8 +1,14 @@
 use super::Quantity;
 #[cfg(feature = "approx")]
 use approx::{AbsDiffEq, RelativeEq};
+#[cfg(feature = "nalgebra")]
+use nalgebra::allocator::Allocator;
+#[cfg(feature = "nalgebra")]
+use nalgebra::{DefaultAllocator, Dim, OMatrix};
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, DataMut, DataOwned, Dimension};
+#[cfg(feature = "num-dual")]
+use num_dual::DualNum;
 use num_traits::{Inv, Signed};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
@@ -93,6 +99,28 @@ impl<U, S: DataOwned<Elem = f64> + DataMut, D: Dimension> Mul<Quantity<f64, U>>
     for ArrayBase<S, D>
 {
     type Output = Quantity<ArrayBase<S, D>, U>;
+    fn mul(self, other: Quantity<f64, U>) -> Self::Output {
+        Quantity(self * other.0, PhantomData)
+    }
+}
+
+#[cfg(feature = "nalgebra")]
+impl<U, R: Dim, C: Dim> Mul<Quantity<f64, U>> for &OMatrix<f64, R, C>
+where
+    DefaultAllocator: Allocator<R, C>,
+{
+    type Output = Quantity<OMatrix<f64, R, C>, U>;
+    fn mul(self, other: Quantity<f64, U>) -> Self::Output {
+        Quantity(self * other.0, PhantomData)
+    }
+}
+
+#[cfg(feature = "nalgebra")]
+impl<U, R: Dim, C: Dim> Mul<Quantity<f64, U>> for OMatrix<f64, R, C>
+where
+    DefaultAllocator: Allocator<R, C>,
+{
+    type Output = Quantity<OMatrix<f64, R, C>, U>;
     fn mul(self, other: Quantity<f64, U>) -> Self::Output {
         Quantity(self * other.0, PhantomData)
     }
@@ -336,6 +364,7 @@ where
     }
 }
 
+#[cfg(not(feature = "num-dual"))]
 impl<U> Quantity<f64, U> {
     /// Calculate the integer power of self.
     ///
@@ -397,6 +426,75 @@ impl<U> Quantity<f64, U> {
     /// assert_relative_eq!(x.root::<P4>(), 3.0 * METER);
     /// ```
     pub fn root<R: Integer>(self) -> Quantity<f64, Quot<U, R>>
+    where
+        U: Div<R>,
+    {
+        Quantity(self.0.powf(1.0 / R::I32 as f64), PhantomData)
+    }
+}
+
+#[cfg(feature = "num-dual")]
+impl<D: DualNum<f64>, U> Quantity<D, U> {
+    /// Calculate the integer power of self.
+    ///
+    /// # Example
+    /// ```
+    /// # use quantity::METER;
+    /// # use approx::assert_relative_eq;
+    /// # use typenum::P2;
+    /// let x = 3.0 * METER;
+    /// assert_relative_eq!(x.powi::<P2>(), 9.0 * METER * METER);
+    /// ```
+    pub fn powi<E: Integer>(self) -> Quantity<D, Prod<U, E>>
+    where
+        U: Mul<E>,
+    {
+        Quantity(self.0.powi(E::I32), PhantomData)
+    }
+
+    /// Calculate the square root of self.
+    ///
+    /// # Example
+    /// ```
+    /// # use quantity::METER;
+    /// # use approx::assert_relative_eq;
+    /// let x = 9.0 * METER * METER;
+    /// assert_relative_eq!(x.sqrt(), 3.0 * METER);
+    /// ```
+    pub fn sqrt(self) -> Quantity<D, Quot<U, P2>>
+    where
+        U: Div<P2>,
+    {
+        Quantity(self.0.sqrt(), PhantomData)
+    }
+
+    /// Calculate the cubic root of self.
+    ///
+    /// # Example
+    /// ```
+    /// # use quantity::METER;
+    /// # use approx::assert_relative_eq;
+    /// let x = 27.0 * METER * METER * METER;
+    /// assert_relative_eq!(x.cbrt(), 3.0 * METER);
+    /// ```
+    pub fn cbrt(self) -> Quantity<D, Quot<U, P3>>
+    where
+        U: Div<P3>,
+    {
+        Quantity(self.0.cbrt(), PhantomData)
+    }
+
+    /// Calculate the integer root of self.
+    ///
+    /// # Example
+    /// ```
+    /// # use quantity::METER;
+    /// # use approx::assert_relative_eq;
+    /// # use typenum::P4;
+    /// let x = 81.0 * METER * METER * METER * METER;
+    /// assert_relative_eq!(x.root::<P4>(), 3.0 * METER);
+    /// ```
+    pub fn root<R: Integer>(self) -> Quantity<D, Quot<U, R>>
     where
         U: Div<R>,
     {
