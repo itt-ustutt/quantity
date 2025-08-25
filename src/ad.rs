@@ -1,7 +1,7 @@
 use super::Quantity;
 use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, OVector, U1};
 use num_dual::{
-    Dual, Dual2, Dual2Vec, Dual3, DualNum, DualStruct, DualVec, HyperDual, HyperDualVec,
+    Dual, Dual2, Dual2Vec, Dual3, DualNum, DualStruct, DualVec, Gradients, HyperDual, HyperDualVec,
     HyperHyperDual,
 };
 use std::ops::Sub;
@@ -43,6 +43,20 @@ where
     UY: Sub<UX>,
 {
     let r = num_dual::gradient(|x| g(Quantity::new(x)).0, &x.0);
+    (Quantity::new(r.0), Quantity::new(r.1))
+}
+
+#[expect(clippy::type_complexity)]
+pub fn gradient_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
+    g: G,
+    x: &Quantity<OVector<T, N>, UX>,
+) -> (Quantity<T, UY>, Quantity<OVector<T, N>, Diff<UY, UX>>)
+where
+    DefaultAllocator: Allocator<N>,
+    G: Fn(Quantity<OVector<N::Dual<T, f64>, N>, UX>) -> Quantity<N::Dual<T, f64>, UY>,
+    UY: Sub<UX>,
+{
+    let r = N::gradient(|x, _: &()| g(Quantity::new(x)).0, &x.0, &());
     (Quantity::new(r.0), Quantity::new(r.1))
 }
 
@@ -99,6 +113,25 @@ where
     Diff<UY, UX>: Sub<UX>,
 {
     let r = num_dual::hessian(|x| g(Quantity::new(x)).0, &x.0);
+    (Quantity::new(r.0), Quantity::new(r.1), Quantity::new(r.2))
+}
+
+#[expect(clippy::type_complexity)]
+pub fn hessian_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
+    g: G,
+    x: &Quantity<OVector<T, N>, UX>,
+) -> (
+    Quantity<T, UY>,
+    Quantity<OVector<T, N>, Diff<UY, UX>>,
+    Quantity<OMatrix<T, N, N>, Diff<Diff<UY, UX>, UX>>,
+)
+where
+    DefaultAllocator: Allocator<N> + Allocator<N, N>,
+    G: Fn(Quantity<OVector<N::Dual2<T, f64>, N>, UX>) -> Quantity<N::Dual2<T, f64>, UY>,
+    UY: Sub<UX>,
+    Diff<UY, UX>: Sub<UX>,
+{
+    let r = N::hessian(|x, _: &()| g(Quantity::new(x)).0, &x.0, &());
     (Quantity::new(r.0), Quantity::new(r.1), Quantity::new(r.2))
 }
 
@@ -160,6 +193,42 @@ where
     let r = num_dual::partial_hessian(
         |(x, y)| g((Quantity::new(x), Quantity::new(y))).0,
         (&x.0, &y.0),
+    );
+    (
+        Quantity::new(r.0),
+        Quantity::new(r.1),
+        Quantity::new(r.2),
+        Quantity::new(r.3),
+    )
+}
+
+#[expect(clippy::type_complexity)]
+pub fn partial_hessian_copy<G, T: DualNum<f64> + Copy, UX, UY, UZ, N: Gradients>(
+    g: G,
+    (x, y): (&Quantity<OVector<T, N>, UX>, Quantity<T, UY>),
+) -> (
+    Quantity<T, UZ>,
+    Quantity<OVector<T, N>, Diff<UZ, UX>>,
+    Quantity<T, Diff<UZ, UY>>,
+    Quantity<OVector<T, N>, Diff<Diff<UZ, UX>, UY>>,
+)
+where
+    G: Fn(
+        (
+            Quantity<OVector<N::HyperDual<T, f64>, N>, UX>,
+            Quantity<N::HyperDual<T, f64>, UY>,
+        ),
+    ) -> Quantity<N::HyperDual<T, f64>, UZ>,
+    DefaultAllocator: Allocator<N>,
+    UZ: Sub<UX>,
+    UZ: Sub<UY>,
+    Diff<UZ, UX>: Sub<UY>,
+{
+    let r = N::partial_hessian(
+        |x, y, _: &()| g((Quantity::new(x), Quantity::new(y))).0,
+        &x.0,
+        y.0,
+        &(),
     );
     (
         Quantity::new(r.0),
