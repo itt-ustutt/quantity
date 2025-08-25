@@ -2,6 +2,7 @@ use pyo3::pymodule;
 
 #[pymodule]
 mod extend_quantity {
+    use nalgebra::{DMatrix, DVector};
     use ndarray::Array1;
     use pyo3::pyfunction;
     use quantity::*;
@@ -33,5 +34,13 @@ mod extend_quantity {
     #[pyfunction]
     fn law_of_cosines2(a: Length, b: Length, c: Length) -> Angle {
         Angle::acos((a * a + b * b - c * c).convert_into(2.0 * a * b))
+    }
+
+    #[pyfunction]
+    fn test_nalgebra(
+        pressure: Pressure<DMatrix<f64>>,
+        volume: Volume<DVector<f64>>,
+    ) -> Energy<DVector<f64>> {
+        pressure * volume
     }
 }

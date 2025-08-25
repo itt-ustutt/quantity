@@ -35,4 +35,4 @@ jobs:
           maturin build --release --out dist
           pip install si-units --no-index --find-links dist --force-reinstall
       - name: Test with pytest
-        run: pytest example/extend_quantity/test.py
+        run: pytest --doctest-modules example/extend_quantity/test.py

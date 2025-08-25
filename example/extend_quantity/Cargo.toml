@@ -11,3 +11,4 @@ crate-type = ["cdylib"]
 pyo3 = { version = "0.25", features = ["extension-module", "abi3-py39"] }
 quantity = { version = "*", path = "../../", features = ["python_numpy"] }
 ndarray = "0.16"
+nalgebra = "0.34"

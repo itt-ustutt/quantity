@@ -30,12 +30,12 @@ document-features = "0.2"
 ## Use N-dimensional arrays from the [ndarray] crate as value of a quantity.
 ndarray = { version = "0.16", optional = true }
 ## Use dynamic or static arrays from the [nalgebra] crate as value of a quantity.
-nalgebra = { version = "0.33", optional = true }
+nalgebra = { version = "0.34", optional = true }
 approx = { version = "0.5", optional = true }
 pyo3 = { version = "0.25", optional = true }
-numpy = { version = "0.25", optional = true }
+#numpy = { version = "0.26", optional = true }
+numpy = { git = "https://github.com/PyO3/rust-numpy", optional = true }
 num-dual = { git = "https://github.com/itt-ustutt/num-dual", branch = "linalg_nalgebra", optional = true }
-nshare = { version = "0.10", optional = true }
 
 [features]
 default = []
@@ -44,6 +44,6 @@ num-dual = ["dep:num-dual", "nalgebra"]
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.
 python = ["pyo3"]
 ## Use scalar and array quantities in Python interfaces through [pyo3], [numpy], and the [si-units](https://pypi.org/project/si-units/) package.
-python_numpy = ["python", "numpy/nalgebra", "ndarray", "nalgebra", "nshare"]
+python_numpy = ["python", "numpy/nalgebra", "ndarray", "nalgebra"]
 ## Enable approximate comparisons through the [approx] crate.
 approx = ["dep:approx", "ndarray?/approx"]
