@@ -14,8 +14,8 @@ use pyo3::{exceptions::PyValueError, prelude::*};
 use std::{marker::PhantomData, sync::LazyLock};
 use typenum::Integer;
 
-static SIOBJECT: LazyLock<PyObject> = LazyLock::new(|| {
-    Python::with_gil(|py| {
+static SIOBJECT: LazyLock<Py<PyAny>> = LazyLock::new(|| {
+    Python::attach(|py| {
         PyModule::import(py, "si_units")
             .unwrap()
             .getattr("SIObject")
@@ -274,8 +274,8 @@ where
     }
 }
 
-static ANGLE: LazyLock<PyObject> = LazyLock::new(|| {
-    Python::with_gil(|py| {
+static ANGLE: LazyLock<Py<PyAny>> = LazyLock::new(|| {
+    Python::attach(|py| {
         PyModule::import(py, "si_units")
             .unwrap()
             .getattr("Angle")

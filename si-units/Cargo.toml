@@ -22,7 +22,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ndarray = "0.16"
-numpy = "0.25"
-pyo3 = { version = "0.25", features = ["extension-module", "abi3-py39"] }
+numpy = "0.26"
+pyo3 = { version = "0.26", features = ["extension-module", "abi3-py39"] }
 regex = "1.11"
 thiserror = "2.0"
