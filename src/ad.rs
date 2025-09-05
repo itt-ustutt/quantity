@@ -2,7 +2,7 @@ use super::Quantity;
 use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, OVector, U1};
 use num_dual::{
     Dual, Dual2, Dual2Vec, Dual3, DualNum, DualStruct, DualVec, Gradients, HyperDual, HyperDualVec,
-    HyperHyperDual,
+    HyperHyperDual, Real,
 };
 use std::ops::Sub;
 use typenum::Diff;
@@ -18,6 +18,15 @@ impl<D, F, T: DualStruct<D, F>, U> DualStruct<D, F> for Quantity<T, U> {
     fn from_inner(inner: &Self::Inner) -> Self {
         Quantity::new(T::from_inner(&inner.0))
     }
+}
+
+pub fn zeroth_derivative<G, T: DualNum<f64>, UX, UY>(g: G, x: Quantity<T, UX>) -> Quantity<T, UY>
+where
+    G: Fn(Quantity<Real<T, f64>, UX>) -> Quantity<Real<T, f64>, UY>,
+    UY: Sub<UX>,
+{
+    let r = num_dual::zeroth_derivative(|x| g(Quantity::new(x)).0, x.0);
+    Quantity::new(r)
 }
 
 pub fn first_derivative<G, T: DualNum<f64>, UX, UY>(
