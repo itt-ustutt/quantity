@@ -72,7 +72,7 @@ where
 #[expect(clippy::type_complexity)]
 pub fn jacobian<G, T: DualNum<f64>, UX, UY, M: Dim, N: Dim>(
     g: G,
-    x: Quantity<OVector<T, N>, UX>,
+    x: &Quantity<OVector<T, N>, UX>,
 ) -> (
     Quantity<OVector<T, M>, UY>,
     Quantity<OMatrix<T, M, N>, Diff<UY, UX>>,
@@ -84,7 +84,24 @@ where
     ) -> Quantity<OVector<DualVec<T, f64, N>, M>, UY>,
     UY: Sub<UX>,
 {
-    let r = num_dual::jacobian(|x| g(Quantity::new(x)).0, x.0);
+    let r = num_dual::jacobian(|x| g(Quantity::new(x)).0, &x.0);
+    (Quantity::new(r.0), Quantity::new(r.1))
+}
+
+#[expect(clippy::type_complexity)]
+pub fn jacobian_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
+    g: G,
+    x: &Quantity<OVector<T, N>, UX>,
+) -> (
+    Quantity<OVector<T, N>, UY>,
+    Quantity<OMatrix<T, N, N>, Diff<UY, UX>>,
+)
+where
+    DefaultAllocator: Allocator<N> + Allocator<N> + Allocator<N, N> + Allocator<U1, N>,
+    G: Fn(Quantity<OVector<N::Dual<T, f64>, N>, UX>) -> Quantity<OVector<N::Dual<T, f64>, N>, UY>,
+    UY: Sub<UX>,
+{
+    let r = N::jacobian(|x, _: &()| g(Quantity::new(x)).0, &x.0, &());
     (Quantity::new(r.0), Quantity::new(r.1))
 }
 
