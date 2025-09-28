@@ -142,7 +142,7 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     }
 
     /// Return a producer and iterable that traverses over all 1D lanes pointing in the direction of axis.
-    pub fn lanes_mut(&mut self, axis: Axis) -> LanesMut<T, D::Smaller>
+    pub fn lanes_mut(&mut self, axis: Axis) -> LanesMut<'_, T, D::Smaller>
     where
         S: DataMut,
     {

@@ -5,8 +5,8 @@ authors = [
     "Philipp Rehner <prehner@ethz.ch>",
     "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
 ]
-rust-version = "1.81"
-edition = "2021"
+rust-version = "1.87"
+edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Representation of SI unit valued scalars and arrays."
 homepage = "https://github.com/itt-ustutt/quantity/tree/master/si-units"
@@ -22,7 +22,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ndarray = "0.16"
-numpy = "0.23"
-pyo3 = { version = "0.23", features = ["extension-module", "abi3-py39"] }
+numpy = "0.26"
+pyo3 = { version = "0.26", features = ["extension-module", "abi3-py39"] }
 regex = "1.11"
 thiserror = "2.0"

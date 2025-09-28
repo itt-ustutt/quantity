@@ -18,3 +18,14 @@ def test_array():
     >>> ideal_gas_array(T, V, N)
     array([ 826.31900987, 1058.09851279]) Pa
     """
+
+def test_nalgebra():
+    """
+    >>> from extend_quantity import test_nalgebra
+    >>> import si_units as si
+    >>> import numpy as np
+    >>> p = np.array([[1, 2], [3, 4]]) * si.BAR
+    >>> V = np.array([1, 2]) * si.LITER
+    >>> test_nalgebra(p, V)
+    array([ 500., 1100.]) J
+    """

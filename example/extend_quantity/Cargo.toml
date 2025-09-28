@@ -1,13 +1,14 @@
 [package]
 name = "extend_quantity"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 name = "extend_quantity"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.23", features = ["extension-module", "abi3-py39"] }
+pyo3 = { version = "0.26", features = ["extension-module", "abi3-py39"] }
 quantity = { version = "*", path = "../../", features = ["python_numpy"] }
 ndarray = "0.16"
+nalgebra = "0.34"

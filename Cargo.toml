@@ -1,12 +1,12 @@
 [package]
 name = "quantity"
-version = "0.10.6"
+version = "0.11.0"
 authors = [
     "Philipp Rehner <prehner@ethz.ch>",
     "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
 ]
-rust-version = "1.81"
-edition = "2021"
+rust-version = "1.87"
+edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Representation of quantites, i.e. of unit valued scalars and arrays."
 homepage = "https://github.com/itt-ustutt/quantity"
@@ -29,17 +29,20 @@ num-traits = "0.2"
 document-features = "0.2"
 ## Use N-dimensional arrays from the [ndarray] crate as value of a quantity.
 ndarray = { version = "0.16", optional = true }
+## Use dynamic or static arrays from the [nalgebra] crate as value of a quantity.
+nalgebra = { version = "0.34", optional = true }
 approx = { version = "0.5", optional = true }
-pyo3 = { version = "0.23", optional = true }
-numpy = { version = "0.23", optional = true }
-## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
-num-dual = { version = "0.11.2", optional = true }
+pyo3 = { version = "0.26", optional = true }
+numpy = { version = "0.26", optional = true }
+num-dual = { version = "0.12", optional = true }
 
 [features]
 default = []
+## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
+num-dual = ["dep:num-dual", "nalgebra"]
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.
 python = ["pyo3"]
 ## Use scalar and array quantities in Python interfaces through [pyo3], [numpy], and the [si-units](https://pypi.org/project/si-units/) package.
-python_numpy = ["python", "numpy", "ndarray"]
+python_numpy = ["python", "numpy/nalgebra", "ndarray", "nalgebra"]
 ## Enable approximate comparisons through the [approx] crate.
 approx = ["dep:approx", "ndarray?/approx"]

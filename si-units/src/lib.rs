@@ -28,12 +28,12 @@ pub enum QuantityError {
 
 #[pyclass(name = "SIObject", module = "si_units._core", frozen)]
 pub struct PySIObject {
-    value: PyObject,
+    value: Py<PyAny>,
     unit: SIUnit,
 }
 
 impl PySIObject {
-    fn new(value: PyObject, unit: SIUnit) -> Self {
+    fn new(value: Py<PyAny>, unit: SIUnit) -> Self {
         Self { value, unit }
     }
 
@@ -93,7 +93,7 @@ impl PySIObject {
             .ok()
     }
 
-    fn __richcmp__(&self, py: Python, other: &Self, op: CompareOp) -> PyResult<PyObject> {
+    fn __richcmp__(&self, py: Python, other: &Self, op: CompareOp) -> PyResult<Py<PyAny>> {
         self.check_units(other).and_then(|_| match op {
             CompareOp::Eq => self.value.call_method1(py, "__eq__", (&other.value,)),
             CompareOp::Ne => self.value.call_method1(py, "__ne__", (&other.value,)),
@@ -240,7 +240,7 @@ impl PySIObject {
     }
 
     #[getter]
-    fn get_shape(&self, py: Python) -> PyResult<PyObject> {
+    fn get_shape(&self, py: Python) -> PyResult<Py<PyAny>> {
         self.value.getattr(py, "shape")
     }
 
