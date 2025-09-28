@@ -146,7 +146,7 @@
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use std::marker::PhantomData;
 use std::ops::{Deref, Div, Mul};
-use typenum::{ATerm, Diff, Integer, Negate, Quot, Sum, TArr, N1, N2, P1, P3, Z0};
+use typenum::{ATerm, Diff, Integer, N1, N2, Negate, P1, P3, Quot, Sum, TArr, Z0};
 
 #[cfg(feature = "num-dual")]
 pub mod ad;

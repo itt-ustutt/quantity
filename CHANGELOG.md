@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2025-09-28
+### Added
+- Added core functionalities for quantities with underlying data structures from `nalgebra`. [#92](https://github.com/itt-ustutt/quantity/pull/92)
+- Added automatic differentiation capabilities from the `num-dual` crate. [#92](https://github.com/itt-ustutt/quantity/pull/92)
+
 ## [0.10.6] - 2025-06-24
-## Changed
+### Changed
 - Updated the optional num-dual dependency to 0.11.2. [#91](https://github.com/itt-ustutt/quantity/pull/91)
 
 ## [0.10.5] - 2025-06-03

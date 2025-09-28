@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```
 [dependencies]
-quantity = "0.10"
+quantity = "0.11"
 ```
 
 ## Examples
@@ -24,7 +24,7 @@ Calculate pressure of an ideal gas.
 
 ```rust
 let temperature = 25.0 * CELSIUS;
-let volume = 1.5 * METER.powi(3);
+let volume = 1.5 * METER.powi::<P3>();
 let moles = 75.0 * MOL;
 let pressure = moles * RGAS * temperature / volume;
 println!("{:.5}", pressure);            // 123.94785 kPa
@@ -36,19 +36,19 @@ Calculate the gravitational pull of the moon on the earth.
 let mass_earth = 5.9724e24 * KILOGRAM;
 let mass_moon = 7.346e22 * KILOGRAM;
 let distance = 383.398 * KILO * METER;
-let force = G * mass_earth * mass_moon / distance.powi(2);
+let force = G * mass_earth * mass_moon / distance.powi::<P2>();
 println!("{:.5e}", force);              // 1.99208e26 N
 ```
 
 Calculate the pressure distribution in the atmosphere using the barometric formula.
 
 ```rust
-let z = SIArray1::linspace(1.0 * METER, 70.0 * KILO * METER, 10)?;
-let g = 9.81 * METER / SECOND.powi(2);
+let z = Quantity::linspace(1.0 * METER, 70.0 * KILO * METER, 10);
+let g = 9.81 * METER / SECOND.powi::<P2>();
 let m = 28.949 * GRAM / MOL;
 let t = 10.0 * CELSIUS;
 let p0 = BAR;
-let pressure = p0 * (-&z * m * g).to_reduced(RGAS * t)?.mapv(f64::exp);
+let pressure = ((-z.clone() * m * g) / (RGAS * t)).mapv(f64::exp) * p0;
 for i in 0..10 {
     println!("z = {:8.5}   p = {:9.5}", z.get(i), pressure.get(i));
 }
