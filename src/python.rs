@@ -24,16 +24,8 @@ static SIOBJECT: LazyLock<Py<PyAny>> = LazyLock::new(|| {
     })
 });
 
-impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > IntoPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
+    IntoPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
@@ -47,16 +39,16 @@ impl<
 
 #[cfg(feature = "ndarray")]
 impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-        D: Dimension,
-    > IntoPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
+    'py,
+    T: Integer,
+    L: Integer,
+    M: Integer,
+    I: Integer,
+    THETA: Integer,
+    N: Integer,
+    J: Integer,
+    D: Dimension,
+> IntoPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
@@ -70,16 +62,8 @@ impl<
 }
 
 #[cfg(feature = "nalgebra")]
-impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > IntoPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
+    IntoPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
@@ -93,16 +77,8 @@ impl<
 }
 
 #[cfg(feature = "nalgebra")]
-impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > IntoPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
+    IntoPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
@@ -115,16 +91,8 @@ impl<
     }
 }
 
-impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > FromPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
+    FromPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
@@ -154,16 +122,16 @@ where
 
 #[cfg(feature = "ndarray")]
 impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-        D: Dimension,
-    > FromPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
+    'py,
+    T: Integer,
+    L: Integer,
+    M: Integer,
+    I: Integer,
+    THETA: Integer,
+    N: Integer,
+    J: Integer,
+    D: Dimension,
+> FromPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
@@ -193,16 +161,8 @@ where
 }
 
 #[cfg(feature = "nalgebra")]
-impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > FromPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
+    FromPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
@@ -234,16 +194,8 @@ where
 }
 
 #[cfg(feature = "nalgebra")]
-impl<
-        'py,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > FromPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
+    FromPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {

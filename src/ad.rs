@@ -1,5 +1,5 @@
 use super::Quantity;
-use nalgebra::{allocator::Allocator, DefaultAllocator, Dim, OMatrix, OVector, U1};
+use nalgebra::{DefaultAllocator, Dim, OMatrix, OVector, U1, allocator::Allocator};
 use num_dual::{
     Dual, Dual2, Dual2Vec, Dual3, DualNum, DualStruct, DualVec, Gradients, HyperDual, HyperDualVec,
     HyperHyperDual, Real,
@@ -338,9 +338,9 @@ where
 #[cfg(test)]
 mod test_num_dual {
     use super::*;
-    use crate::{Area, Length, Temperature, Volume, METER};
+    use crate::{Area, Length, METER, Temperature, Volume};
     use approx::assert_relative_eq;
-    use nalgebra::{vector, SMatrix, SVector};
+    use nalgebra::{SMatrix, SVector, vector};
     use num_dual::{Dual64, ImplicitDerivative, ImplicitFunction};
     use typenum::{P2, P3};
 

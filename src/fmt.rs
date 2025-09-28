@@ -4,20 +4,20 @@ use ndarray::{Array, Dimension};
 use std::collections::HashMap;
 use std::fmt;
 use std::sync::LazyLock;
-use typenum::{Quot, N1, N2, N3, P2, P3, P4};
+use typenum::{N1, N2, N3, P2, P3, P4, Quot};
 
 const UNIT_SYMBOLS: [&str; 7] = ["s", "m", "kg", "A", "K", "mol", "cd"];
 
 impl<
-        Inner: fmt::Debug,
-        T: Integer,
-        L: Integer,
-        M: Integer,
-        I: Integer,
-        THETA: Integer,
-        N: Integer,
-        J: Integer,
-    > fmt::Debug for Quantity<Inner, SIUnit<T, L, M, I, THETA, N, J>>
+    Inner: fmt::Debug,
+    T: Integer,
+    L: Integer,
+    M: Integer,
+    I: Integer,
+    THETA: Integer,
+    N: Integer,
+    J: Integer,
+> fmt::Debug for Quantity<Inner, SIUnit<T, L, M, I, THETA, N, J>>
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)?;

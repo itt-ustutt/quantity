@@ -12,7 +12,7 @@ use num_dual::DualNum;
 use num_traits::{Inv, Signed};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-use typenum::{Diff, Integer, Negate, Prod, Quot, Sum, P2, P3};
+use typenum::{Diff, Integer, Negate, P2, P3, Prod, Quot, Sum};
 
 // Multiplication
 impl<T1, T2, U1, U2> Mul<Quantity<T2, U2>> for Quantity<T1, U1>
