@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2025-11-08
+### Packaging
+- Updated `pyo3` and `numpy` dependencies to 0.27. [#93](https://github.com/itt-ustutt/quantity/pull/93)
+
 ## [0.11.0] - 2025-09-28
 ### Added
 - Added core functionalities for quantities with underlying data structures from `nalgebra`. [#92](https://github.com/itt-ustutt/quantity/pull/92)
