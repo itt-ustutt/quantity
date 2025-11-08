@@ -92,11 +92,12 @@ impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Int
 }
 
 impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    FromPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+    FromPyObject<'_, 'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
-    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+    type Error = PyErr;
+    fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob
             .call_method0("__getnewargs__")
             .and_then(|raw| raw.extract::<(f64, [i8; 7])>())
@@ -131,11 +132,12 @@ impl<
     N: Integer,
     J: Integer,
     D: Dimension,
-> FromPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
+> FromPyObject<'_, 'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
-    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+    type Error = PyErr;
+    fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob
             .call_method0("__getnewargs__")
             .and_then(|raw| raw.extract::<(PyReadonlyArray<f64, D>, [i8; 7])>())
@@ -162,11 +164,12 @@ where
 
 #[cfg(feature = "nalgebra")]
 impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    FromPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+    FromPyObject<'_, 'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
-    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+    type Error = PyErr;
+    fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob.call_method0("__getnewargs__").and_then(|raw| {
             raw.extract::<(PyReadonlyArray1<f64>, [i8; 7])>()
                 .map(|(m, u)| {
@@ -195,11 +198,12 @@ where
 
 #[cfg(feature = "nalgebra")]
 impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    FromPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+    FromPyObject<'_, 'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
-    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+    type Error = PyErr;
+    fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob.call_method0("__getnewargs__").and_then(|raw| {
             raw.extract::<(PyReadonlyArray2<f64>, [i8; 7])>()
                 .map(|(m, u)| {
@@ -245,8 +249,10 @@ impl<'py> IntoPyObject<'py> for Angle {
     }
 }
 
-impl<'py> FromPyObject<'py> for Angle {
-    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+impl<'py> FromPyObject<'_, 'py> for Angle {
+    type Error = PyErr;
+
+    fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok(value) = ob
             .call_method0("__getnewargs__")
             .and_then(|raw| raw.extract::<f64>())

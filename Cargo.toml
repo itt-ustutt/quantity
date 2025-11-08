@@ -32,8 +32,8 @@ ndarray = { version = "0.16", optional = true }
 ## Use dynamic or static arrays from the [nalgebra] crate as value of a quantity.
 nalgebra = { version = "0.34", optional = true }
 approx = { version = "0.5", optional = true }
-pyo3 = { version = "0.26", optional = true }
-numpy = { version = "0.26", optional = true }
+pyo3 = { version = "0.27", optional = true }
+numpy = { version = "0.27", optional = true }
 num-dual = { version = "0.12", optional = true }
 
 [features]
@@ -46,3 +46,4 @@ python = ["pyo3"]
 python_numpy = ["python", "numpy/nalgebra", "ndarray", "nalgebra"]
 ## Enable approximate comparisons through the [approx] crate.
 approx = ["dep:approx", "ndarray?/approx"]
+
