@@ -37,7 +37,7 @@ numpy = { version = "0.27", optional = true }
 num-dual = { version = "0.12", optional = true }
 
 [features]
-default = ["python_numpy"]
+default = []
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
 num-dual = ["dep:num-dual", "nalgebra"]
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.
@@ -46,3 +46,4 @@ python = ["pyo3"]
 python_numpy = ["python", "numpy/nalgebra", "ndarray", "nalgebra"]
 ## Enable approximate comparisons through the [approx] crate.
 approx = ["dep:approx", "ndarray?/approx"]
+
