@@ -1,6 +1,6 @@
 #![warn(clippy::all)]
 #![allow(non_snake_case)]
-use ndarray::{arr1, Array1};
+use ndarray::{Array1, arr1};
 use numpy::IntoPyArray;
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyRuntimeError;
@@ -150,7 +150,7 @@ impl PySIObject {
     }
 
     fn __mul__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>().map(Bound::get) {
+        let (rhs_value, unit) = if let Ok(r) = rhs.cast::<Self>().map(Bound::get) {
             (r.value.bind(rhs.py()).clone(), self.unit * r.unit)
         } else {
             (rhs.clone(), self.unit)
@@ -166,7 +166,7 @@ impl PySIObject {
     }
 
     fn __rmul__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>().map(Bound::get) {
+        let (lhs_value, unit) = if let Ok(l) = lhs.cast::<Self>().map(Bound::get) {
             (l.value.bind(lhs.py()).clone(), l.unit * self.unit)
         } else {
             (lhs.clone(), self.unit)
@@ -182,9 +182,9 @@ impl PySIObject {
     }
 
     fn __truediv__<'py>(&self, rhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (rhs_value, unit) = if let Ok(r) = rhs.downcast::<Self>().map(Bound::get) {
+        let (rhs_value, unit) = if let Ok(r) = rhs.cast::<Self>().map(Bound::get) {
             (r.value.bind(rhs.py()).clone(), self.unit / r.unit)
-        } else if rhs.downcast::<Celsius>().is_ok() {
+        } else if rhs.cast::<Celsius>().is_ok() {
             return if self.unit == _KELVIN {
                 let delta = PyFloat::new(rhs.py(), 273.15);
                 self.value.bind(rhs.py()).call_method1("__sub__", (&delta,))
@@ -208,7 +208,7 @@ impl PySIObject {
     }
 
     fn __rtruediv__<'py>(&self, lhs: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-        let (lhs_value, unit) = if let Ok(l) = lhs.downcast::<Self>().map(Bound::get) {
+        let (lhs_value, unit) = if let Ok(l) = lhs.cast::<Self>().map(Bound::get) {
             (l.value.bind(lhs.py()).clone(), l.unit / self.unit)
         } else {
             (lhs.clone(), self.unit.recip())
@@ -283,10 +283,11 @@ impl<T> SIObject<T> {
     }
 }
 
-impl<'py> FromPyObject<'py> for SINumber {
-    fn extract_bound(ob: &Bound<'py, PyAny>) -> PyResult<Self> {
+impl<'py> FromPyObject<'_, 'py> for SINumber {
+    type Error = PyErr;
+    fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let py = ob.py();
-        let ob = ob.downcast::<PySIObject>()?.borrow();
+        let ob = ob.cast::<PySIObject>()?.borrow();
         let value = ob.value.extract::<f64>(py)?;
         let unit = ob.unit;
         Ok(SINumber { value, unit })
@@ -317,7 +318,7 @@ fn array(value: Bound<'_, PyAny>) -> PyResult<Bound<'_, PySIObject>> {
         let value = value.into_pyarray(py).into_any().unbind();
         Bound::new(py, PySIObject::new(value, unit))
     } else {
-        Ok(value.downcast_into::<PySIObject>()?)
+        Ok(value.cast_into::<PySIObject>()?)
     }
 }
 

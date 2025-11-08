@@ -32,12 +32,12 @@ ndarray = { version = "0.16", optional = true }
 ## Use dynamic or static arrays from the [nalgebra] crate as value of a quantity.
 nalgebra = { version = "0.34", optional = true }
 approx = { version = "0.5", optional = true }
-pyo3 = { version = "0.26", optional = true }
-numpy = { version = "0.26", optional = true }
+pyo3 = { version = "0.27", optional = true }
+numpy = { version = "0.27", optional = true }
 num-dual = { version = "0.12", optional = true }
 
 [features]
-default = []
+default = ["python_numpy"]
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
 num-dual = ["dep:num-dual", "nalgebra"]
 ## Directly use (scalar) quantities in Python interfaces through [pyo3] and the [si-units](https://pypi.org/project/si-units/) package.
