@@ -1,6 +1,6 @@
 [package]
 name = "quantity"
-version = "0.12.1"
+version = "0.12.2"
 authors = [
     "Philipp Rehner <prehner@ethz.ch>",
     "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
@@ -34,7 +34,7 @@ nalgebra = { version = "0.34", optional = true }
 approx = { version = "0.5", optional = true }
 pyo3 = { version = "0.27", optional = true }
 numpy = { version = "0.27", optional = true }
-num-dual = { version = "0.12", optional = true }
+num-dual = { version = "0.13", optional = true }
 
 [features]
 default = []

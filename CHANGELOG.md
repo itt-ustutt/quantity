@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2] - 2025-12-04
+### Fixed
+- Also updated `num-dual` dependency to 0.13 to fix incorrect dependency resolution for downstream crates. [#95](https://github.com/itt-ustutt/quantity/pull/95)
+
 ## [0.12.1] - 2025-12-04
 ### Fixed
 - Updated `ndarray` dependency to 0.17 to fix incorrect dependency resolution. [#94](https://github.com/itt-ustutt/quantity/pull/94)
