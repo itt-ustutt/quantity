@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.1] - 2025-12-04
+### Fixed
+- Updated `ndarray` dependency to 0.17 to fix incorrect dependency resolution. [#94](https://github.com/itt-ustutt/quantity/pull/94)
+
 ## [0.12.0] - 2025-11-08
 ### Packaging
 - Updated `pyo3` and `numpy` dependencies to 0.27. [#93](https://github.com/itt-ustutt/quantity/pull/93)

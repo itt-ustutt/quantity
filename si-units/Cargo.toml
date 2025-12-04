@@ -21,7 +21,7 @@ name = "_core"
 crate-type = ["cdylib"]
 
 [dependencies]
-ndarray = "0.16"
+ndarray = "0.17"
 numpy = "0.27"
 pyo3 = { version = "0.27", features = ["extension-module", "abi3-py310"] }
 regex = "1.12"
