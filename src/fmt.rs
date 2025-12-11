@@ -4,24 +4,23 @@ use ndarray::{Array, Dimension};
 use std::collections::HashMap;
 use std::fmt;
 use std::sync::LazyLock;
-use typenum::{N1, N2, N3, P2, P3, P4, Quot};
 
 const UNIT_SYMBOLS: [&str; 7] = ["s", "m", "kg", "A", "K", "mol", "cd"];
 
 impl<
     Inner: fmt::Debug,
-    T: Integer,
-    L: Integer,
-    M: Integer,
-    I: Integer,
-    THETA: Integer,
-    N: Integer,
-    J: Integer,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
 > fmt::Debug for Quantity<Inner, SIUnit<T, L, M, I, THETA, N, J>>
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)?;
-        let unit = [T::I8, L::I8, M::I8, I::I8, THETA::I8, N::I8, J::I8]
+        let unit = [T, L, M, I, THETA, N, J]
             .iter()
             .zip(UNIT_SYMBOLS.iter())
             .filter_map(|(&u, &s)| match u {
@@ -48,8 +47,8 @@ pub(crate) trait PrintUnit {
 }
 
 macro_rules! impl_fmt {
-    ($t:ident, $l:ident, $m:ident, $i:ident, $theta:ident, $n:ident, $unit:expr, $symbol:expr, $has_prefix:expr) => {
-        impl<T> fmt::LowerExp for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>>
+    ($t:expr, $l:expr, $m:expr, $i:expr, $theta:expr, $n:expr, $unit:expr, $symbol:expr, $has_prefix:expr) => {
+        impl<T> fmt::LowerExp for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, 0>>
         where
             for<'a> &'a T: Div<f64>,
             for<'a> Quot<&'a T, f64>: fmt::LowerExp,
@@ -60,7 +59,7 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl<T> fmt::UpperExp for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>>
+        impl<T> fmt::UpperExp for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, 0>>
         where
             for<'a> &'a T: Div<f64>,
             for<'a> Quot<&'a T, f64>: fmt::UpperExp,
@@ -73,7 +72,7 @@ macro_rules! impl_fmt {
 
         #[cfg(feature = "ndarray")]
         impl<D: Dimension> fmt::Display
-            for Quantity<Array<f64, D>, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>>
+            for Quantity<Array<f64, D>, SIUnit<$t, $l, $m, $i, $theta, $n, 0>>
         {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 (self / $unit).into_value().fmt(f)?;
@@ -81,7 +80,7 @@ macro_rules! impl_fmt {
             }
         }
 
-        impl fmt::Display for Quantity<f64, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>> {
+        impl fmt::Display for Quantity<f64, SIUnit<$t, $l, $m, $i, $theta, $n, 0>> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 let (value, prefix) = get_prefix((self / $unit).into_value(), $has_prefix);
                 if !((1e-2..1e4).contains(&value.abs()) || value == 0.0) {
@@ -94,30 +93,30 @@ macro_rules! impl_fmt {
         }
 
         #[cfg(feature = "python")]
-        impl<T> PrintUnit for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, Z0>> {
+        impl<T> PrintUnit for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, 0>> {
             const UNIT: &'static str = $symbol;
         }
     };
 }
 
-impl_fmt!(P1, Z0, Z0, Z0, Z0, Z0, SECOND, "s", Some(KILO));
-impl_fmt!(Z0, P1, Z0, Z0, Z0, Z0, METER, "m", Some(MEGA));
-impl_fmt!(Z0, Z0, P1, Z0, Z0, Z0, GRAM, "g", Some(MEGA));
-impl_fmt!(Z0, Z0, Z0, Z0, Z0, P1, MOL, "mol", Some(MEGA));
-impl_fmt!(Z0, Z0, Z0, Z0, P1, Z0, KELVIN, "K", None);
-impl_fmt!(N1, Z0, Z0, Z0, Z0, Z0, HERTZ, "Hz", Some(PETA));
-impl_fmt!(N2, P1, P1, Z0, Z0, Z0, NEWTON, "N", Some(PETA));
-impl_fmt!(N2, N1, P1, Z0, Z0, Z0, PASCAL, "Pa", Some(PETA));
-impl_fmt!(N2, P2, P1, Z0, Z0, Z0, JOULE, "J", Some(PETA));
-impl_fmt!(N3, P2, P1, Z0, Z0, Z0, WATT, "W", Some(PETA));
-impl_fmt!(P1, Z0, Z0, P1, Z0, Z0, COULOMB, "C", None);
-impl_fmt!(N3, P2, P1, N1, Z0, Z0, VOLT, "V", Some(PETA));
-impl_fmt!(P4, N2, N1, P2, Z0, Z0, FARAD, "F", Some(PETA));
-impl_fmt!(N3, P2, P1, N2, Z0, Z0, OHM, "Ω", Some(PETA));
-impl_fmt!(P3, N2, N1, P2, Z0, Z0, SIEMENS, "S", Some(PETA));
-impl_fmt!(N2, P2, P1, N1, Z0, Z0, WEBER, "Wb", Some(PETA));
-impl_fmt!(N2, Z0, P1, N1, Z0, Z0, TESLA, "T", Some(PETA));
-impl_fmt!(N2, P2, P1, N2, Z0, Z0, HENRY, "H", Some(PETA));
+impl_fmt!(1, 0, 0, 0, 0, 0, SECOND, "s", Some(KILO));
+impl_fmt!(0, 1, 0, 0, 0, 0, METER, "m", Some(MEGA));
+impl_fmt!(0, 0, 1, 0, 0, 0, GRAM, "g", Some(MEGA));
+impl_fmt!(0, 0, 0, 0, 0, 1, MOL, "mol", Some(MEGA));
+impl_fmt!(0, 0, 0, 0, 1, 0, KELVIN, "K", None);
+impl_fmt!(-1, 0, 0, 0, 0, 0, HERTZ, "Hz", Some(PETA));
+impl_fmt!(-2, 1, 1, 0, 0, 0, NEWTON, "N", Some(PETA));
+impl_fmt!(-2, -1, 1, 0, 0, 0, PASCAL, "Pa", Some(PETA));
+impl_fmt!(-2, 2, 1, 0, 0, 0, JOULE, "J", Some(PETA));
+impl_fmt!(-3, 2, 1, 0, 0, 0, WATT, "W", Some(PETA));
+impl_fmt!(1, 0, 0, 1, 0, 0, COULOMB, "C", None);
+impl_fmt!(-3, 2, 1, -1, 0, 0, VOLT, "V", Some(PETA));
+impl_fmt!(4, -2, -1, 2, 0, 0, FARAD, "F", Some(PETA));
+impl_fmt!(-3, 2, 1, -2, 0, 0, OHM, "Ω", Some(PETA));
+impl_fmt!(3, -2, -1, 2, 0, 0, SIEMENS, "S", Some(PETA));
+impl_fmt!(-2, 2, 1, -1, 0, 0, WEBER, "Wb", Some(PETA));
+impl_fmt!(-2, 0, 1, -1, 0, 0, TESLA, "T", Some(PETA));
+impl_fmt!(-2, 2, 1, -2, 0, 0, HENRY, "H", Some(PETA));
 
 const M2: Area = Quantity(1.0, PhantomData);
 const M3: Volume = Quantity(1.0, PhantomData);
@@ -127,32 +126,32 @@ const JKGK: SpecificEntropy = Quantity(1.0, PhantomData);
 const WMK: ThermalConductivity = Quantity(1.0, PhantomData);
 const GS: MassFlowRate = Quantity(1e-3, PhantomData);
 
-impl_fmt!(Z0, N3, Z0, Z0, Z0, P1, MOL / M3, "mol/m³", Some(MEGA));
-impl_fmt!(Z0, N2, Z0, Z0, Z0, P1, MOL / M2, "mol/m²", Some(MEGA));
-impl_fmt!(Z0, N1, Z0, Z0, Z0, P1, MOL / METER, "mol/m", Some(MEGA));
-impl_fmt!(Z0, P3, Z0, Z0, Z0, N1, M3 / MOL, "m³/mol", None);
-impl_fmt!(Z0, P3, Z0, Z0, N1, N1, M3 / MOL / KELVIN, "m³/mol/K", None);
-impl_fmt!(Z0, N3, P1, Z0, Z0, Z0, GRAM / M3, "g/m³", Some(MEGA));
-impl_fmt!(N2, Z0, P1, Z0, Z0, Z0, NEWTON / METER, "N/m", Some(PETA));
-impl_fmt!(N1, P2, P1, Z0, Z0, Z0, JOULE * SECOND, "J*s", Some(PETA));
-impl_fmt!(N2, P2, P1, Z0, Z0, N1, JOULE / MOL, "J/mol", Some(PETA));
-impl_fmt!(N2, P2, P1, Z0, N1, Z0, JOULE / KELVIN, "J/K", Some(PETA));
-impl_fmt!(N2, P2, P1, Z0, N1, N1, JMK, "J/mol/K", Some(PETA));
-impl_fmt!(N2, P2, Z0, Z0, Z0, Z0, JOULE / KG, "J/kg", Some(PETA));
-impl_fmt!(N2, P2, Z0, Z0, N1, Z0, JKGK, "J/kg/K", Some(PETA));
-impl_fmt!(N1, N1, P1, Z0, Z0, Z0, PASCAL * SECOND, "Pa*s", Some(PETA));
-impl_fmt!(N1, P1, Z0, Z0, Z0, Z0, METER / SECOND, "m/s", Some(MEGA));
-impl_fmt!(N1, P2, Z0, Z0, Z0, Z0, M2 / SECOND, "m²/s", None);
-impl_fmt!(N3, P1, P1, Z0, N1, Z0, WMK, "W/m/K", Some(PETA));
-impl_fmt!(Z0, Z0, P1, Z0, Z0, N1, GRAM / MOL, "g/mol", Some(MEGA));
-impl_fmt!(Z0, P2, Z0, Z0, Z0, Z0, M2, "m²", None);
-impl_fmt!(Z0, P3, Z0, Z0, Z0, Z0, M3, "m³", None);
-impl_fmt!(N1, P3, N1, Z0, Z0, Z0, M3 / KG / SECOND, "m³/kg/s²", None);
-impl_fmt!(N3, P2, P1, Z0, N1, Z0, WATT / KELVIN, "W/K", None);
-impl_fmt!(N3, Z0, P1, Z0, N1, Z0, WMK / METER, "W/m²/K", None);
-impl_fmt!(N3, Z0, P1, Z0, Z0, Z0, WATT / M2, "W/m²", None);
-impl_fmt!(N1, Z0, P1, Z0, Z0, Z0, GS, "g/s", Some(MEGA));
-impl_fmt!(N1, N2, P1, Z0, Z0, Z0, GS / M2, "g/m²/s", Some(MEGA));
+impl_fmt!(0, -3, 0, 0, 0, 1, MOL / M3, "mol/m³", Some(MEGA));
+impl_fmt!(0, -2, 0, 0, 0, 1, MOL / M2, "mol/m²", Some(MEGA));
+impl_fmt!(0, -1, 0, 0, 0, 1, MOL / METER, "mol/m", Some(MEGA));
+impl_fmt!(0, 3, 0, 0, 0, -1, M3 / MOL, "m³/mol", None);
+impl_fmt!(0, 3, 0, 0, -1, -1, M3 / MOL / KELVIN, "m³/mol/K", None);
+impl_fmt!(0, -3, 1, 0, 0, 0, GRAM / M3, "g/m³", Some(MEGA));
+impl_fmt!(-2, 0, 1, 0, 0, 0, NEWTON / METER, "N/m", Some(PETA));
+impl_fmt!(-1, 2, 1, 0, 0, 0, JOULE * SECOND, "J*s", Some(PETA));
+impl_fmt!(-2, 2, 1, 0, 0, -1, JOULE / MOL, "J/mol", Some(PETA));
+impl_fmt!(-2, 2, 1, 0, -1, 0, JOULE / KELVIN, "J/K", Some(PETA));
+impl_fmt!(-2, 2, 1, 0, -1, -1, JMK, "J/mol/K", Some(PETA));
+impl_fmt!(-2, 2, 0, 0, 0, 0, JOULE / KG, "J/kg", Some(PETA));
+impl_fmt!(-2, 2, 0, 0, -1, 0, JKGK, "J/kg/K", Some(PETA));
+impl_fmt!(-1, -1, 1, 0, 0, 0, PASCAL * SECOND, "Pa*s", Some(PETA));
+impl_fmt!(-1, 1, 0, 0, 0, 0, METER / SECOND, "m/s", Some(MEGA));
+impl_fmt!(-1, 2, 0, 0, 0, 0, M2 / SECOND, "m²/s", None);
+impl_fmt!(-3, 1, 1, 0, -1, 0, WMK, "W/m/K", Some(PETA));
+impl_fmt!(0, 0, 1, 0, 0, -1, GRAM / MOL, "g/mol", Some(MEGA));
+impl_fmt!(0, 2, 0, 0, 0, 0, M2, "m²", None);
+impl_fmt!(0, 3, 0, 0, 0, 0, M3, "m³", None);
+impl_fmt!(-1, 3, -1, 0, 0, 0, M3 / KG / SECOND, "m³/kg/s²", None);
+impl_fmt!(-3, 2, 1, 0, -1, 0, WATT / KELVIN, "W/K", None);
+impl_fmt!(-3, 0, 1, 0, -1, 0, WMK / METER, "W/m²/K", None);
+impl_fmt!(-3, 0, 1, 0, 0, 0, WATT / M2, "W/m²", None);
+impl_fmt!(-1, 0, 1, 0, 0, 0, GS, "g/s", Some(MEGA));
+impl_fmt!(-1, -2, 1, 0, 0, 0, GS / M2, "g/m²/s", Some(MEGA));
 
 fn get_prefix(value: f64, has_prefix: Option<f64>) -> (f64, &'static str) {
     if let Some(p) = has_prefix {

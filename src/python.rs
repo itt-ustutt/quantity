@@ -12,7 +12,6 @@ use numpy::PyReadonlyArray;
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, ToPyArray};
 use pyo3::{exceptions::PyValueError, prelude::*};
 use std::{marker::PhantomData, sync::LazyLock};
-use typenum::Integer;
 
 static SIOBJECT: LazyLock<Py<PyAny>> = LazyLock::new(|| {
     Python::attach(|py| {
@@ -24,15 +23,23 @@ static SIOBJECT: LazyLock<Py<PyAny>> = LazyLock::new(|| {
     })
 });
 
-impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    IntoPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+    'py,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+> IntoPyObject<'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-        let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit = [L, M, T, I, N, THETA, J];
         SIOBJECT.bind(py).call1((self.0, unit))
     }
 }
@@ -40,13 +47,13 @@ impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Int
 #[cfg(feature = "ndarray")]
 impl<
     'py,
-    T: Integer,
-    L: Integer,
-    M: Integer,
-    I: Integer,
-    THETA: Integer,
-    N: Integer,
-    J: Integer,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
     D: Dimension,
 > IntoPyObject<'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 {
@@ -55,44 +62,68 @@ impl<
     type Error = PyErr;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-        let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit = [L, M, T, I, N, THETA, J];
         let value = self.0.into_pyarray(py).into_any();
         SIOBJECT.bind(py).call1((value, unit))
     }
 }
 
 #[cfg(feature = "nalgebra")]
-impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    IntoPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+    'py,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+> IntoPyObject<'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-        let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit = [L, M, T, I, N, THETA, J];
         let value = self.0.to_pyarray(py).into_any();
         SIOBJECT.bind(py).call1((value, unit))
     }
 }
 
 #[cfg(feature = "nalgebra")]
-impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    IntoPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+    'py,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+> IntoPyObject<'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-        let unit = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit = [L, M, T, I, N, THETA, J];
         let value = numpy::PyArray1::from_slice(py, self.0.data.as_vec()).into_any();
         SIOBJECT.bind(py).call1((value, unit))
     }
 }
 
-impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    FromPyObject<'_, 'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+    'py,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+> FromPyObject<'_, 'py> for Quantity<f64, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
@@ -108,7 +139,7 @@ where
                 ob.call_method0("__repr__")?
             )));
         };
-        let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
         } else {
@@ -124,13 +155,13 @@ where
 #[cfg(feature = "ndarray")]
 impl<
     'py,
-    T: Integer,
-    L: Integer,
-    M: Integer,
-    I: Integer,
-    THETA: Integer,
-    N: Integer,
-    J: Integer,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
     D: Dimension,
 > FromPyObject<'_, 'py> for Quantity<Array<f64, D>, SIUnit<T, L, M, I, THETA, N, J>>
 where
@@ -149,7 +180,7 @@ where
             )));
         };
         let value = value.as_array().to_owned();
-        let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
         } else {
@@ -163,8 +194,16 @@ where
 }
 
 #[cfg(feature = "nalgebra")]
-impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    FromPyObject<'_, 'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+    'py,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+> FromPyObject<'_, 'py> for Quantity<DVector<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
@@ -183,7 +222,7 @@ where
                 ob.call_method0("__repr__")?
             )));
         };
-        let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
         } else {
@@ -197,8 +236,16 @@ where
 }
 
 #[cfg(feature = "nalgebra")]
-impl<'py, T: Integer, L: Integer, M: Integer, I: Integer, THETA: Integer, N: Integer, J: Integer>
-    FromPyObject<'_, 'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
+impl<
+    'py,
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+> FromPyObject<'_, 'py> for Quantity<DMatrix<f64>, SIUnit<T, L, M, I, THETA, N, J>>
 where
     Self: PrintUnit,
 {
@@ -217,7 +264,7 @@ where
                 ob.call_method0("__repr__")?
             )));
         };
-        let unit_into = [L::I8, M::I8, T::I8, I::I8, N::I8, THETA::I8, J::I8];
+        let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
             Ok(Quantity(value, PhantomData))
         } else {

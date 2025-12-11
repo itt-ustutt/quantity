@@ -1,11 +1,10 @@
-use super::Quantity;
+use super::{Diff, Quantity};
 use nalgebra::{DefaultAllocator, Dim, OMatrix, OVector, U1, allocator::Allocator};
 use num_dual::{
     Dual, Dual2, Dual2Vec, Dual3, DualNum, DualStruct, DualVec, Gradients, HyperDual, HyperDualVec,
     HyperHyperDual, Real,
 };
 use std::ops::Sub;
-use typenum::Diff;
 
 impl<D, F, T: DualStruct<D, F>, U> DualStruct<D, F> for Quantity<T, U> {
     type Real = Quantity<T::Real, U>;
@@ -338,32 +337,10 @@ where
 #[cfg(test)]
 mod test_num_dual {
     use super::*;
-    use crate::{Area, Length, METER, Temperature, Volume};
+    use crate::{Area, Length, METER, Volume};
     use approx::assert_relative_eq;
     use nalgebra::{SMatrix, SVector, vector};
     use num_dual::{Dual64, ImplicitDerivative, ImplicitFunction};
-    use typenum::{P2, P3};
-
-    struct MyArgs<D> {
-        temperature: Temperature<D>,
-    }
-
-    impl<D: DualNum<f64> + Copy> DualStruct<D, f64> for MyArgs<D> {
-        type Real = MyArgs<f64>;
-        type Inner = MyArgs<D::Inner>;
-
-        fn re(&self) -> Self::Real {
-            MyArgs {
-                temperature: self.temperature.re(),
-            }
-        }
-
-        fn from_inner(inner: &Self::Inner) -> Self {
-            MyArgs {
-                temperature: Temperature::from_inner(&inner.temperature),
-            }
-        }
-    }
 
     struct AreaImplicit;
     impl ImplicitFunction<f64> for AreaImplicit {
@@ -403,27 +380,27 @@ mod test_num_dual {
     fn test_derivative() {
         let (v, dv) = first_derivative(volume, 5.0 * METER);
         println!("{v}\t{dv:3}");
-        assert_eq!(v, 125.0 * METER.powi::<P3>());
-        assert_eq!(dv, 75.0 * METER.powi::<P2>());
+        assert_eq!(v, 125.0 * METER.powi::<3>());
+        assert_eq!(dv, 75.0 * METER.powi::<2>());
 
         let (v, dv, d2v) = second_derivative(volume, 5.0 * METER);
         println!("{v}\t{dv:3}\t\t{d2v}");
-        assert_eq!(v, 125.0 * METER.powi::<P3>(),);
-        assert_eq!(dv, 75.0 * METER.powi::<P2>(),);
+        assert_eq!(v, 125.0 * METER.powi::<3>(),);
+        assert_eq!(dv, 75.0 * METER.powi::<2>(),);
         assert_eq!(d2v, 30.0 * METER);
 
         let (v, dv_dx, dv_dh, d2v) =
             second_partial_derivative(volume2, (5.0 * METER, 20.0 * METER));
         println!("{v}\t{dv_dx:3}\t{dv_dh:3}\t{d2v}");
-        assert_eq!(v, 500.0 * METER.powi::<P3>(),);
-        assert_eq!(dv_dx, 200.0 * METER.powi::<P2>(),);
-        assert_eq!(dv_dh, 25.0 * METER.powi::<P2>(),);
+        assert_eq!(v, 500.0 * METER.powi::<3>(),);
+        assert_eq!(dv_dx, 200.0 * METER.powi::<2>(),);
+        assert_eq!(dv_dh, 25.0 * METER.powi::<2>(),);
         assert_eq!(d2v, 10.0 * METER);
 
         let (v, dv, d2v, d3v) = third_derivative(volume, 5.0 * METER);
         println!("{v}\t{dv:3}\t\t{d2v}\t{d3v}");
-        assert_eq!(v, 125.0 * METER.powi::<P3>(),);
-        assert_eq!(dv, 75.0 * METER.powi::<P2>(),);
+        assert_eq!(v, 125.0 * METER.powi::<3>(),);
+        assert_eq!(dv, 75.0 * METER.powi::<2>(),);
         assert_eq!(d2v, 30.0 * METER);
         assert_eq!(d3v.into_value(), 6.0);
     }

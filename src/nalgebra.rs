@@ -1,11 +1,10 @@
-use super::Quantity;
+use super::{Quantity, Sum};
 use nalgebra::allocator::Allocator;
 use nalgebra::constraint::{DimEq, ShapeConstraint};
 use nalgebra::{ClosedAddAssign, ClosedMulAssign, DMatrix, DefaultAllocator, Dim, OMatrix, Scalar};
 use num_traits::Zero;
 use std::marker::PhantomData;
 use std::ops::Add;
-use typenum::Sum;
 
 impl<R: Dim, C: Dim, U, T: Scalar> Quantity<OMatrix<T, R, C>, U>
 where
