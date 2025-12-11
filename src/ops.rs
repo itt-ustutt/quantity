@@ -1,4 +1,4 @@
-use super::Quantity;
+use super::{Const, Diff, Negate, Prod, Quantity, Quot, Sum};
 #[cfg(feature = "approx")]
 use approx::{AbsDiffEq, RelativeEq};
 #[cfg(feature = "nalgebra")]
@@ -12,7 +12,6 @@ use num_dual::DualNum;
 use num_traits::{Inv, Signed};
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-use typenum::{Diff, Integer, Negate, P2, P3, Prod, Quot, Sum};
 
 // Multiplication
 impl<T1, T2, U1, U2> Mul<Quantity<T2, U2>> for Quantity<T1, U1>
@@ -372,15 +371,14 @@ impl<U> Quantity<f64, U> {
     /// ```
     /// # use quantity::METER;
     /// # use approx::assert_relative_eq;
-    /// # use typenum::P2;
     /// let x = 3.0 * METER;
-    /// assert_relative_eq!(x.powi::<P2>(), 9.0 * METER * METER);
+    /// assert_relative_eq!(x.powi::<2>(), 9.0 * METER * METER);
     /// ```
-    pub fn powi<E: Integer>(self) -> Quantity<f64, Prod<U, E>>
+    pub fn powi<const E: i8>(self) -> Quantity<f64, Prod<U, Const<E>>>
     where
-        U: Mul<E>,
+        U: Mul<Const<E>>,
     {
-        Quantity(self.0.powi(E::I32), PhantomData)
+        Quantity(self.0.powi(E as i32), PhantomData)
     }
 
     /// Calculate the square root of self.
@@ -392,9 +390,9 @@ impl<U> Quantity<f64, U> {
     /// let x = 9.0 * METER * METER;
     /// assert_relative_eq!(x.sqrt(), 3.0 * METER);
     /// ```
-    pub fn sqrt(self) -> Quantity<f64, Quot<U, P2>>
+    pub fn sqrt(self) -> Quantity<f64, Quot<U, Const<2>>>
     where
-        U: Div<P2>,
+        U: Div<Const<2>>,
     {
         Quantity(self.0.sqrt(), PhantomData)
     }
@@ -408,9 +406,9 @@ impl<U> Quantity<f64, U> {
     /// let x = 27.0 * METER * METER * METER;
     /// assert_relative_eq!(x.cbrt(), 3.0 * METER);
     /// ```
-    pub fn cbrt(self) -> Quantity<f64, Quot<U, P3>>
+    pub fn cbrt(self) -> Quantity<f64, Quot<U, Const<3>>>
     where
-        U: Div<P3>,
+        U: Div<Const<3>>,
     {
         Quantity(self.0.cbrt(), PhantomData)
     }
@@ -421,15 +419,14 @@ impl<U> Quantity<f64, U> {
     /// ```
     /// # use quantity::METER;
     /// # use approx::assert_relative_eq;
-    /// # use typenum::P4;
     /// let x = 81.0 * METER * METER * METER * METER;
-    /// assert_relative_eq!(x.root::<P4>(), 3.0 * METER);
+    /// assert_relative_eq!(x.root::<4>(), 3.0 * METER);
     /// ```
-    pub fn root<R: Integer>(self) -> Quantity<f64, Quot<U, R>>
+    pub fn root<const R: i8>(self) -> Quantity<f64, Quot<U, Const<R>>>
     where
-        U: Div<R>,
+        U: Div<Const<R>>,
     {
-        Quantity(self.0.powf(1.0 / R::I32 as f64), PhantomData)
+        Quantity(self.0.powf(1.0 / R as f64), PhantomData)
     }
 }
 
@@ -441,15 +438,14 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     /// ```
     /// # use quantity::METER;
     /// # use approx::assert_relative_eq;
-    /// # use typenum::P2;
     /// let x = 3.0 * METER;
-    /// assert_relative_eq!(x.powi::<P2>(), 9.0 * METER * METER);
+    /// assert_relative_eq!(x.powi::<2>(), 9.0 * METER * METER);
     /// ```
-    pub fn powi<E: Integer>(self) -> Quantity<D, Prod<U, E>>
+    pub fn powi<const E: i8>(self) -> Quantity<D, Prod<U, Const<E>>>
     where
-        U: Mul<E>,
+        U: Mul<Const<E>>,
     {
-        Quantity(self.0.powi(E::I32), PhantomData)
+        Quantity(self.0.powi(E as i32), PhantomData)
     }
 
     /// Calculate the square root of self.
@@ -461,9 +457,9 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     /// let x = 9.0 * METER * METER;
     /// assert_relative_eq!(x.sqrt(), 3.0 * METER);
     /// ```
-    pub fn sqrt(self) -> Quantity<D, Quot<U, P2>>
+    pub fn sqrt(self) -> Quantity<D, Quot<U, Const<2>>>
     where
-        U: Div<P2>,
+        U: Div<Const<2>>,
     {
         Quantity(self.0.sqrt(), PhantomData)
     }
@@ -477,9 +473,9 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     /// let x = 27.0 * METER * METER * METER;
     /// assert_relative_eq!(x.cbrt(), 3.0 * METER);
     /// ```
-    pub fn cbrt(self) -> Quantity<D, Quot<U, P3>>
+    pub fn cbrt(self) -> Quantity<D, Quot<U, Const<3>>>
     where
-        U: Div<P3>,
+        U: Div<Const<3>>,
     {
         Quantity(self.0.cbrt(), PhantomData)
     }
@@ -490,15 +486,14 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     /// ```
     /// # use quantity::METER;
     /// # use approx::assert_relative_eq;
-    /// # use typenum::P4;
     /// let x = 81.0 * METER * METER * METER * METER;
-    /// assert_relative_eq!(x.root::<P4>(), 3.0 * METER);
+    /// assert_relative_eq!(x.root::<4>(), 3.0 * METER);
     /// ```
-    pub fn root<R: Integer>(self) -> Quantity<D, Quot<U, R>>
+    pub fn root<const R: i8>(self) -> Quantity<D, Quot<U, Const<R>>>
     where
-        U: Div<R>,
+        U: Div<Const<R>>,
     {
-        Quantity(self.0.powf(1.0 / R::I32 as f64), PhantomData)
+        Quantity(self.0.powf(1.0 / R as f64), PhantomData)
     }
 }
 

@@ -91,9 +91,8 @@
 //! Calculate pressure of an ideal gas.
 //! ```
 //! # use quantity::*;
-//! # use typenum::P3;
 //! let temperature = 25.0 * CELSIUS;
-//! let volume = 1.5 * METER.powi::<P3>();
+//! let volume = 1.5 * METER.powi::<3>();
 //! let moles = 75.0 * MOL;
 //! let pressure = moles * RGAS * temperature / volume;
 //! println!("{:.5}", pressure);            // 123.94785 kPa
@@ -102,11 +101,10 @@
 //! Calculate the gravitational pull of the moon on the earth.
 //! ```
 //! # use quantity::*;
-//! # use typenum::P2;
 //! let mass_earth = 5.9724e24 * KILOGRAM;
 //! let mass_moon = 7.346e22 * KILOGRAM;
 //! let distance = 383.398 * KILO * METER;
-//! let force = G * mass_earth * mass_moon / distance.powi::<P2>();
+//! let force = G * mass_earth * mass_moon / distance.powi::<2>();
 //! println!("{:.5e}", force);              // 1.99208e26 N
 //! ```
 //!
@@ -116,9 +114,8 @@
 //! # #[cfg(feature = "ndarray")]
 //! # {
 //! # use quantity::*;
-//! # use typenum::P2;
 //! let z = Length::linspace(1.0 * METER, 70.0 * KILO * METER, 10);
-//! let g = 9.81 * METER / SECOND.powi::<P2>();
+//! let g = 9.81 * METER / SECOND.powi::<2>();
 //! let m = 28.949 * GRAM / MOL;
 //! let t = 10.0 * CELSIUS;
 //! let p0 = BAR;
@@ -142,11 +139,11 @@
 //! Interoperability with other crates can be achieved by activating the following features:
 #![doc = document_features::document_features!()]
 #![warn(clippy::all)]
+#![expect(clippy::neg_multiply)]
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use std::marker::PhantomData;
-use std::ops::{Deref, Div, Mul};
-use typenum::{ATerm, Diff, Integer, N1, N2, Negate, P1, P3, Quot, Sum, TArr, Z0};
+use std::ops::{Add, Deref, Div, Mul, Neg, Sub};
 
 #[cfg(feature = "num-dual")]
 pub mod ad;
@@ -159,22 +156,333 @@ mod ops;
 #[cfg(feature = "python")]
 mod python;
 
-pub type SIUnit<T, L, M, I, THETA, N, J> =
-    TArr<T, TArr<L, TArr<M, TArr<I, TArr<THETA, TArr<N, TArr<J, ATerm>>>>>>>;
+type Sum<T1, T2> = <T1 as Add<T2>>::Output;
+type Diff<T1, T2> = <T1 as Sub<T2>>::Output;
+type Negate<T> = <T as Neg>::Output;
+type Prod<T1, T2> = <T1 as Mul<T2>>::Output;
+type Quot<T1, T2> = <T1 as Div<T2>>::Output;
+
+pub struct Const<const N: i8>;
+
+macro_rules! impl_add {
+    ($a:expr; $($b:expr),*) => {
+        $(
+            impl_add!($a, $b);
+        )*
+    };
+    ($a:expr, $b:expr) => {
+        impl Add<Const<$b>> for Const<$a> {
+            type Output = Const<{ $a + $b }>;
+
+            fn add(self, _: Const<$b>) -> Self::Output {
+                Const
+            }
+        }
+    };
+}
+
+impl_add!(-6; 0, 1, 2, 3, 4, 5, 6);
+impl_add!(-5; -1, 0, 1, 2, 3, 4, 5, 6);
+impl_add!(-4; -2, -1, 0, 1, 2, 3, 4, 5, 6);
+impl_add!(-3; -3, -2, -1, 0, 1, 2, 3, 4, 5, 6);
+impl_add!(-2; -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6);
+impl_add!(-1; -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6);
+impl_add!(0; -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6);
+impl_add!(1; -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5);
+impl_add!(2; -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4);
+impl_add!(3; -6, -5, -4, -3, -2, -1, 0, 1, 2, 3);
+impl_add!(4; -6, -5, -4, -3, -2, -1, 0, 1, 2);
+impl_add!(5; -6, -5, -4, -3, -2, -1, 0, 1);
+impl_add!(6; -6, -5, -4, -3, -2, -1, 0);
+
+macro_rules! impl_neg {
+    ($a:expr) => {
+        impl Neg for Const<$a> {
+            type Output = Const<{ -$a }>;
+
+            fn neg(self) -> Self::Output {
+                Const
+            }
+        }
+    };
+    ($($a:expr),+) => {
+        impl_neg!(0);
+        $(
+            impl_neg!($a);
+            impl_neg!({-$a});
+        )+
+    };
+}
+
+impl_neg!(1, 2, 3, 4, 5, 6);
+
+impl<const X: i8, const Y: i8, const Z: i8> Sub<Const<Y>> for Const<X>
+where
+    Const<Y>: Neg,
+    Const<X>: Add<Negate<Const<Y>>, Output = Const<Z>>,
+    Const<Y>: Add<Const<Z>, Output = Const<X>>,
+{
+    type Output = Const<Z>;
+
+    fn sub(self, _: Const<Y>) -> Self::Output {
+        Const
+    }
+}
+
+macro_rules! impl_mul {
+    ($a:expr; $($b:expr),*) => {
+        $(
+            impl_mul!($a, $b);
+        )*
+    };
+    ($a:expr, $b:expr) => {
+        impl Mul<Const<$b>> for Const<$a> {
+            type Output = Const<{ $a * $b }>;
+
+            fn mul(self, _: Const<$b>) -> Self::Output {
+                Const
+            }
+        }
+    };
+}
+
+impl_mul!(-3; -2, 2);
+impl_mul!(-2; -3, -2, 2, 3);
+impl_mul!(-1; -6, -5, -4, -3, -2, 2, 3, 4, 5, 6);
+impl_mul!(0; -6, -5, -4, -3, -2, 2, 3, 4, 5, 6);
+impl_mul!(1; -6, -5, -4, -3, -2, 2, 3, 4, 5, 6);
+impl_mul!(2; -3, -2, 2, 3);
+impl_mul!(3; -2, 2);
+
+macro_rules! impl_div {
+    ($a:expr; $($b:expr),*) => {
+        $(
+            impl_div!($a, $b);
+        )*
+    };
+    ($a:expr, $b:expr) => {
+        impl Div<Const<$b>> for Const<$a> {
+            type Output = Const<{ $a / $b }>;
+
+            fn div(self, _: Const<$b>) -> Self::Output {
+                Const
+            }
+        }
+    };
+}
+
+impl_div!(-6; -6, -3, -2, 2, 3, 6);
+impl_div!(-5; -5, 5);
+impl_div!(-4; -4, -2, 2, 4);
+impl_div!(-3; -3, 3);
+impl_div!(-2; -2, 2);
+impl_div!(0; -6, -5, -4, -3, -2, 2, 3, 4, 5, 6);
+impl_div!(2; -2, 2);
+impl_div!(3; -3, 3);
+impl_div!(4; -4, -2, 2, 4);
+impl_div!(5; -5, 5);
+impl_div!(6; -6, -3, -2, 2, 3, 6);
+
+#[derive(Clone, Copy)]
+pub struct SIUnit<
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+>;
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const T3: i8,
+    const L3: i8,
+    const M3: i8,
+    const I3: i8,
+    const THETA3: i8,
+    const N3: i8,
+    const J3: i8,
+> Add<SIUnit<T2, L2, M2, I2, THETA2, N2, J2>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Add<Const<T2>, Output = Const<T3>>,
+    Const<L1>: Add<Const<L2>, Output = Const<L3>>,
+    Const<M1>: Add<Const<M2>, Output = Const<M3>>,
+    Const<I1>: Add<Const<I2>, Output = Const<I3>>,
+    Const<THETA1>: Add<Const<THETA2>, Output = Const<THETA3>>,
+    Const<N1>: Add<Const<N2>, Output = Const<N3>>,
+    Const<J1>: Add<Const<J2>, Output = Const<J3>>,
+{
+    type Output = SIUnit<T3, L3, M3, I3, THETA3, N3, J3>;
+
+    fn add(self, _: SIUnit<T2, L2, M2, I2, THETA2, N2, J2>) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+> Neg for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Neg<Output = Const<T2>>,
+    Const<L1>: Neg<Output = Const<L2>>,
+    Const<M1>: Neg<Output = Const<M2>>,
+    Const<I1>: Neg<Output = Const<I2>>,
+    Const<THETA1>: Neg<Output = Const<THETA2>>,
+    Const<N1>: Neg<Output = Const<N2>>,
+    Const<J1>: Neg<Output = Const<J2>>,
+{
+    type Output = SIUnit<T2, L2, M2, I2, THETA2, N2, J2>;
+
+    fn neg(self) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const T3: i8,
+    const L3: i8,
+    const M3: i8,
+    const I3: i8,
+    const THETA3: i8,
+    const N3: i8,
+    const J3: i8,
+> Sub<SIUnit<T2, L2, M2, I2, THETA2, N2, J2>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Sub<Const<T2>, Output = Const<T3>>,
+    Const<L1>: Sub<Const<L2>, Output = Const<L3>>,
+    Const<M1>: Sub<Const<M2>, Output = Const<M3>>,
+    Const<I1>: Sub<Const<I2>, Output = Const<I3>>,
+    Const<THETA1>: Sub<Const<THETA2>, Output = Const<THETA3>>,
+    Const<N1>: Sub<Const<N2>, Output = Const<N3>>,
+    Const<J1>: Sub<Const<J2>, Output = Const<J3>>,
+{
+    type Output = SIUnit<T3, L3, M3, I3, THETA3, N3, J3>;
+
+    fn sub(self, _: SIUnit<T2, L2, M2, I2, THETA2, N2, J2>) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const E: i8,
+> Mul<Const<E>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Mul<Const<E>, Output = Const<T2>>,
+    Const<L1>: Mul<Const<E>, Output = Const<L2>>,
+    Const<M1>: Mul<Const<E>, Output = Const<M2>>,
+    Const<I1>: Mul<Const<E>, Output = Const<I2>>,
+    Const<THETA1>: Mul<Const<E>, Output = Const<THETA2>>,
+    Const<N1>: Mul<Const<E>, Output = Const<N2>>,
+    Const<J1>: Mul<Const<E>, Output = Const<J2>>,
+{
+    type Output = SIUnit<T2, L2, M2, I2, THETA2, N2, J2>;
+
+    fn mul(self, _: Const<E>) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const E: i8,
+> Div<Const<E>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Div<Const<E>, Output = Const<T2>>,
+    Const<L1>: Div<Const<E>, Output = Const<L2>>,
+    Const<M1>: Div<Const<E>, Output = Const<M2>>,
+    Const<I1>: Div<Const<E>, Output = Const<I2>>,
+    Const<THETA1>: Div<Const<E>, Output = Const<THETA2>>,
+    Const<N1>: Div<Const<E>, Output = Const<N2>>,
+    Const<J1>: Div<Const<E>, Output = Const<J2>>,
+{
+    type Output = SIUnit<T2, L2, M2, I2, THETA2, N2, J2>;
+
+    fn div(self, _: Const<E>) -> Self::Output {
+        SIUnit
+    }
+}
 
 /// Physical quantity with compile-time checked unit.
 #[derive(Clone, Copy)]
 #[repr(transparent)]
 pub struct Quantity<T, U>(T, PhantomData<U>);
 
-pub type _Dimensionless = SIUnit<Z0, Z0, Z0, Z0, Z0, Z0, Z0>;
-pub type _Time = SIUnit<P1, Z0, Z0, Z0, Z0, Z0, Z0>;
-pub type _Length = SIUnit<Z0, P1, Z0, Z0, Z0, Z0, Z0>;
-pub type _Mass = SIUnit<Z0, Z0, P1, Z0, Z0, Z0, Z0>;
-pub type _Current = SIUnit<Z0, Z0, Z0, P1, Z0, Z0, Z0>;
-pub type _Temperature = SIUnit<Z0, Z0, Z0, Z0, P1, Z0, Z0>;
-pub type _Moles = SIUnit<Z0, Z0, Z0, Z0, Z0, P1, Z0>;
-pub type _LuminousIntensity = SIUnit<Z0, Z0, Z0, Z0, Z0, Z0, P1>;
+pub type _Dimensionless = SIUnit<0, 0, 0, 0, 0, 0, 0>;
+pub type _Time = SIUnit<1, 0, 0, 0, 0, 0, 0>;
+pub type _Length = SIUnit<0, 1, 0, 0, 0, 0, 0>;
+pub type _Mass = SIUnit<0, 0, 1, 0, 0, 0, 0>;
+pub type _Current = SIUnit<0, 0, 0, 1, 0, 0, 0>;
+pub type _Temperature = SIUnit<0, 0, 0, 0, 1, 0, 0>;
+pub type _Moles = SIUnit<0, 0, 0, 0, 0, 1, 0>;
+pub type _LuminousIntensity = SIUnit<0, 0, 0, 0, 0, 0, 1>;
 
 pub type Dimensionless<T = f64> = Quantity<T, _Dimensionless>;
 pub type Time<T = f64> = Quantity<T, _Time>;
@@ -352,11 +660,9 @@ pub const QE: Charge = Quantity(1.602176634e-19, PhantomData);
 /// Speed of light $\\left(c=299792458\\,\\frac{\text{m}}{\text{s}}\\right)$
 pub const CLIGHT: Velocity = Quantity(299792458.0, PhantomData);
 /// Luminous efficacy of $540\\,\text{THz}$ radiation $\\left(K_\text{cd}=683\\,\\frac{\text{lm}}{\text{W}}\\right)$
-#[expect(clippy::type_complexity)]
-pub const KCD: Quantity<f64, SIUnit<N2, N1, P3, Z0, Z0, Z0, P1>> = Quantity(683.0, PhantomData);
+pub const KCD: Quantity<f64, SIUnit<-2, -1, 3, 0, 0, 0, 1>> = Quantity(683.0, PhantomData);
 /// Gravitational constant $\\left(G=6.6743\\times 10^{-11}\\,\\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}\\right)$
-#[expect(clippy::type_complexity)]
-pub const G: Quantity<f64, SIUnit<N2, P3, N1, Z0, Z0, Z0, Z0>> = Quantity(6.6743e-11, PhantomData);
+pub const G: Quantity<f64, SIUnit<-2, 3, -1, 0, 0, 0, 0>> = Quantity(6.6743e-11, PhantomData);
 
 /// Prefix quecto $\\left(\text{q}=10^{-30}\\right)$
 pub const QUECTO: f64 = 1e-30;
