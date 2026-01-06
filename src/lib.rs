@@ -139,7 +139,6 @@
 //! Interoperability with other crates can be achieved by activating the following features:
 #![doc = document_features::document_features!()]
 #![warn(clippy::all)]
-#![expect(clippy::neg_multiply)]
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use std::marker::PhantomData;
@@ -237,40 +236,25 @@ where
 
 macro_rules! impl_mul {
     ($a:expr; $($b:expr),*) => {
+        impl_mul!(0, $a, 0);
         $(
-            impl_mul!($a, $b);
+            impl_mul!($a, $b, {$a * $b});
+            impl_mul!({-$a}, $b, {-{$a * $b}});
+            impl_mul!($a, {-$b}, {-{$a * $b}});
+            impl_mul!({-$a}, {-$b}, {$a * $b});
         )*
     };
-    ($a:expr, $b:expr) => {
+    ($a:expr, $b:expr, $c:expr) => {
         impl Mul<Const<$b>> for Const<$a> {
-            type Output = Const<{ $a * $b }>;
+            type Output = Const<$c>;
 
             fn mul(self, _: Const<$b>) -> Self::Output {
                 Const
             }
         }
-    };
-}
 
-impl_mul!(-4; -2, 2);
-impl_mul!(-3; -3, -2, 2, 3);
-impl_mul!(-2; -4, -3, -2, 2, 3, 4);
-impl_mul!(-1; -9, -8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_mul!(0; -9, -8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_mul!(1; -9, -8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_mul!(2; -4, -3, -2, 2, 3, 4);
-impl_mul!(3; -3, -2, 2, 3);
-impl_mul!(4; -2, 2);
-
-macro_rules! impl_div {
-    ($a:expr; $($b:expr),*) => {
-        $(
-            impl_div!($a, $b);
-        )*
-    };
-    ($a:expr, $b:expr) => {
-        impl Div<Const<$b>> for Const<$a> {
-            type Output = Const<{ $a / $b }>;
+        impl Div<Const<$b>> for Const<$c> {
+            type Output = Const<$a>;
 
             fn div(self, _: Const<$b>) -> Self::Output {
                 Const
@@ -279,21 +263,15 @@ macro_rules! impl_div {
     };
 }
 
-impl_div!(-9; -9, -3, 3, 9);
-impl_div!(-8; -8, -4, -2, 2, 4, 8);
-impl_div!(-6; -6, -3, -2, 2, 3, 6);
-impl_div!(-5; -5, 5);
-impl_div!(-4; -4, -2, 2, 4);
-impl_div!(-3; -3, 3);
-impl_div!(-2; -2, 2);
-impl_div!(0; -8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8);
-impl_div!(2; -2, 2);
-impl_div!(3; -3, 3);
-impl_div!(4; -4, -2, 2, 4);
-impl_div!(5; -5, 5);
-impl_div!(6; -6, -3, -2, 2, 3, 6);
-impl_div!(8; -8, -4, -2, 2, 4, 8);
-impl_div!(9; -9, -3, 3, 9);
+impl_mul!(1; 1, 2, 3, 4, 5, 6, 7, 8, 9);
+impl_mul!(2; 1, 2, 3, 4);
+impl_mul!(3; 1, 2, 3);
+impl_mul!(4; 1, 2);
+impl_mul!(5; 1);
+impl_mul!(6; 1);
+impl_mul!(7; 1);
+impl_mul!(8; 1);
+impl_mul!(9; 1);
 
 #[derive(Clone, Copy)]
 pub struct SIUnit<
