@@ -91,9 +91,8 @@
 //! Calculate pressure of an ideal gas.
 //! ```
 //! # use quantity::*;
-//! # use typenum::P3;
 //! let temperature = 25.0 * CELSIUS;
-//! let volume = 1.5 * METER.powi::<P3>();
+//! let volume = 1.5 * METER.powi::<3>();
 //! let moles = 75.0 * MOL;
 //! let pressure = moles * RGAS * temperature / volume;
 //! println!("{:.5}", pressure);            // 123.94785 kPa
@@ -102,11 +101,10 @@
 //! Calculate the gravitational pull of the moon on the earth.
 //! ```
 //! # use quantity::*;
-//! # use typenum::P2;
 //! let mass_earth = 5.9724e24 * KILOGRAM;
 //! let mass_moon = 7.346e22 * KILOGRAM;
 //! let distance = 383.398 * KILO * METER;
-//! let force = G * mass_earth * mass_moon / distance.powi::<P2>();
+//! let force = G * mass_earth * mass_moon / distance.powi::<2>();
 //! println!("{:.5e}", force);              // 1.99208e26 N
 //! ```
 //!
@@ -116,9 +114,8 @@
 //! # #[cfg(feature = "ndarray")]
 //! # {
 //! # use quantity::*;
-//! # use typenum::P2;
 //! let z = Length::linspace(1.0 * METER, 70.0 * KILO * METER, 10);
-//! let g = 9.81 * METER / SECOND.powi::<P2>();
+//! let g = 9.81 * METER / SECOND.powi::<2>();
 //! let m = 28.949 * GRAM / MOL;
 //! let t = 10.0 * CELSIUS;
 //! let p0 = BAR;
@@ -145,8 +142,7 @@
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
 use std::marker::PhantomData;
-use std::ops::{Deref, Div, Mul};
-use typenum::{ATerm, Diff, Integer, N1, N2, Negate, P1, P3, Quot, Sum, TArr, Z0};
+use std::ops::{Add, Deref, Div, Mul, Neg, Sub};
 
 #[cfg(feature = "num-dual")]
 pub mod ad;
@@ -159,22 +155,221 @@ mod ops;
 #[cfg(feature = "python")]
 mod python;
 
-pub type SIUnit<T, L, M, I, THETA, N, J> =
-    TArr<T, TArr<L, TArr<M, TArr<I, TArr<THETA, TArr<N, TArr<J, ATerm>>>>>>>;
+type Sum<T1, T2> = <T1 as Add<T2>>::Output;
+type Diff<T1, T2> = <T1 as Sub<T2>>::Output;
+type Negate<T> = <T as Neg>::Output;
+type Prod<T1, T2> = <T1 as Mul<T2>>::Output;
+type Quot<T1, T2> = <T1 as Div<T2>>::Output;
+
+/// Convertion between const generics and the Rust type system.
+pub struct Const<const N: i8>;
+
+// implements all operations (+,-,*,/) for integers within a given range.
+include!(concat!(env!("OUT_DIR"), "/const_impls.rs"));
+
+/// A compile-time representation of an SI unit based on the exponents of
+/// the seven base units (time, length, mass, current, temperature, amount
+/// of substance, luminous intensity)
+#[derive(Clone, Copy)]
+pub struct SIUnit<
+    const T: i8,
+    const L: i8,
+    const M: i8,
+    const I: i8,
+    const THETA: i8,
+    const N: i8,
+    const J: i8,
+>;
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const T3: i8,
+    const L3: i8,
+    const M3: i8,
+    const I3: i8,
+    const THETA3: i8,
+    const N3: i8,
+    const J3: i8,
+> Add<SIUnit<T2, L2, M2, I2, THETA2, N2, J2>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Add<Const<T2>, Output = Const<T3>>,
+    Const<L1>: Add<Const<L2>, Output = Const<L3>>,
+    Const<M1>: Add<Const<M2>, Output = Const<M3>>,
+    Const<I1>: Add<Const<I2>, Output = Const<I3>>,
+    Const<THETA1>: Add<Const<THETA2>, Output = Const<THETA3>>,
+    Const<N1>: Add<Const<N2>, Output = Const<N3>>,
+    Const<J1>: Add<Const<J2>, Output = Const<J3>>,
+{
+    type Output = SIUnit<T3, L3, M3, I3, THETA3, N3, J3>;
+
+    fn add(self, _: SIUnit<T2, L2, M2, I2, THETA2, N2, J2>) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+> Neg for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Neg<Output = Const<T2>>,
+    Const<L1>: Neg<Output = Const<L2>>,
+    Const<M1>: Neg<Output = Const<M2>>,
+    Const<I1>: Neg<Output = Const<I2>>,
+    Const<THETA1>: Neg<Output = Const<THETA2>>,
+    Const<N1>: Neg<Output = Const<N2>>,
+    Const<J1>: Neg<Output = Const<J2>>,
+{
+    type Output = SIUnit<T2, L2, M2, I2, THETA2, N2, J2>;
+
+    fn neg(self) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const T3: i8,
+    const L3: i8,
+    const M3: i8,
+    const I3: i8,
+    const THETA3: i8,
+    const N3: i8,
+    const J3: i8,
+> Sub<SIUnit<T2, L2, M2, I2, THETA2, N2, J2>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Sub<Const<T2>, Output = Const<T3>>,
+    Const<L1>: Sub<Const<L2>, Output = Const<L3>>,
+    Const<M1>: Sub<Const<M2>, Output = Const<M3>>,
+    Const<I1>: Sub<Const<I2>, Output = Const<I3>>,
+    Const<THETA1>: Sub<Const<THETA2>, Output = Const<THETA3>>,
+    Const<N1>: Sub<Const<N2>, Output = Const<N3>>,
+    Const<J1>: Sub<Const<J2>, Output = Const<J3>>,
+{
+    type Output = SIUnit<T3, L3, M3, I3, THETA3, N3, J3>;
+
+    fn sub(self, _: SIUnit<T2, L2, M2, I2, THETA2, N2, J2>) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const E: i8,
+> Mul<Const<E>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Mul<Const<E>, Output = Const<T2>>,
+    Const<L1>: Mul<Const<E>, Output = Const<L2>>,
+    Const<M1>: Mul<Const<E>, Output = Const<M2>>,
+    Const<I1>: Mul<Const<E>, Output = Const<I2>>,
+    Const<THETA1>: Mul<Const<E>, Output = Const<THETA2>>,
+    Const<N1>: Mul<Const<E>, Output = Const<N2>>,
+    Const<J1>: Mul<Const<E>, Output = Const<J2>>,
+{
+    type Output = SIUnit<T2, L2, M2, I2, THETA2, N2, J2>;
+
+    fn mul(self, _: Const<E>) -> Self::Output {
+        SIUnit
+    }
+}
+
+impl<
+    const T1: i8,
+    const L1: i8,
+    const M1: i8,
+    const I1: i8,
+    const THETA1: i8,
+    const N1: i8,
+    const J1: i8,
+    const T2: i8,
+    const L2: i8,
+    const M2: i8,
+    const I2: i8,
+    const THETA2: i8,
+    const N2: i8,
+    const J2: i8,
+    const E: i8,
+> Div<Const<E>> for SIUnit<T1, L1, M1, I1, THETA1, N1, J1>
+where
+    Const<T1>: Div<Const<E>, Output = Const<T2>>,
+    Const<L1>: Div<Const<E>, Output = Const<L2>>,
+    Const<M1>: Div<Const<E>, Output = Const<M2>>,
+    Const<I1>: Div<Const<E>, Output = Const<I2>>,
+    Const<THETA1>: Div<Const<E>, Output = Const<THETA2>>,
+    Const<N1>: Div<Const<E>, Output = Const<N2>>,
+    Const<J1>: Div<Const<E>, Output = Const<J2>>,
+{
+    type Output = SIUnit<T2, L2, M2, I2, THETA2, N2, J2>;
+
+    fn div(self, _: Const<E>) -> Self::Output {
+        SIUnit
+    }
+}
 
 /// Physical quantity with compile-time checked unit.
 #[derive(Clone, Copy)]
 #[repr(transparent)]
 pub struct Quantity<T, U>(T, PhantomData<U>);
 
-pub type _Dimensionless = SIUnit<Z0, Z0, Z0, Z0, Z0, Z0, Z0>;
-pub type _Time = SIUnit<P1, Z0, Z0, Z0, Z0, Z0, Z0>;
-pub type _Length = SIUnit<Z0, P1, Z0, Z0, Z0, Z0, Z0>;
-pub type _Mass = SIUnit<Z0, Z0, P1, Z0, Z0, Z0, Z0>;
-pub type _Current = SIUnit<Z0, Z0, Z0, P1, Z0, Z0, Z0>;
-pub type _Temperature = SIUnit<Z0, Z0, Z0, Z0, P1, Z0, Z0>;
-pub type _Moles = SIUnit<Z0, Z0, Z0, Z0, Z0, P1, Z0>;
-pub type _LuminousIntensity = SIUnit<Z0, Z0, Z0, Z0, Z0, Z0, P1>;
+pub type _Dimensionless = SIUnit<0, 0, 0, 0, 0, 0, 0>;
+pub type _Time = SIUnit<1, 0, 0, 0, 0, 0, 0>;
+pub type _Length = SIUnit<0, 1, 0, 0, 0, 0, 0>;
+pub type _Mass = SIUnit<0, 0, 1, 0, 0, 0, 0>;
+pub type _Current = SIUnit<0, 0, 0, 1, 0, 0, 0>;
+pub type _Temperature = SIUnit<0, 0, 0, 0, 1, 0, 0>;
+pub type _Moles = SIUnit<0, 0, 0, 0, 0, 1, 0>;
+pub type _LuminousIntensity = SIUnit<0, 0, 0, 0, 0, 0, 1>;
 
 pub type Dimensionless<T = f64> = Quantity<T, _Dimensionless>;
 pub type Time<T = f64> = Quantity<T, _Time>;
@@ -352,11 +547,9 @@ pub const QE: Charge = Quantity(1.602176634e-19, PhantomData);
 /// Speed of light $\\left(c=299792458\\,\\frac{\text{m}}{\text{s}}\\right)$
 pub const CLIGHT: Velocity = Quantity(299792458.0, PhantomData);
 /// Luminous efficacy of $540\\,\text{THz}$ radiation $\\left(K_\text{cd}=683\\,\\frac{\text{lm}}{\text{W}}\\right)$
-#[expect(clippy::type_complexity)]
-pub const KCD: Quantity<f64, SIUnit<N2, N1, P3, Z0, Z0, Z0, P1>> = Quantity(683.0, PhantomData);
+pub const KCD: Quantity<f64, SIUnit<-2, -1, 3, 0, 0, 0, 1>> = Quantity(683.0, PhantomData);
 /// Gravitational constant $\\left(G=6.6743\\times 10^{-11}\\,\\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}\\right)$
-#[expect(clippy::type_complexity)]
-pub const G: Quantity<f64, SIUnit<N2, P3, N1, Z0, Z0, Z0, Z0>> = Quantity(6.6743e-11, PhantomData);
+pub const G: Quantity<f64, SIUnit<-2, 3, -1, 0, 0, 0, 0>> = Quantity(6.6743e-11, PhantomData);
 
 /// Prefix quecto $\\left(\text{q}=10^{-30}\\right)$
 pub const QUECTO: f64 = 1e-30;
@@ -526,6 +719,72 @@ impl<T> Deref for Dimensionless<T> {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_quantity_instantiation() {
+        let t = 10.0 * SECOND;
+        assert_eq!(t.0, 10.0);
+
+        let l = 5.0 * METER;
+        assert_eq!(l.0, 5.0);
+    }
+
+    #[test]
+    fn test_quantity_conversion() {
+        let dist = 1.5 * KILO * METER;
+        let raw_m = dist.convert_into(METER);
+        assert!((raw_m - 1500.0).abs() < 1e-10);
+
+        let km = Quantity::new(1000.0);
+        let val_km = dist.convert_to(km);
+        assert!((val_km - 1.5).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_celsius_conversion() {
+        let c = 0.0 * CELSIUS;
+        assert_eq!(c.0, 273.15);
+
+        let zero = c / CELSIUS;
+        assert!(zero.abs() < 1e-15);
+    }
+
+    #[test]
+    fn test_prefix_scaling() {
+        let v1 = 1.0 * MILLI * METER;
+        let v2 = 1.0 * KILO * METER;
+
+        assert_eq!(v1.0, 0.001);
+        assert_eq!(v2.0, 1000.0);
+    }
+
+    #[test]
+    fn test_quantity_arithmetic() {
+        let d = 10.0 * METER;
+        let t = 2.0 * SECOND;
+
+        let v = d / t;
+        assert_eq!(v.0, 5.0);
+
+        let m = 5.0 * KILOGRAM;
+        let a = 2.0 * METER / (SECOND * SECOND);
+        let f = m * a;
+        assert_eq!(f.0, 10.0);
+
+        let l1 = 1.0 * METER;
+        let l2 = 2.0 * METER;
+        let l3 = l1 + l2;
+        assert_eq!(l3.0, 3.0);
+    }
+
+    #[test]
+    fn test_angles() {
+        let ninety_deg = 90.0 * DEGREES;
+        let half_pi = std::f64::consts::FRAC_PI_2;
+
+        assert!((ninety_deg.0 - half_pi).abs() < 1e-10);
+        assert!((ninety_deg.sin() - 1.0).abs() < 1e-10);
+    }
 
     #[test]
     fn test_deref() {

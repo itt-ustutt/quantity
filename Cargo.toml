@@ -1,6 +1,6 @@
 [package]
 name = "quantity"
-version = "0.12.2"
+version = "0.13.0"
 authors = [
     "Philipp Rehner <prehner@ethz.ch>",
     "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
@@ -24,7 +24,6 @@ rustdoc-args = ["--html-in-header", "./src/docs-header.html"]
 members = ["si-units", "example/extend_quantity"]
 
 [dependencies]
-typenum = "1.17"
 num-traits = "0.2"
 document-features = "0.2"
 ## Use N-dimensional arrays from the [ndarray] crate as value of a quantity.
