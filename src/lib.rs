@@ -161,10 +161,15 @@ type Negate<T> = <T as Neg>::Output;
 type Prod<T1, T2> = <T1 as Mul<T2>>::Output;
 type Quot<T1, T2> = <T1 as Div<T2>>::Output;
 
+/// Convertion between const generics and the Rust type system.
 pub struct Const<const N: i8>;
 
+// implements all operations (+,-,*,/) for integers within a given range.
 include!(concat!(env!("OUT_DIR"), "/const_impls.rs"));
 
+/// A compile-time representation of an SI unit based on the exponents of
+/// the seven base units (time, length, mass, current, temperature, amount
+/// of substance, luminous intensity)
 #[derive(Clone, Copy)]
 pub struct SIUnit<
     const T: i8,
