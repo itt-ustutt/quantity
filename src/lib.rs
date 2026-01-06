@@ -163,115 +163,7 @@ type Quot<T1, T2> = <T1 as Div<T2>>::Output;
 
 pub struct Const<const N: i8>;
 
-macro_rules! impl_add {
-    ($a:expr; $($b:expr),*) => {
-        $(
-            impl_add!($a, $b);
-        )*
-    };
-    ($a:expr, $b:expr) => {
-        impl Add<Const<$b>> for Const<$a> {
-            type Output = Const<{ $a + $b }>;
-
-            fn add(self, _: Const<$b>) -> Self::Output {
-                Const
-            }
-        }
-    };
-}
-
-impl_add!(-9; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-8; -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-7; -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-6; -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-5; -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-4; -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-3; -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-2; -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(-1; -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(0; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_add!(1; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8);
-impl_add!(2; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7);
-impl_add!(3; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6);
-impl_add!(4; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5);
-impl_add!(5; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4);
-impl_add!(6; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3);
-impl_add!(7; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2);
-impl_add!(8; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1);
-impl_add!(9; -9, -8, -7, -6, -5, -4, -3, -2, -1, 0);
-
-macro_rules! impl_neg {
-    ($a:expr) => {
-        impl Neg for Const<$a> {
-            type Output = Const<{ -$a }>;
-
-            fn neg(self) -> Self::Output {
-                Const
-            }
-        }
-    };
-    ($($a:expr),+) => {
-        impl_neg!(0);
-        $(
-            impl_neg!($a);
-            impl_neg!({-$a});
-        )+
-    };
-}
-
-impl_neg!(1, 2, 3, 4, 5, 6, 7, 8, 9);
-
-impl<const X: i8, const Y: i8, const Z: i8> Sub<Const<Y>> for Const<X>
-where
-    Const<Y>: Neg,
-    Const<X>: Add<Negate<Const<Y>>, Output = Const<Z>>,
-    Const<Y>: Add<Const<Z>, Output = Const<X>>,
-{
-    type Output = Const<Z>;
-
-    fn sub(self, _: Const<Y>) -> Self::Output {
-        Const
-    }
-}
-
-macro_rules! impl_mul {
-    ($a:expr; $($b:expr),*) => {
-        impl_mul!(0, $a, 0);
-        $(
-            impl_mul!($a, $b, {$a * $b});
-            impl_mul!({-$a}, $b, {-{$a * $b}});
-            impl_mul!($a, {-$b}, {-{$a * $b}});
-            impl_mul!({-$a}, {-$b}, {$a * $b});
-        )*
-    };
-    ($a:expr, $b:expr, $c:expr) => {
-        impl Mul<Const<$b>> for Const<$a> {
-            type Output = Const<$c>;
-
-            fn mul(self, _: Const<$b>) -> Self::Output {
-                Const
-            }
-        }
-
-        impl Div<Const<$b>> for Const<$c> {
-            type Output = Const<$a>;
-
-            fn div(self, _: Const<$b>) -> Self::Output {
-                Const
-            }
-        }
-    };
-}
-
-impl_mul!(1; 1, 2, 3, 4, 5, 6, 7, 8, 9);
-impl_mul!(2; 1, 2, 3, 4);
-impl_mul!(3; 1, 2, 3);
-impl_mul!(4; 1, 2);
-impl_mul!(5; 1);
-impl_mul!(6; 1);
-impl_mul!(7; 1);
-impl_mul!(8; 1);
-impl_mul!(9; 1);
+include!(concat!(env!("OUT_DIR"), "/const_impls.rs"));
 
 #[derive(Clone, Copy)]
 pub struct SIUnit<
@@ -822,6 +714,72 @@ impl<T> Deref for Dimensionless<T> {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_quantity_instantiation() {
+        let t = 10.0 * SECOND;
+        assert_eq!(t.0, 10.0);
+
+        let l = 5.0 * METER;
+        assert_eq!(l.0, 5.0);
+    }
+
+    #[test]
+    fn test_quantity_conversion() {
+        let dist = 1.5 * KILO * METER;
+        let raw_m = dist.convert_into(METER);
+        assert!((raw_m - 1500.0).abs() < 1e-10);
+
+        let km = Quantity::new(1000.0);
+        let val_km = dist.convert_to(km);
+        assert!((val_km - 1.5).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_celsius_conversion() {
+        let c = 0.0 * CELSIUS;
+        assert_eq!(c.0, 273.15);
+
+        let zero = c / CELSIUS;
+        assert!(zero.abs() < 1e-15);
+    }
+
+    #[test]
+    fn test_prefix_scaling() {
+        let v1 = 1.0 * MILLI * METER;
+        let v2 = 1.0 * KILO * METER;
+
+        assert_eq!(v1.0, 0.001);
+        assert_eq!(v2.0, 1000.0);
+    }
+
+    #[test]
+    fn test_quantity_arithmetic() {
+        let d = 10.0 * METER;
+        let t = 2.0 * SECOND;
+
+        let v = d / t;
+        assert_eq!(v.0, 5.0);
+
+        let m = 5.0 * KILOGRAM;
+        let a = 2.0 * METER / (SECOND * SECOND);
+        let f = m * a;
+        assert_eq!(f.0, 10.0);
+
+        let l1 = 1.0 * METER;
+        let l2 = 2.0 * METER;
+        let l3 = l1 + l2;
+        assert_eq!(l3.0, 3.0);
+    }
+
+    #[test]
+    fn test_angles() {
+        let ninety_deg = 90.0 * DEGREES;
+        let half_pi = std::f64::consts::FRAC_PI_2;
+
+        assert!((ninety_deg.0 - half_pi).abs() < 1e-10);
+        assert!((ninety_deg.sin() - 1.0).abs() < 1e-10);
+    }
 
     #[test]
     fn test_deref() {
