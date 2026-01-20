@@ -857,7 +857,11 @@ z = 70000.0000000000   p =     0.0215180823
 <span class="n">z</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="p">,</span> <span class="mf">70.0e3</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div></p>
 <h2 id="using-numpy-or-torch-functions">Using <code>numpy</code> or <code>torch</code> functions</h2>
-<p>Some functions work with methods or the equivalent numpy functions.</p>
+<p>A <code>SIObject</code> wraps a provided Python object, allowing you to use <code>numpy</code> arrays, <code>torch</code> tensors,
+or <code>jax</code> arrays as the underlying data type.
+Binary operations work between objects with compatible inner types and units.
+The <code>sqrt</code> and <code>cbrt</code> methods are supported when the unit exponents are divisible accordingly.</p>
+<p>This works for scalars:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -873,25 +877,7 @@ z = 70000.0000000000   p =     0.0215180823
 <div class="highlight"><pre><span></span><code>1  m
 1  m
 </code></pre></div>
-<p>Some behaviour is not as you would expect. For example, when we
-change the above to an array, numpy will throw an exception:
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="n">sqm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span><span class="o">**</span><span class="mi">2</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sqm</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sqm</span><span class="o">.</span><span class="n">sqrt</span><span class="p">())</span>  <span class="c1"># both calls raise an exception</span>
-</code></pre></div></td></tr></table></div>
-<div class="highlight"><pre><span></span><code>AttributeError: &#39;numpy.ndarray&#39; object has no attribute &#39;sqrt&#39;
-</code></pre></div></p>
-<p>In such a case, we can divide by the unit to return the inner data type,
-perform the operation to the value and the unit separately, and finally 
-multiply by the unit to get back a <code>SIObject</code>.</p>
-<p>For <code>torch.tensor</code>'s this is not an issue and the following works just 
-fine:</p>
+<p><code>torch.tensor</code>'s work as well:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -907,6 +893,8 @@ fine:</p>
 <div class="highlight"><pre><span></span><code>tensor([ 4.,  9., 16.]) m²
 tensor([2., 3., 4.]) m
 </code></pre></div>
+<p>For unsupported operations, you can retrieve the underlying Python object by dividing the 
+<code>SIObject</code> by its unit, then perform the operation directly on the raw data.</p>
 
 
 
