@@ -175,7 +175,12 @@ z = si.linspace(1.0 * si.METER, 70.0e3 * si.METER, 10)
 
 ## Using `numpy` or `torch` functions
 
-Some functions work with methods or the equivalent numpy functions.
+A `SIObject` wraps a provided Python object, allowing you to use `numpy` arrays, `torch` tensors,
+or `jax` arrays as the underlying data type.
+Binary operations work between objects with compatible inner types and units.
+The `sqrt` and `cbrt` methods are supported when the unit exponents are divisible accordingly.
+
+This works for scalars:
 
 ```py linenums="1"
 import si_units as si
@@ -191,25 +196,7 @@ print(sqm.sqrt())   # this is equivalent
 1  m
 ```
 
-Some behaviour is not as you would expect. For example, when we
-change the above to an array, numpy will throw an exception:
-```py linenums="1"
-import si_units as si
-import numpy as np
-sqm = np.array([1.0, 2.0]) * si.METER**2
-print(np.sqrt(sqm))
-print(sqm.sqrt())  # both calls raise an exception
-```
-```
-AttributeError: 'numpy.ndarray' object has no attribute 'sqrt'
-```
-
-In such a case, we can divide by the unit to return the inner data type,
-perform the operation to the value and the unit separately, and finally 
-multiply by the unit to get back a `SIObject`.
-
-For `torch.tensor`'s this is not an issue and the following works just 
-fine:
+`torch.tensor`'s work as well:
 
 ```py linenums="1"
 import si_units as si
@@ -224,3 +211,6 @@ print(sqms.sqrt())
 tensor([ 4.,  9., 16.]) m²
 tensor([2., 3., 4.]) m
 ```
+
+For unsupported operations, you can retrieve the underlying Python object by dividing the 
+`SIObject` by its unit, then perform the operation directly on the raw data.
