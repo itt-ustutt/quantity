@@ -105,21 +105,29 @@ impl PySIObject {
     }
 
     pub fn sqrt(&self, py: Python) -> PyResult<Self> {
+        let unit = self.unit.sqrt()?;
         let value = if let Ok(v) = self.value.extract::<f64>(py) {
             PyFloat::new(py, v.sqrt()).into_any().unbind()
+        } else if let Ok(v) = self.value.call_method0(py, "sqrt") {
+            v
         } else {
-            self.value.call_method0(py, "sqrt")?
+            let np = py.import("numpy")?;
+            np.call_method1("sqrt", (&self.value,))?.unbind()
         };
-        Ok(Self::new(value, self.unit.sqrt()?))
+        Ok(Self::new(value, unit))
     }
 
     pub fn cbrt(&self, py: Python) -> PyResult<Self> {
+        let unit = self.unit.cbrt()?;
         let value = if let Ok(v) = self.value.extract::<f64>(py) {
             PyFloat::new(py, v.cbrt()).into_any().unbind()
+        } else if let Ok(v) = self.value.call_method0(py, "cbrt") {
+            v
         } else {
-            self.value.call_method0(py, "cbrt")?
+            let np = py.import("numpy")?;
+            np.call_method1("cbrt", (&self.value,))?.unbind()
         };
-        Ok(Self::new(value, self.unit.cbrt()?))
+        Ok(Self::new(value, unit))
     }
 
     pub fn has_unit(&self, other: PyRef<'_, Self>) -> bool {
