@@ -1,5 +1,7 @@
 #![warn(clippy::all)]
 #![allow(non_snake_case)]
+use std::f64::consts::PI;
+
 use ndarray::{Array1, arr1};
 use numpy::IntoPyArray;
 use pyo3::basic::CompareOp;
@@ -78,11 +80,20 @@ impl PySIObject {
         if let Ok(v) = self.value.extract::<f64>(py) {
             Ok(SINumber::new(v, self.unit).to_string())
         } else {
-            let value = self
-                .value
-                .call_method0(py, "__repr__")?
-                .extract::<String>(py)?;
-            Ok(format!("{} {}", value, self.unit))
+            let (multiplier, symbol) = SINumber::new(1.0, self.unit).into_scaled_parts();
+
+            let value_str = if (multiplier - 1.0).abs() > 1e-15 {
+                let scaled_val = self.value.call_method1(py, "__mul__", (multiplier,))?;
+                scaled_val
+                    .call_method0(py, "__repr__")?
+                    .extract::<String>(py)?
+            } else {
+                self.value
+                    .call_method0(py, "__repr__")?
+                    .extract::<String>(py)?
+            };
+
+            Ok(format!("{} {}", value_str, symbol))
         }
     }
 
@@ -258,25 +269,43 @@ impl PySIObject {
             .and_then(|v| v.extract::<usize>(py))
     }
 
-    fn __getitem__(&self, py: Python, idx: isize) -> PyResult<Self> {
+    fn __getitem__(&self, py: Python, idx: &Bound<'_, PyAny>) -> PyResult<Self> {
         let value = self.value.call_method1(py, "__getitem__", (idx,))?;
         Ok(Self::new(value, self.unit))
     }
 
-    fn __setitem__(&self, py: Python, idx: isize, value: SINumber) -> PyResult<()> {
-        if self.unit == value.unit {
+    fn __setitem__(
+        &self,
+        py: Python,
+        idx: &Bound<'_, PyAny>,
+        value: &Bound<'_, PyAny>,
+    ) -> PyResult<()> {
+        if let Ok(v) = value.extract::<SINumber>() {
+            if self.unit == v.unit {
+                self.value.call_method1(py, "__setitem__", (idx, v.value))?;
+                return Ok(());
+            }
+            return Err(QuantityError::InconsistentUnits {
+                unit1: self.unit,
+                unit2: v.unit,
+            }
+            .into());
+        }
+
+        let ob = value.extract::<PyRef<PySIObject>>()?;
+        if self.unit == ob.unit {
             self.value
-                .call_method1(py, "__setitem__", (idx, value.value))?;
+                .call_method1(py, "__setitem__", (idx, &ob.value))?;
             Ok(())
         } else {
             Err(QuantityError::InconsistentUnits {
                 unit1: self.unit,
-                unit2: value.unit,
-            })?
+                unit2: ob.unit,
+            }
+            .into())
         }
     }
 }
-
 #[derive(Clone, Copy)]
 pub struct SIObject<T> {
     value: T,
@@ -396,6 +425,9 @@ const _TESLA: SIUnit = SIUnit([0, 1, -2, -1, 0, 0, 0]);
 const _HENRY: SIUnit = SIUnit([2, 1, -2, -2, 0, 0, 0]);
 const _METER_PER_SECOND: SIUnit = SIUnit([1, 0, -1, 0, 0, 0, 0]);
 const _LUMEN_PER_WATT: SIUnit = SIUnit([-2, -1, 3, 0, 0, 0, 1]);
+const _FARAD_PER_METER: SIUnit = SIUnit([-3, -1, 4, 2, 0, 0, 0]);
+const _METER_PER_FARAD: SIUnit = SIUnit([3, 1, -4, -2, 0, 0, 0]);
+const _PASCAL_SECOND: SIUnit = SIUnit([-1, 1, -1, 0, 0, 0, 0]);
 
 /// Prefix quecto $\\left(\text{q}=10^{-30}\\right)$
 pub const QUECTO: f64 = 1e-30;
@@ -471,6 +503,13 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_constant(m, "KB", 1.380649e-23, _JOULE_PER_KELVIN)?;
     add_constant(m, "NAV", 6.02214076e23, _PER_MOL)?;
     add_constant(m, "KCD", 683.0, _LUMEN_PER_WATT)?;
+    add_constant(m, "EPSILON0", 8.8541878188e-12, _FARAD_PER_METER)?;
+    add_constant(
+        m,
+        "KE",
+        1.0_f64 / (4.0_f64 * PI * 8.8541878188e-12),
+        _METER_PER_FARAD,
+    )?;
 
     add_constant(m, "HERTZ", 1.0, _HERTZ)?;
     add_constant(m, "NEWTON", 1.0, _NEWTON)?;
@@ -489,6 +528,7 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_constant(m, "ANGSTROM", 1e-10, _METER)?;
     add_constant(m, "AMU", 1.6605390671738466e-27, _KILOGRAM)?;
     add_constant(m, "AU", 149597870700.0, _METER)?;
+    add_constant(m, "ATM", 101325.0, _PASCAL)?;
     add_constant(m, "BAR", 1e5, _PASCAL)?;
     add_constant(m, "CALORIE", 4.184, _JOULE)?;
     m.add("CELSIUS", Celsius)?;
@@ -499,6 +539,7 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_constant(m, "HOUR", 3600.0, _SECOND)?;
     add_constant(m, "LITER", 1e-3, _CUBIC_METER)?;
     add_constant(m, "MINUTE", 60.0, _SECOND)?;
+    add_constant(m, "POISE", 0.1, _PASCAL_SECOND)?;
     m.add("RADIANS", Angle(1.0))?;
 
     add_constant(m, "G", 6.6743e-11, SIUnit([3, -1, -2, 0, 0, 0, 0]))?;

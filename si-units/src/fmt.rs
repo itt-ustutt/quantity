@@ -73,6 +73,15 @@ impl SINumber {
             format!("{}\\,{}", float_to_latex(self.value), &self.unit.to_latex())
         }
     }
+
+    pub fn into_scaled_parts(&self) -> (f64, String) {
+        if let Some((unit, symbol, _, _, _)) = DERIVED_UNITS.get(&self.unit) {
+            if !self.value.is_nan() {
+                return (self.value / unit.value, symbol.clone());
+            }
+        }
+        (self.value, self.unit.to_string())
+    }
 }
 
 fn float_to_latex(f: f64) -> String {
