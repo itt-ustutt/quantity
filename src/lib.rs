@@ -531,6 +531,10 @@ pub const HOUR: Time = Quantity(3600.0, PhantomData);
 pub const LITER: Volume = Quantity(1e-3, PhantomData);
 /// Additional unit minute $\\left(1\\,\text{min}=60,\text{s}\\right)$
 pub const MINUTE: Time = Quantity(60.0, PhantomData);
+/// Additional unit atmosphere $\left(1\,\text{atm}=101325\,\text{Pa}\right)$
+pub const ATM: Pressure = Quantity(101325.0, PhantomData);
+/// Additional unit poise $\left(1\,\text{P}=0.1\,\text{Pa}\cdot\text{s}\right)$
+pub const POISE: Viscosity = Quantity(0.1, PhantomData);
 
 /// Boltzmann constant $\\left(k_\text{B}=1.380649\times 10^{-23}\\,\\frac{\text{J}}{\text{K}}\\right)$
 pub const KB: Entropy = Quantity(1.380649e-23, PhantomData);

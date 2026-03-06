@@ -17,6 +17,7 @@ Examples:
     >>> print(f"The pressure is {pressure / BAR:.2f} bar")
     The pressure is 1.24 bar
 """
+
 # from si_units._core import SIObject
 from si_units._core import (
     SIObject,
@@ -43,6 +44,7 @@ from si_units._core import (
     KB,
     NAV,
     KCD,
+    KE,
     HERTZ,
     NEWTON,
     PASCAL,
@@ -58,13 +60,16 @@ from si_units._core import (
     HENRY,
     ANGSTROM,
     AMU,
+    ATM,
     AU,
     BAR,
     CALORIE,
+    EPSILON0,
     GRAM,
     HOUR,
     LITER,
     MINUTE,
+    POISE,
     G,
     RGAS,
     QUECTO,
@@ -119,6 +124,7 @@ __all__ = [
     "KB",
     "NAV",
     "KCD",
+    "KE",
     "HERTZ",
     "NEWTON",
     "PASCAL",
@@ -134,13 +140,16 @@ __all__ = [
     "HENRY",
     "ANGSTROM",
     "AMU",
+    "ATM",
     "AU",
     "BAR",
     "CALORIE",
+    "EPSILON0",
     "GRAM",
     "HOUR",
     "LITER",
     "MINUTE",
+    "POISE",
     "G",
     "RGAS",
     "QUECTO",
