@@ -7,7 +7,7 @@ use numpy::IntoPyArray;
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
-use pyo3::types::{PyFloat, PyNotImplemented};
+use pyo3::types::{PyDict, PyFloat, PyList, PyNotImplemented, PyTuple};
 use pyo3::{PyErr, PyTypeInfo};
 use thiserror::Error;
 
@@ -62,6 +62,26 @@ impl PySIObject {
 impl From<QuantityError> for PyErr {
     fn from(e: QuantityError) -> PyErr {
         PyRuntimeError::new_err(e.to_string())
+    }
+}
+
+fn unwrap_nested<'py>(py: Python<'py>, obj: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
+    if let Ok(si_obj) = obj.extract::<PyRef<PySIObject>>() {
+        Ok(si_obj.value.clone_ref(py).into_bound(py))
+    } else if let Ok(tuple) = obj.extract::<Bound<'py, PyTuple>>() {
+        let mut new_elements: Vec<Bound<'py, PyAny>> = Vec::new();
+        for elem in tuple.iter() {
+            new_elements.push(unwrap_nested(py, &elem)?);
+        }
+        Ok(PyTuple::new(py, new_elements)?.into_any())
+    } else if let Ok(list) = obj.extract::<Bound<'py, PyList>>() {
+        let mut new_elements: Vec<Bound<'py, PyAny>> = Vec::new();
+        for elem in list.iter() {
+            new_elements.push(unwrap_nested(py, &elem)?);
+        }
+        Ok(PyList::new(py, new_elements)?.into_any())
+    } else {
+        Ok(obj.clone())
     }
 }
 
@@ -303,6 +323,162 @@ impl PySIObject {
                 unit2: ob.unit,
             }
             .into())
+        }
+    }
+
+    #[pyo3(signature = (ufunc, method, *inputs, **kwargs))]
+    fn __array_ufunc__<'py>(
+        &self,
+        py: Python<'py>,
+        ufunc: &Bound<'py, PyAny>,
+        method: &str,
+        inputs: &Bound<'py, PyTuple>,
+        kwargs: Option<&Bound<'py, PyDict>>,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let name: String = ufunc.getattr("__name__")?.extract()?;
+        let mut raw_inputs = Vec::new();
+        let mut units = Vec::new();
+
+        for inp in inputs.iter() {
+            if let Ok(si_obj) = inp.extract::<PyRef<PySIObject>>() {
+                raw_inputs.push(si_obj.value.clone_ref(py).into_bound(py));
+                units.push(Some(si_obj.unit));
+            } else {
+                raw_inputs.push(inp.clone());
+                units.push(None);
+            }
+        }
+        let result_unit = match name.as_str() {
+            "add" | "subtract" => {
+                let u1 = units[0].unwrap_or(SIUnit::DIMENSIONLESS);
+                let u2 = units
+                    .get(1)
+                    .and_then(|u| *u)
+                    .unwrap_or(SIUnit::DIMENSIONLESS);
+                if u1 != u2 {
+                    return Err(QuantityError::InconsistentUnits {
+                        unit1: u1,
+                        unit2: u2,
+                    }
+                    .into());
+                }
+                u1
+            }
+            "multiply" => {
+                let u1 = units[0].unwrap_or(SIUnit::DIMENSIONLESS);
+                let u2 = units
+                    .get(1)
+                    .and_then(|u| *u)
+                    .unwrap_or(SIUnit::DIMENSIONLESS);
+                u1 * u2
+            }
+            "divide" | "true_divide" => {
+                let u1 = units[0].unwrap_or(SIUnit::DIMENSIONLESS);
+                let u2 = units
+                    .get(1)
+                    .and_then(|u| *u)
+                    .unwrap_or(SIUnit::DIMENSIONLESS);
+                u1 / u2
+            }
+            "sqrt" => units[0].unwrap_or(SIUnit::DIMENSIONLESS).sqrt()?,
+            "cbrt" => units[0].unwrap_or(SIUnit::DIMENSIONLESS).cbrt()?,
+            "sin" | "cos" | "tan" | "exp" | "log" | "log10" => {
+                let u1 = units[0].unwrap_or(SIUnit::DIMENSIONLESS);
+                if !u1.is_dimensionless() {
+                    return Err(QuantityError::InconsistentUnits {
+                        unit1: u1,
+                        unit2: SIUnit::DIMENSIONLESS,
+                    }
+                    .into());
+                }
+                SIUnit::DIMENSIONLESS
+            }
+            _ => return Ok(py.NotImplemented().into_bound(py)),
+        };
+
+        let raw_inputs_tuple = PyTuple::new(py, raw_inputs)?;
+        let method_obj = ufunc.getattr(method)?;
+        let raw_result = method_obj.call(raw_inputs_tuple, kwargs)?;
+
+        let result_obj = PySIObject::new(raw_result.unbind(), result_unit);
+        Ok(Bound::new(py, result_obj)?.into_any())
+    }
+
+    #[pyo3(signature = (func, types, args, kwargs))]
+    fn __array_function__<'py>(
+        &self,
+        py: Python<'py>,
+        func: &Bound<'py, PyAny>,
+        types: &Bound<'py, PyTuple>,
+        args: &Bound<'py, PyTuple>,
+        kwargs: Option<&Bound<'py, PyDict>>,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let _ = types;
+        let name: String = func.getattr("__name__")?.extract()?;
+        let mut wrap_in_unit = true;
+        let result_unit = match name.as_str() {
+            "sum" | "mean" | "max" | "min" | "std" | "median" | "reshape" | "transpose"
+            | "squeeze" | "flatten" | "ravel" | "sort" | "zeros_like" | "ones_like" | "copy"
+            | "concatenate" | "vstack" | "hstack" | "dstack" | "split" | "array_split" => self.unit,
+            "var" => self.unit * self.unit,
+            "argsort" | "argmax" | "argmin" | "nonzero" => {
+                wrap_in_unit = false;
+                SIUnit::DIMENSIONLESS
+            }
+            "where" => {
+                if args.len() == 3 {
+                    wrap_in_unit = true;
+                    if let Ok(arg_x) = args.get_item(1) {
+                        if let Ok(si) = arg_x.extract::<PyRef<PySIObject>>() {
+                            si.unit
+                        } else {
+                            SIUnit::DIMENSIONLESS
+                        }
+                    } else {
+                        SIUnit::DIMENSIONLESS
+                    }
+                } else {
+                    wrap_in_unit = false;
+                    SIUnit::DIMENSIONLESS
+                }
+            }
+            "dot" | "matmul" | "cross" => {
+                let u1 = if let Ok(arg) = args.get_item(0) {
+                    if let Ok(si) = arg.extract::<PyRef<PySIObject>>() {
+                        si.unit
+                    } else {
+                        SIUnit::DIMENSIONLESS
+                    }
+                } else {
+                    SIUnit::DIMENSIONLESS
+                };
+                let u2 = if let Ok(arg) = args.get_item(1) {
+                    if let Ok(si) = arg.extract::<PyRef<PySIObject>>() {
+                        si.unit
+                    } else {
+                        SIUnit::DIMENSIONLESS
+                    }
+                } else {
+                    SIUnit::DIMENSIONLESS
+                };
+                u1 * u2
+            }
+            _ => return Ok(py.NotImplemented().into_bound(py).into_any()),
+        };
+
+        let mut raw_args: Vec<Bound<'py, PyAny>> = Vec::new();
+        for arg in args.iter() {
+            raw_args.push(unwrap_nested(py, &arg)?);
+        }
+
+        let raw_args_tuple = PyTuple::new(py, raw_args)?;
+        let raw_result = func.call(raw_args_tuple, kwargs)?;
+
+        if wrap_in_unit {
+            let result_obj = PySIObject::new(raw_result.unbind(), result_unit);
+            Ok(Bound::new(py, result_obj)?.into_any())
+        } else {
+            Ok(raw_result)
         }
     }
 }
