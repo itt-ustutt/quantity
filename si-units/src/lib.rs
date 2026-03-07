@@ -275,6 +275,17 @@ impl PySIObject {
             })?
         }
     }
+
+    #[getter]
+    fn unit(&self) -> [i8; 7] {
+        self.unit.0
+    }
+
+    #[getter]
+    fn value(&self, py: Python) -> Py<PyAny> {
+        // self.value.clone_ref(py)
+        self.value.clone_ref(py)
+    }
 }
 
 #[derive(Clone, Copy)]
