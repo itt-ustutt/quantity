@@ -283,7 +283,6 @@ impl PySIObject {
 
     #[getter]
     fn value(&self, py: Python) -> Py<PyAny> {
-        // self.value.clone_ref(py)
         self.value.clone_ref(py)
     }
 }
