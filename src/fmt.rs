@@ -44,6 +44,8 @@ impl<Inner: fmt::Display> fmt::Display for Quantity<Inner, _Dimensionless> {
 #[cfg(feature = "pyo3")]
 pub(crate) trait PrintUnit {
     const UNIT: &'static str;
+
+    fn scale() -> f64;
 }
 
 macro_rules! impl_fmt {
@@ -95,6 +97,10 @@ macro_rules! impl_fmt {
         #[cfg(feature = "python")]
         impl<T> PrintUnit for Quantity<T, SIUnit<$t, $l, $m, $i, $theta, $n, 0>> {
             const UNIT: &'static str = $symbol;
+
+            fn scale() -> f64 {
+                $unit.0
+            }
         }
     };
 }
