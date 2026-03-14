@@ -28,6 +28,7 @@ pub enum QuantityError {
 
 #[pyclass(name = "SIObject", module = "si_units._core", frozen)]
 pub struct PySIObject {
+    #[pyo3(get)]
     value: Py<PyAny>,
     unit: SIUnit,
 }
@@ -279,11 +280,6 @@ impl PySIObject {
     #[getter]
     fn unit(&self) -> [i8; 7] {
         self.unit.0
-    }
-
-    #[getter]
-    fn value(&self, py: Python) -> Py<PyAny> {
-        self.value.clone_ref(py)
     }
 }
 
