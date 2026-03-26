@@ -349,7 +349,7 @@ impl PySIObject {
             }
         }
         let result_unit = match name.as_str() {
-            "add" | "subtract" => {
+            "add" | "subtract" | "maximum" | "minimum" => {
                 let u1 = units[0].unwrap_or(SIUnit::DIMENSIONLESS);
                 let u2 = units
                     .get(1)
