@@ -1,4 +1,4 @@
-from typing import Self, Any
+from typing import Any, Self
 
 class SIObject:
     """Combination of value and unit.
@@ -14,7 +14,7 @@ class SIObject:
     def __init__(self, value: float | Any, unit: list[int]) -> None:
         """Constructs a new quantity.
 
-        Warning: Don't use the default constructor 
+        Warning: Don't use the default constructor
             This constructor should not be used to construct a quantity.
             Instead, multiply the value (float or array of floats)
             by the appropriate unit. See example below.
@@ -64,7 +64,7 @@ class SIObject:
         Raises:
             RuntimeError: When exponents of units are not multiples of three.
             AttributeError: When the inner data type has no 'cbrt' method.
-        
+
         Examples:
             >>> from si_units import METER
             >>> volume = METER**3
@@ -83,6 +83,29 @@ class SIObject:
         """
         ...
 
+    def value_in(self, unit: Self) -> float | Any:
+        """Return the numeric value expressed in specified unit.
+
+        The underlying value (float, numpy.ndarray, torch.tensor, ...)
+        is divided by unit and returned without the unit wrapper.
+
+        Args:
+            unit: A quantity describing target unit (e.g. KILO * WATT * HOUR).
+
+        Returns:
+            The numeric value of self expressed in unit.
+
+        Raises:
+            RuntimeError: When self and unit have incompatible units.
+
+        Examples:
+            >>> from si_units import JOULE, KILO, WATT, HOUR
+            >>> energy = 5.4e6 * JOULE
+            >>> energy.value_in(KILO * WATT * HOUR)
+            1.5
+        """
+        ...
+
 def array(value: SIObject | list[SIObject]) -> SIObject:
     """Build SIObject from scalar or list.
 
@@ -92,7 +115,7 @@ def array(value: SIObject | list[SIObject]) -> SIObject:
         value: Values to store. Must all have the same unit.
 
     Returns:
-        The quantity with values stored within array, 
+        The quantity with values stored within array,
             even if value is given as a scalar.
 
     Raises:
