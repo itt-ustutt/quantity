@@ -6,6 +6,7 @@
         - cbrt
         - sqrt
         - has_unit
+        - value_in
       summary: 
         attributes: false
         functions: true

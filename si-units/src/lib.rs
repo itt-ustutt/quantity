@@ -135,6 +135,13 @@ impl PySIObject {
         self.unit.eq(&other.unit)
     }
 
+    pub fn value_in<'py>(&self, py: Python<'py>, unit: &Self) -> PyResult<Bound<'py, PyAny>> {
+        self.check_units(unit)?;
+        self.value
+            .bind(py)
+            .call_method1("__truediv__", (&unit.value,))
+    }
+
     #[classattr]
     fn __array_priority__() -> u64 {
         1000
