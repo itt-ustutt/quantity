@@ -32,4 +32,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.9.0] - 2024-10-24
 ### Changed
-- Reimplemented `si-units` Python package independent of `quantity` crate in and more "pythonic" fashion. [#63](https://github.com/itt-ustutt/quantity/pull/63)
+- Reimplemented `si-units` Python package independent of `quantity` crate in a more "pythonic" fashion. [#63](https://github.com/itt-ustutt/quantity/pull/63)
