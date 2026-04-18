@@ -647,34 +647,46 @@ pub const RADIANS: Angle = Quantity(1.0, PhantomData);
 /// Angle unit degrees $\\left(1°=\\frac{\\pi}{180}\text{rad}\\right)$
 pub const DEGREES: Angle = Quantity(std::f64::consts::PI / 180., PhantomData);
 
+macro_rules! angle_methods {
+    ($t:ty) => {
+        pub fn sin(self) -> $t {
+            self.0.sin()
+        }
+
+        pub fn cos(self) -> $t {
+            self.0.cos()
+        }
+
+        pub fn tan(self) -> $t {
+            self.0.tan()
+        }
+
+        pub fn asin(x: $t) -> Self {
+            Quantity(x.asin(), PhantomData)
+        }
+
+        pub fn acos(x: $t) -> Self {
+            Quantity(x.acos(), PhantomData)
+        }
+
+        pub fn atan(x: $t) -> Self {
+            Quantity(x.atan(), PhantomData)
+        }
+
+        pub fn atan2(y: $t, x: $t) -> Self {
+            Quantity(y.atan2(x), PhantomData)
+        }
+    };
+}
+
+#[cfg(not(feature = "num-dual"))]
 impl Angle {
-    pub fn sin(self) -> f64 {
-        self.0.sin()
-    }
+    angle_methods!(f64);
+}
 
-    pub fn cos(self) -> f64 {
-        self.0.cos()
-    }
-
-    pub fn tan(self) -> f64 {
-        self.0.tan()
-    }
-
-    pub fn asin(x: f64) -> Self {
-        Quantity(x.asin(), PhantomData)
-    }
-
-    pub fn acos(x: f64) -> Self {
-        Quantity(x.acos(), PhantomData)
-    }
-
-    pub fn atan(x: f64) -> Self {
-        Quantity(x.atan(), PhantomData)
-    }
-
-    pub fn atan2(y: f64, x: f64) -> Self {
-        Quantity(y.atan2(x), PhantomData)
-    }
+#[cfg(feature = "num-dual")]
+impl<T: num_dual::DualNum<f64>> Angle<T> {
+    angle_methods!(T);
 }
 
 impl<T> Dimensionless<T> {

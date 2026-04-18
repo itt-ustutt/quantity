@@ -35,6 +35,9 @@ pyo3 = { version = "0.27", optional = true }
 numpy = { version = "0.27", optional = true }
 num-dual = { version = "0.13", optional = true }
 
+[dev-dependencies]
+approx = "0.5"
+
 [features]
 default = []
 ## Use generalized (hyper-)dual numbers from the [num-dual] crate as value of a quantity.
