@@ -1524,22 +1524,22 @@ even if value is given as a scalar.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>si-units/src/si_units/_core.pyi</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">SIObject</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">SIObject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">SIObject</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">SIObject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build SIObject from scalar or list.</span>
 
 <span class="sd">    When the input is a scalar, it is stored in an array with a single element.</span>
@@ -1686,23 +1686,23 @@ the same unit, or if n is not positive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>si-units/src/si_units/_core.pyi</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Linearly spaced quantities.</span>
 
 <span class="sd">    Args:</span>
@@ -1850,23 +1850,23 @@ the same unit, or if n is not positive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>si-units/src/si_units/_core.pyi</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logspace</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logspace</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Logarithmically spaced quantities.</span>
 
 <span class="sd">    Args:</span>
