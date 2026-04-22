@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.3] - 2026-04-22
+### Added
+- Added stub information for methods and constants. [#106](https://github.com/itt-ustutt/quantity/pull/106)
+
 ## [0.11.2] - 2026-04-18
 ### Added
 - Added getters for `value` and `unit` of `SIObject`. [#102](https://github.com/itt-ustutt/quantity/pull/102)
