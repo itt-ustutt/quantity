@@ -272,15 +272,15 @@ impl PySIObject {
             .and_then(|v| v.extract::<usize>(py))
     }
 
-    fn __getitem__(&self, py: Python, idx: isize) -> PyResult<Self> {
+    fn __getitem__(&self, py: Python, idx: &Bound<'_, PyAny>) -> PyResult<Self> {
         let value = self.value.call_method1(py, "__getitem__", (idx,))?;
         Ok(Self::new(value, self.unit))
     }
 
-    fn __setitem__(&self, py: Python, idx: isize, value: SINumber) -> PyResult<()> {
+    fn __setitem__(&self, py: Python, idx: &Bound<'_, PyAny>, value: &Self) -> PyResult<()> {
         if self.unit == value.unit {
             self.value
-                .call_method1(py, "__setitem__", (idx, value.value))?;
+                .call_method1(py, "__setitem__", (idx, &value.value))?;
             Ok(())
         } else {
             Err(QuantityError::InconsistentUnits {
