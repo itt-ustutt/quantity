@@ -297,6 +297,11 @@ impl PySIObject {
         }
     }
 
+    fn sum(&self, py: Python) -> PyResult<Self> {
+        let value = self.value.call_method0(py, "sum")?;
+        Ok(Self::new(value, self.unit))
+    }
+
     #[getter]
     fn unit(&self) -> [i8; 7] {
         self.unit.0
