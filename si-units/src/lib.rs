@@ -7,6 +7,7 @@ use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::types::{PyFloat, PyNotImplemented};
 use pyo3::{PyErr, PyTypeInfo};
+use std::f64::consts::FRAC_1_PI;
 use thiserror::Error;
 
 mod si_unit;
@@ -537,6 +538,13 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_constant(m, "G", 6.6743e-11, SIUnit([3, -1, -2, 0, 0, 0, 0]))?;
     let rgas = 1.380649e-23 * 6.02214076e23;
     add_constant(m, "RGAS", rgas, _JOULE_PER_MOL_AND_KELVIN)?;
+    add_constant(m, "EPSILON0", 8.8541878188e-12, _FARAD / _METER)?;
+    add_constant(
+        m,
+        "KE",
+        FRAC_1_PI / (4.0 * 8.8541878188e-12),
+        _METER / _FARAD,
+    )?;
 
     m.add("QUECTO", QUECTO)?;
     m.add("RONTO", RONTO)?;

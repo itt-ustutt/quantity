@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `ATM` and `POISE` as additional units for pressure and viscosity.
 - Added `sum` for `SIObject`s that can be summed. [#111](https://github.com/itt-ustutt/quantity/pull/111)
+- Added `EPSILON0` and `KE` as additional constants. [#113](https://github.com/itt-ustutt/quantity/pull/113)
 
 ### Fixed
 - Fixed the String representation of non-scalar mass quantities. [#111](https://github.com/itt-ustutt/quantity/pull/111)

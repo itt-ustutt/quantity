@@ -68,6 +68,8 @@
 //! -|-|-|-
 //! [G] | Gravitational constant | $G$ | $6.6743\\times 10^{-11}\\,\\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}$
 //! [RGAS] | Ideal gas constant | $R=N_\text{Av}k_\text{B}$ | $8.31446261815324\\,\\frac{\text{J}}{\text{mol}\\cdot\text{K}}$
+//! [EPSILON0] | Electric constant | $\varepsilon_0$ | $8.8541878188e-12~\frac{\text{F}}{\text{m}}$
+//! [KE] | Coulomb constant | $k_\text{e} = \frac{1}{4\pi\varepsilon_0}$ | $8987551786.1708~\frac{\text{m}}{\text{F}}$
 //!
 //! ## Prefixes
 //!
@@ -143,6 +145,7 @@
 #![warn(clippy::all)]
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
+use std::f64::consts::FRAC_1_PI;
 use std::marker::PhantomData;
 use std::ops::{Add, Deref, Div, Mul, Neg, Sub};
 
@@ -556,6 +559,12 @@ pub const CLIGHT: Velocity = Quantity(299792458.0, PhantomData);
 pub const KCD: Quantity<f64, SIUnit<-2, -1, 3, 0, 0, 0, 1>> = Quantity(683.0, PhantomData);
 /// Gravitational constant $\\left(G=6.6743\\times 10^{-11}\\,\\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}\\right)$
 pub const G: Quantity<f64, SIUnit<-2, 3, -1, 0, 0, 0, 0>> = Quantity(6.6743e-11, PhantomData);
+/// Electric constant $\\left(\\varepsilon_0=8.8541878188\times 10^{-12}\\,\\frac{\text{F}}{\text{m}}\\right)$
+pub const EPSILON0: Quantity<f64, SIUnit<4, -3, -1, 2, 0, 0, 0>> =
+    Quantity(8.8541878188e-12, PhantomData);
+/// Coulomb constant $\\left(k_\text{e}=\frac{1}{4\pi\varepsilon_0}=8987551786.1708\\,\\frac{\text{m}}{\text{F}}\\right)$
+pub const KE: Quantity<f64, SIUnit<-4, 3, 1, -2, 0, 0, 0>> =
+    Quantity(FRAC_1_PI / (4.0 * 8.8541878188e-12), PhantomData);
 
 /// Prefix quecto $\\left(\text{q}=10^{-30}\\right)$
 pub const QUECTO: f64 = 1e-30;

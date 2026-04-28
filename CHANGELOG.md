@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added implementations for trigonometric funtions for `Angle<T>` with `T: DualNum<f64>` when the `num-dual` feature is active. [#105](https://github.com/itt-ustutt/quantity/pull/105)
 - Added `ATM` and `POISE` as additional units for pressure and viscosity.
+- Added `EPSILON0` and `KE` as additional constants. [#113](https://github.com/itt-ustutt/quantity/pull/113)
 
 ## [0.13.0] - 2026-01-06
 ### Changed

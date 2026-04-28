@@ -47,6 +47,8 @@ of quantities is unique, they do not appear in formatted outputs.
 | -------- | ---------------------- | ------------------------- | ------------------------------------------------------------------- |
 | G        | Gravitational constant | $G$                       | $6.6743\times 10^{-11}~\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}$ |
 | RGAS     | Ideal gas constant     | $R=N_\text{Av}k_\text{B}$ | $8.31446261815324~\frac{\text{J}}{\text{mol}\cdot\text{K}}$         |
+| EPSILON0 | Electric constant      | $\varepsilon_0$           | $8.8541878188e-12~\frac{\text{F}}{\text{m}}$                        |
+| KE       | Coulomb constant       | $k_\text{e} = \frac{1}{4\pi\varepsilon_0}$ | $8987551786.1708~\frac{\text{m}}{\text{F}}$        |
 
 ### Example
 
