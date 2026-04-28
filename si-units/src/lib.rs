@@ -83,7 +83,14 @@ impl PySIObject {
                 .value
                 .call_method0(py, "__repr__")?
                 .extract::<String>(py)?;
-            Ok(format!("{} {}", value, self.unit))
+            let unit = if self.unit == _KILOGRAM {
+                // because the base unit already has a prefix, we cannot call
+                // unit.to_string() on it (it would return 'g').
+                "kg".into()
+            } else {
+                self.unit.to_string()
+            };
+            Ok(format!("{} {}", value, unit))
         }
     }
 
