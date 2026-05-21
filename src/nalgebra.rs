@@ -3,7 +3,6 @@ use nalgebra::allocator::Allocator;
 use nalgebra::constraint::{DimEq, ShapeConstraint};
 use nalgebra::{ClosedAddAssign, ClosedMulAssign, DMatrix, DefaultAllocator, Dim, OMatrix, Scalar};
 use num_traits::Zero;
-use std::marker::PhantomData;
 use std::ops::Add;
 
 impl<R: Dim, C: Dim, U, T: Scalar> Quantity<OMatrix<T, R, C>, U>
@@ -34,14 +33,14 @@ where
     where
         T: Zero + ClosedAddAssign,
     {
-        Quantity(self.0.sum(), PhantomData)
+        Quantity::new(self.0.sum())
     }
 
     pub fn get(&self, index: usize) -> Quantity<T, U>
     where
         T: Copy,
     {
-        Quantity(self.0[index], PhantomData)
+        Quantity::new(self.0[index])
     }
 
     pub fn set(&mut self, index: usize, value: Quantity<T, U>) {
@@ -52,7 +51,7 @@ where
     where
         T: Copy,
     {
-        Quantity(self.0[(i, j)], PhantomData)
+        Quantity::new(self.0[(i, j)])
     }
 
     pub fn set2(&mut self, i: usize, j: usize, value: Quantity<T, U>) {
@@ -72,7 +71,7 @@ where
     where
         T: ClosedAddAssign,
     {
-        Self(self.0.add_scalar(rhs.0), PhantomData)
+        Self::new(self.0.add_scalar(rhs.0))
     }
 
     pub fn component_mul<U2>(
@@ -83,7 +82,7 @@ where
         T: ClosedMulAssign,
         U: Add<U2>,
     {
-        Quantity(self.0.component_mul(&rhs.0), PhantomData)
+        Quantity::new(self.0.component_mul(&rhs.0))
     }
 
     pub fn dot<U2, R2: Dim, C2: Dim>(
@@ -96,24 +95,18 @@ where
         U: Add<U2>,
         ShapeConstraint: DimEq<R, R2> + DimEq<C, C2>,
     {
-        Quantity(self.0.dot(&rhs.0), PhantomData)
+        Quantity::new(self.0.dot(&rhs.0))
     }
 
     pub fn from_fn_generic<F>(nrows: R, ncols: C, mut f: F) -> Self
     where
         F: FnMut(usize, usize) -> Quantity<T, U>,
     {
-        Self(
-            OMatrix::from_fn_generic(nrows, ncols, |i, j| f(i, j).0),
-            PhantomData,
-        )
+        Self::new(OMatrix::from_fn_generic(nrows, ncols, |i, j| f(i, j).0))
     }
 
     pub fn from_element_generic(nrows: R, ncols: C, elem: Quantity<T, U>) -> Self {
-        Self(
-            OMatrix::from_element_generic(nrows, ncols, elem.0),
-            PhantomData,
-        )
+        Self::new(OMatrix::from_element_generic(nrows, ncols, elem.0))
     }
 }
 
@@ -122,9 +115,6 @@ impl<T: Scalar, U> Quantity<DMatrix<T>, U> {
     where
         F: FnMut(usize, usize) -> Quantity<T, U>,
     {
-        Self(
-            DMatrix::from_fn(nrows, ncols, |i, j| f(i, j).0),
-            PhantomData,
-        )
+        Self::new(DMatrix::from_fn(nrows, ncols, |i, j| f(i, j).0))
     }
 }

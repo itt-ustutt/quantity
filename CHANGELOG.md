@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-05-21
+### Added
+- Made `Quantity::new` available in `const` contexts.
+
 ## [0.13.0] - 2026-01-06
 ### Changed
 - Use const generics instead of types from `typenum` to represent units. [#95](https://github.com/itt-ustutt/quantity/pull/95)

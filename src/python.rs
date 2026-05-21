@@ -11,7 +11,7 @@ use numpy::PyReadonlyArray;
 #[cfg(feature = "nalgebra")]
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, ToPyArray};
 use pyo3::{exceptions::PyValueError, prelude::*};
-use std::{marker::PhantomData, sync::LazyLock};
+use std::sync::LazyLock;
 
 static SIOBJECT: LazyLock<Py<PyAny>> = LazyLock::new(|| {
     Python::attach(|py| {
@@ -141,7 +141,7 @@ where
         };
         let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
-            Ok(Quantity(value, PhantomData))
+            Ok(Quantity::new(value))
         } else {
             Err(PyErr::new::<PyValueError, _>(format!(
                 "Wrong units! Expected {}, got {}.",
@@ -182,7 +182,7 @@ where
         let value = value.as_array().to_owned();
         let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
-            Ok(Quantity(value, PhantomData))
+            Ok(Quantity::new(value))
         } else {
             Err(PyErr::new::<PyValueError, _>(format!(
                 "Wrong units! Expected {}, got {}.",
@@ -224,7 +224,7 @@ where
         };
         let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
-            Ok(Quantity(value, PhantomData))
+            Ok(Quantity::new(value))
         } else {
             Err(PyErr::new::<PyValueError, _>(format!(
                 "Wrong units! Expected {}, got {}.",
@@ -266,7 +266,7 @@ where
         };
         let unit_into = [L, M, T, I, N, THETA, J];
         if unit_into == unit_from {
-            Ok(Quantity(value, PhantomData))
+            Ok(Quantity::new(value))
         } else {
             Err(PyErr::new::<PyValueError, _>(format!(
                 "Wrong units! Expected {}, got {}.",
@@ -309,6 +309,6 @@ impl<'py> FromPyObject<'_, 'py> for Angle {
                 ob.call_method0("__repr__")?
             )));
         };
-        Ok(Quantity(value, PhantomData))
+        Ok(Quantity::new(value))
     }
 }

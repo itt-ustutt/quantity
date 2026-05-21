@@ -12,7 +12,7 @@ use std::ops::{Add, Mul, Sub};
 impl<T: Copy, U> Quantity<Array1<T>, U> {
     /// Create a one-dimensional array from a vector of scalar quantities.
     pub fn from_vec(v: Vec<Quantity<T, U>>) -> Self {
-        Self(v.iter().map(|e| e.0).collect(), PhantomData)
+        Self::new(v.iter().map(|e| e.0).collect())
     }
 
     /// Create a one-dimensional array with n evenly spaced elements from `start` to `end` (inclusive).
@@ -29,12 +29,11 @@ impl<T: Copy, U> Quantity<Array1<T>, U> {
     where
         T: Mul<f64, Output = T> + Sub<Output = T> + Add<Output = T>,
     {
-        Self(
+        Self::new(
             Array1::linspace(0.0, 1.0, n)
                 .into_iter()
                 .map(|x| (end.0 - start.0) * x + start.0)
                 .collect(),
-            PhantomData,
         )
     }
 }
@@ -51,10 +50,7 @@ impl<U> Quantity<Array1<f64>, U> {
     /// assert_relative_eq!(x, &(arr1(&[1.0, 2.0, 4.0, 8.0, 16.0]) * METER));
     /// ```
     pub fn logspace(start: Quantity<f64, U>, end: Quantity<f64, U>, n: usize) -> Self {
-        Self(
-            Array1::logspace(10.0, start.0.log10(), end.0.log10(), n),
-            PhantomData,
-        )
+        Self::new(Array1::logspace(10.0, start.0.log10(), end.0.log10(), n))
     }
 }
 
@@ -64,7 +60,7 @@ impl<T, U, D: Dimension> Quantity<Array<T, D>, U> {
     where
         T: Clone + Zero,
     {
-        Quantity(Array::zeros(shape), PhantomData)
+        Quantity::new(Array::zeros(shape))
     }
 
     /// Create an array with values created by the function f.
@@ -73,7 +69,7 @@ impl<T, U, D: Dimension> Quantity<Array<T, D>, U> {
         Sh: ShapeBuilder<Dim = D>,
         F: FnMut(D::Pattern) -> Quantity<T, U>,
     {
-        Quantity(Array::from_shape_fn(shape, |x| f(x).0), PhantomData)
+        Quantity::new(Array::from_shape_fn(shape, |x| f(x).0))
     }
 }
 
@@ -102,7 +98,7 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     where
         T: Clone + Zero,
     {
-        Quantity(self.0.sum(), PhantomData)
+        Quantity::new(self.0.sum())
     }
 
     /// Return an uniquely owned copy of the array.
@@ -110,7 +106,7 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     where
         T: Clone,
     {
-        Quantity(self.0.to_owned(), PhantomData)
+        Quantity::new(self.0.to_owned())
     }
 
     /// Return the shape of the array as a slice.
@@ -130,7 +126,7 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
         S: DataMut,
         F: FnMut(Quantity<T, U>) -> Quantity<T2, U2>,
     {
-        Quantity(self.0.mapv(|x| f(Quantity(x, PhantomData)).0), PhantomData)
+        Quantity::new(self.0.mapv(|x| f(Quantity::new(x)).0))
     }
 
     /// Returns a view restricted to index along the axis, with the axis removed.
@@ -138,7 +134,7 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     where
         D: RemoveAxis,
     {
-        Quantity(self.0.index_axis(axis, index), PhantomData)
+        Quantity::new(self.0.index_axis(axis, index))
     }
 
     /// Return a producer and iterable that traverses over all 1D lanes pointing in the direction of axis.
@@ -155,12 +151,12 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
         T: Clone + Zero,
         D: RemoveAxis,
     {
-        Quantity(self.0.sum_axis(axis), PhantomData)
+        Quantity::new(self.0.sum_axis(axis))
     }
 
     /// Insert new array axis at axis and return the result.
     pub fn insert_axis(self, axis: Axis) -> Quantity<ArrayBase<S, D::Larger>, U> {
-        Quantity(self.0.insert_axis(axis), PhantomData)
+        Quantity::new(self.0.insert_axis(axis))
     }
 
     /// Return the element at `index`.
@@ -171,7 +167,7 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     where
         T: Clone,
     {
-        Quantity(self.0[index].clone(), PhantomData)
+        Quantity::new(self.0[index].clone())
     }
 
     /// Set the element at `index` to `scalar`.
@@ -192,7 +188,7 @@ impl<'a, I: Iterator<Item = &'a T>, T: Copy + 'static, U: Copy> Iterator for Qua
     type Item = Quantity<T, U>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.inner.next().map(|value| Quantity(*value, PhantomData))
+        self.inner.next().map(|value| Quantity::new(*value))
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
@@ -212,9 +208,7 @@ impl<'a, I: Iterator<Item = &'a T> + DoubleEndedIterator, T: Copy + 'static, U: 
     DoubleEndedIterator for QuantityIter<I, U>
 {
     fn next_back(&mut self) -> Option<Self::Item> {
-        self.inner
-            .next_back()
-            .map(|value| Quantity(*value, PhantomData))
+        self.inner.next_back().map(|value| Quantity::new(*value))
     }
 }
 
@@ -238,6 +232,6 @@ impl<T, U> FromIterator<Quantity<T, U>> for Quantity<Array1<T>, U> {
     where
         I: IntoIterator<Item = Quantity<T, U>>,
     {
-        Self(iter.into_iter().map(|v| v.0).collect(), PhantomData)
+        Self::new(iter.into_iter().map(|v| v.0).collect())
     }
 }

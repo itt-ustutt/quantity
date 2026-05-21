@@ -118,13 +118,13 @@ impl_fmt!(-2, 2, 1, -1, 0, 0, WEBER, "Wb", Some(PETA));
 impl_fmt!(-2, 0, 1, -1, 0, 0, TESLA, "T", Some(PETA));
 impl_fmt!(-2, 2, 1, -2, 0, 0, HENRY, "H", Some(PETA));
 
-const M2: Area = Quantity(1.0, PhantomData);
-const M3: Volume = Quantity(1.0, PhantomData);
+const M2: Area = Quantity::new(1.0);
+const M3: Volume = Quantity::new(1.0);
 const KG: Mass = KILOGRAM;
-const JMK: MolarEntropy = Quantity(1.0, PhantomData);
-const JKGK: SpecificEntropy = Quantity(1.0, PhantomData);
-const WMK: ThermalConductivity = Quantity(1.0, PhantomData);
-const GS: MassFlowRate = Quantity(1e-3, PhantomData);
+const JMK: MolarEntropy = Quantity::new(1.0);
+const JKGK: SpecificEntropy = Quantity::new(1.0);
+const WMK: ThermalConductivity = Quantity::new(1.0);
+const GS: MassFlowRate = Quantity::new(1e-3);
 
 impl_fmt!(0, -3, 0, 0, 0, 1, MOL / M3, "mol/m³", Some(MEGA));
 impl_fmt!(0, -2, 0, 0, 0, 1, MOL / M2, "mol/m²", Some(MEGA));

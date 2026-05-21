@@ -10,7 +10,6 @@ use ndarray::{Array, ArrayBase, Data, DataMut, DataOwned, Dimension};
 #[cfg(feature = "num-dual")]
 use num_dual::DualNum;
 use num_traits::{Inv, Signed};
-use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 // Multiplication
@@ -21,7 +20,7 @@ where
 {
     type Output = Quantity<Prod<T1, T2>, Sum<U1, U2>>;
     fn mul(self, other: Quantity<T2, U2>) -> Self::Output {
-        Quantity(self.0 * other.0, PhantomData)
+        Quantity::new(self.0 * other.0)
     }
 }
 
@@ -32,7 +31,7 @@ where
 {
     type Output = Quantity<Prod<&'a T1, T2>, Sum<U1, U2>>;
     fn mul(self, other: Quantity<T2, U2>) -> Self::Output {
-        Quantity(&self.0 * other.0, PhantomData)
+        Quantity::new(&self.0 * other.0)
     }
 }
 
@@ -43,7 +42,7 @@ where
 {
     type Output = Quantity<Prod<T1, &'b T2>, Sum<U1, U2>>;
     fn mul(self, other: &'b Quantity<T2, U2>) -> Self::Output {
-        Quantity(self.0 * &other.0, PhantomData)
+        Quantity::new(self.0 * &other.0)
     }
 }
 
@@ -54,7 +53,7 @@ where
 {
     type Output = Quantity<Prod<&'a T1, &'b T2>, Sum<U1, U2>>;
     fn mul(self, other: &'b Quantity<T2, U2>) -> Self::Output {
-        Quantity(&self.0 * &other.0, PhantomData)
+        Quantity::new(&self.0 * &other.0)
     }
 }
 
@@ -64,14 +63,14 @@ where
 {
     type Output = Quantity<Prod<f64, T>, U>;
     fn mul(self, other: Quantity<T, U>) -> Self::Output {
-        Quantity(self * other.0, PhantomData)
+        Quantity::new(self * other.0)
     }
 }
 
 impl<T: Mul<f64>, U> Mul<f64> for Quantity<T, U> {
     type Output = Quantity<Prod<T, f64>, U>;
     fn mul(self, other: f64) -> Self::Output {
-        Quantity(self.0 * other, PhantomData)
+        Quantity::new(self.0 * other)
     }
 }
 
@@ -81,7 +80,7 @@ where
 {
     type Output = Quantity<Prod<&'a T, f64>, U>;
     fn mul(self, other: f64) -> Self::Output {
-        Quantity(&self.0 * other, PhantomData)
+        Quantity::new(&self.0 * other)
     }
 }
 
@@ -89,7 +88,7 @@ where
 impl<U, S: Data<Elem = f64>, D: Dimension> Mul<Quantity<f64, U>> for &ArrayBase<S, D> {
     type Output = Quantity<Array<f64, D>, U>;
     fn mul(self, other: Quantity<f64, U>) -> Self::Output {
-        Quantity(self * other.0, PhantomData)
+        Quantity::new(self * other.0)
     }
 }
 
@@ -99,7 +98,7 @@ impl<U, S: DataOwned<Elem = f64> + DataMut, D: Dimension> Mul<Quantity<f64, U>>
 {
     type Output = Quantity<ArrayBase<S, D>, U>;
     fn mul(self, other: Quantity<f64, U>) -> Self::Output {
-        Quantity(self * other.0, PhantomData)
+        Quantity::new(self * other.0)
     }
 }
 
@@ -110,7 +109,7 @@ where
 {
     type Output = Quantity<OMatrix<f64, R, C>, U>;
     fn mul(self, other: Quantity<f64, U>) -> Self::Output {
-        Quantity(self * other.0, PhantomData)
+        Quantity::new(self * other.0)
     }
 }
 
@@ -121,7 +120,7 @@ where
 {
     type Output = Quantity<OMatrix<f64, R, C>, U>;
     fn mul(self, other: Quantity<f64, U>) -> Self::Output {
-        Quantity(self * other.0, PhantomData)
+        Quantity::new(self * other.0)
     }
 }
 
@@ -142,7 +141,7 @@ where
 {
     type Output = Quantity<Quot<T1, T2>, Diff<U1, U2>>;
     fn div(self, other: Quantity<T2, U2>) -> Self::Output {
-        Quantity(self.0 / other.0, PhantomData)
+        Quantity::new(self.0 / other.0)
     }
 }
 
@@ -153,7 +152,7 @@ where
 {
     type Output = Quantity<Quot<&'a T1, T2>, Diff<U1, U2>>;
     fn div(self, other: Quantity<T2, U2>) -> Self::Output {
-        Quantity(&self.0 / other.0, PhantomData)
+        Quantity::new(&self.0 / other.0)
     }
 }
 
@@ -164,7 +163,7 @@ where
 {
     type Output = Quantity<Quot<T1, &'b T2>, Diff<U1, U2>>;
     fn div(self, other: &'b Quantity<T2, U2>) -> Self::Output {
-        Quantity(self.0 / &other.0, PhantomData)
+        Quantity::new(self.0 / &other.0)
     }
 }
 
@@ -175,7 +174,7 @@ where
 {
     type Output = Quantity<Quot<&'a T1, &'b T2>, Diff<U1, U2>>;
     fn div(self, other: &'b Quantity<T2, U2>) -> Self::Output {
-        Quantity(&self.0 / &other.0, PhantomData)
+        Quantity::new(&self.0 / &other.0)
     }
 }
 
@@ -186,14 +185,14 @@ where
 {
     type Output = Quantity<Quot<f64, T>, Negate<U>>;
     fn div(self, other: Quantity<T, U>) -> Self::Output {
-        Quantity(self / other.0, PhantomData)
+        Quantity::new(self / other.0)
     }
 }
 
 impl<T: Div<f64>, U> Div<f64> for Quantity<T, U> {
     type Output = Quantity<Quot<T, f64>, U>;
     fn div(self, other: f64) -> Self::Output {
-        Quantity(self.0 / other, PhantomData)
+        Quantity::new(self.0 / other)
     }
 }
 
@@ -203,7 +202,7 @@ where
 {
     type Output = Quantity<Quot<&'a T, f64>, U>;
     fn div(self, other: f64) -> Self::Output {
-        Quantity(&self.0 / other, PhantomData)
+        Quantity::new(&self.0 / other)
     }
 }
 
@@ -211,7 +210,7 @@ where
 impl<U: Neg, S: Data<Elem = f64>, D: Dimension> Div<Quantity<f64, U>> for &ArrayBase<S, D> {
     type Output = Quantity<Array<f64, D>, Negate<U>>;
     fn div(self, other: Quantity<f64, U>) -> Self::Output {
-        Quantity(self / other.0, PhantomData)
+        Quantity::new(self / other.0)
     }
 }
 
@@ -221,7 +220,7 @@ impl<U: Neg, S: DataOwned<Elem = f64> + DataMut, D: Dimension> Div<Quantity<f64,
 {
     type Output = Quantity<ArrayBase<S, D>, Negate<U>>;
     fn div(self, other: Quantity<f64, U>) -> Self::Output {
-        Quantity(self / other.0, PhantomData)
+        Quantity::new(self / other.0)
     }
 }
 
@@ -241,7 +240,7 @@ where
 {
     type Output = Quantity<Sum<T1, T2>, U>;
     fn add(self, other: Quantity<T2, U>) -> Self::Output {
-        Quantity(self.0 + other.0, PhantomData)
+        Quantity::new(self.0 + other.0)
     }
 }
 
@@ -251,7 +250,7 @@ where
 {
     type Output = Quantity<Sum<&'a T1, T2>, U>;
     fn add(self, other: Quantity<T2, U>) -> Self::Output {
-        Quantity(&self.0 + other.0, PhantomData)
+        Quantity::new(&self.0 + other.0)
     }
 }
 
@@ -261,7 +260,7 @@ where
 {
     type Output = Quantity<Sum<T1, &'b T2>, U>;
     fn add(self, other: &'b Quantity<T2, U>) -> Self::Output {
-        Quantity(self.0 + &other.0, PhantomData)
+        Quantity::new(self.0 + &other.0)
     }
 }
 
@@ -271,7 +270,7 @@ where
 {
     type Output = Quantity<Sum<&'a T1, &'b T2>, U>;
     fn add(self, other: &'b Quantity<T2, U>) -> Self::Output {
-        Quantity(&self.0 + &other.0, PhantomData)
+        Quantity::new(&self.0 + &other.0)
     }
 }
 
@@ -300,7 +299,7 @@ where
 {
     type Output = Quantity<Diff<T1, T2>, U>;
     fn sub(self, other: Quantity<T2, U>) -> Self::Output {
-        Quantity(self.0 - other.0, PhantomData)
+        Quantity::new(self.0 - other.0)
     }
 }
 
@@ -310,7 +309,7 @@ where
 {
     type Output = Quantity<Diff<&'a T1, T2>, U>;
     fn sub(self, other: Quantity<T2, U>) -> Self::Output {
-        Quantity(&self.0 - other.0, PhantomData)
+        Quantity::new(&self.0 - other.0)
     }
 }
 
@@ -320,7 +319,7 @@ where
 {
     type Output = Quantity<Diff<T1, &'b T2>, U>;
     fn sub(self, other: &'b Quantity<T2, U>) -> Self::Output {
-        Quantity(self.0 - &other.0, PhantomData)
+        Quantity::new(self.0 - &other.0)
     }
 }
 
@@ -330,7 +329,7 @@ where
 {
     type Output = Quantity<Diff<&'a T1, &'b T2>, U>;
     fn sub(self, other: &'b Quantity<T2, U>) -> Self::Output {
-        Quantity(&self.0 - &other.0, PhantomData)
+        Quantity::new(&self.0 - &other.0)
     }
 }
 
@@ -359,7 +358,7 @@ where
 {
     type Output = Quantity<Negate<T>, U>;
     fn neg(self) -> Self::Output {
-        Quantity(-self.0, PhantomData)
+        Quantity::new(-self.0)
     }
 }
 
@@ -378,7 +377,7 @@ impl<U> Quantity<f64, U> {
     where
         U: Mul<Const<E>>,
     {
-        Quantity(self.0.powi(E as i32), PhantomData)
+        Quantity::new(self.0.powi(E as i32))
     }
 
     /// Calculate the square root of self.
@@ -394,7 +393,7 @@ impl<U> Quantity<f64, U> {
     where
         U: Div<Const<2>>,
     {
-        Quantity(self.0.sqrt(), PhantomData)
+        Quantity::new(self.0.sqrt())
     }
 
     /// Calculate the cubic root of self.
@@ -410,7 +409,7 @@ impl<U> Quantity<f64, U> {
     where
         U: Div<Const<3>>,
     {
-        Quantity(self.0.cbrt(), PhantomData)
+        Quantity::new(self.0.cbrt())
     }
 
     /// Calculate the integer root of self.
@@ -426,7 +425,7 @@ impl<U> Quantity<f64, U> {
     where
         U: Div<Const<R>>,
     {
-        Quantity(self.0.powf(1.0 / R as f64), PhantomData)
+        Quantity::new(self.0.powf(1.0 / R as f64))
     }
 }
 
@@ -445,7 +444,7 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     where
         U: Mul<Const<E>>,
     {
-        Quantity(self.0.powi(E as i32), PhantomData)
+        Quantity::new(self.0.powi(E as i32))
     }
 
     /// Calculate the square root of self.
@@ -461,7 +460,7 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     where
         U: Div<Const<2>>,
     {
-        Quantity(self.0.sqrt(), PhantomData)
+        Quantity::new(self.0.sqrt())
     }
 
     /// Calculate the cubic root of self.
@@ -477,7 +476,7 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     where
         U: Div<Const<3>>,
     {
-        Quantity(self.0.cbrt(), PhantomData)
+        Quantity::new(self.0.cbrt())
     }
 
     /// Calculate the integer root of self.
@@ -493,7 +492,7 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     where
         U: Div<Const<R>>,
     {
-        Quantity(self.0.powf(1.0 / R as f64), PhantomData)
+        Quantity::new(self.0.powf(1.0 / R as f64))
     }
 }
 
@@ -510,7 +509,7 @@ impl<T, U> Quantity<T, U> {
     where
         T: Signed,
     {
-        Self(self.0.abs(), PhantomData)
+        Self::new(self.0.abs())
     }
 
     /// Return the multiplicative inverse of `self`.
@@ -526,7 +525,7 @@ impl<T, U> Quantity<T, U> {
         T: Inv<Output = T>,
         U: Neg,
     {
-        Quantity(self.0.inv(), PhantomData)
+        Quantity::new(self.0.inv())
     }
 }
 
@@ -568,7 +567,7 @@ impl<U> Quantity<f64, U> {
     /// assert_relative_eq!(p1.min(p2), &p2);
     /// ```
     pub fn min(self, other: Self) -> Self {
-        Self(self.0.min(other.0), PhantomData)
+        Self::new(self.0.min(other.0))
     }
 
     /// Return the maximum of `self` and `other`.
@@ -582,7 +581,7 @@ impl<U> Quantity<f64, U> {
     /// assert_relative_eq!(p1.max(p2), &p1);
     /// ```
     pub fn max(self, other: Self) -> Self {
-        Self(self.0.max(other.0), PhantomData)
+        Self::new(self.0.max(other.0))
     }
 }
 
