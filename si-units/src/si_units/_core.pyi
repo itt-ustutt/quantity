@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, Final, Self
 
 class SIObject:
     """Combination of value and unit.
@@ -106,6 +106,34 @@ class SIObject:
         """
         ...
 
+    __array_priority__: int
+    value: Any
+    @property
+    def unit(self) -> list[int]: ...
+    @property
+    def shape(self) -> Any: ...
+    def __getnewargs__(self) -> tuple[Any, list[int]]: ...
+    def __repr__(self) -> str: ...
+    def _repr_latex_(self) -> str | None: ...
+    def __eq__(self, other: object) -> Any: ...
+    def __ne__(self, other: object) -> Any: ...
+    def __lt__(self, other: Self) -> Any: ...
+    def __le__(self, other: Self) -> Any: ...
+    def __gt__(self, other: Self) -> Any: ...
+    def __ge__(self, other: Self) -> Any: ...
+    def __add__(self, rhs: Self) -> Self: ...
+    def __sub__(self, rhs: Self) -> Self: ...
+    def __mul__(self, rhs: Any) -> Any: ...
+    def __rmul__(self, lhs: Any) -> Any: ...
+    def __truediv__(self, rhs: Any) -> Any: ...
+    def __rtruediv__(self, lhs: Any) -> Any: ...
+    def __pow__(self, i: int, _mod: object | None = None) -> Self: ...
+    def __neg__(self) -> Self: ...
+    def __abs__(self) -> Self: ...
+    def __len__(self) -> int: ...
+    def __getitem__(self, idx: int) -> Self: ...
+    def __setitem__(self, idx: int, value: Self) -> None: ...
+
 def array(value: SIObject | list[SIObject]) -> SIObject:
     """Build SIObject from scalar or list.
 
@@ -158,3 +186,98 @@ def logspace(start: SIObject, end: SIObject, n: int) -> SIObject:
             the same unit, or if n is not positive.
     """
     ...
+
+class Celsius:
+    __array_priority__: int
+    def __rmul__(self, lhs: Any) -> SIObject: ...
+
+class Debye:
+    def __rmul__(self, lhs: float) -> Self: ...
+    def __pow__(self, n: int, _mod: object | None = None) -> SIObject: ...
+
+class Angle:
+    def __init__(self, value: float) -> None: ...
+    def __getnewargs__(self) -> float: ...
+    def __add__(self, rhs: Self) -> Self: ...
+    def __sub__(self, rhs: Self) -> Self: ...
+    def __mul__(self, rhs: float) -> Self: ...
+    def __rmul__(self, lhs: float) -> Self: ...
+    def __truediv__(self, rhs: Any) -> Any: ...
+    def __neg__(self) -> Self: ...
+    def value_in(self, unit: Self) -> float: ...
+    def sin(self) -> float: ...
+    def cos(self) -> float: ...
+    def tan(self) -> float: ...
+
+SECOND: Final[SIObject]
+METER: Final[SIObject]
+KILOGRAM: Final[SIObject]
+AMPERE: Final[SIObject]
+KELVIN: Final[SIObject]
+CELSIUS: Final[Celsius]
+DEBYE: Final[Debye]
+DEGREES: Final[Angle]
+RADIANS: Final[Angle]
+DAY: Final[SIObject]
+MOL: Final[SIObject]
+CANDELA: Final[SIObject]
+DVCS: Final[SIObject]
+CLIGHT: Final[SIObject]
+PLANCK: Final[SIObject]
+QE: Final[SIObject]
+KB: Final[SIObject]
+NAV: Final[SIObject]
+KCD: Final[SIObject]
+HERTZ: Final[SIObject]
+NEWTON: Final[SIObject]
+PASCAL: Final[SIObject]
+JOULE: Final[SIObject]
+WATT: Final[SIObject]
+COULOMB: Final[SIObject]
+VOLT: Final[SIObject]
+FARAD: Final[SIObject]
+OHM: Final[SIObject]
+SIEMENS: Final[SIObject]
+WEBER: Final[SIObject]
+TESLA: Final[SIObject]
+HENRY: Final[SIObject]
+ANGSTROM: Final[SIObject]
+AMU: Final[SIObject]
+AU: Final[SIObject]
+BAR: Final[SIObject]
+ATM: Final[SIObject]
+POISE: Final[SIObject]
+CALORIE: Final[SIObject]
+GRAM: Final[SIObject]
+HOUR: Final[SIObject]
+LITER: Final[SIObject]
+MINUTE: Final[SIObject]
+G: Final[SIObject]
+RGAS: Final[SIObject]
+EPSILON0: Final[SIObject]
+KE: Final[SIObject]
+QUECTO: Final[float]
+RONTO: Final[float]
+YOCTO: Final[float]
+ZEPTO: Final[float]
+ATTO: Final[float]
+FEMTO: Final[float]
+PICO: Final[float]
+NANO: Final[float]
+MICRO: Final[float]
+MILLI: Final[float]
+CENTI: Final[float]
+DECI: Final[float]
+DECA: Final[float]
+HECTO: Final[float]
+KILO: Final[float]
+MEGA: Final[float]
+GIGA: Final[float]
+TERA: Final[float]
+PETA: Final[float]
+EXA: Final[float]
+ZETTA: Final[float]
+YOTTA: Final[float]
+RONNA: Final[float]
+QUETTA: Final[float]
+__version__: Final[str]

@@ -50,6 +50,8 @@
 //! [AMU] | $\text{u}$ | mass | $1.6605390671738466\times 10^{-27}\\,\text{kg}$
 //! [AU] | $\text{au}$ | length | $149597870700\\,\text{m}$
 //! [BAR] | $\text{bar}$ | pressure | $10^5\\,\text{Pa}$
+//! [ATM] | $\text{atm}$ | pressure | $101325\\,\text{Pa}$
+//! [POISE] | $\text{P}$ | viscosity | $0.1\\,\text{Pa}\cdot\text{s}$
 //! [CALORIE] | $\text{cal}$ | energy | $4.184\\,\text{J}$
 //! [CELSIUS] | $^\\circ\text{C}$ | temperature | $t\\,^\\circ\text{C}=\\left(t+273.15\\right)\\,\text{K}$
 //! [DAY] | $\text{d}$ | time | $86400\\,\text{s}$
@@ -66,6 +68,8 @@
 //! -|-|-|-
 //! [G] | Gravitational constant | $G$ | $6.6743\\times 10^{-11}\\,\\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}$
 //! [RGAS] | Ideal gas constant | $R=N_\text{Av}k_\text{B}$ | $8.31446261815324\\,\\frac{\text{J}}{\text{mol}\\cdot\text{K}}$
+//! [EPSILON0] | Electric constant | $\varepsilon_0$ | $8.8541878188e-12~\frac{\text{F}}{\text{m}}$
+//! [KE] | Coulomb constant | $k_\text{e} = \frac{1}{4\pi\varepsilon_0}$ | $8987551786.1708~\frac{\text{m}}{\text{F}}$
 //!
 //! ## Prefixes
 //!
@@ -141,6 +145,7 @@
 #![warn(clippy::all)]
 #[cfg(feature = "ndarray")]
 use ndarray::{Array, ArrayBase, Data, Dimension};
+use std::f64::consts::FRAC_1_PI;
 use std::marker::PhantomData;
 use std::ops::{Add, Deref, Div, Mul, Neg, Sub};
 
@@ -519,6 +524,10 @@ pub const AMU: Mass = Quantity::new(1.6605390671738466e-27);
 pub const AU: Length = Quantity::new(149597870700.0);
 /// Additional unit bar $\\left(1\\,\text{bar}=10^5\\,\text{Pa}\\right)$
 pub const BAR: Pressure = Quantity::new(1e5);
+/// Additional unit atmosphere $\left(1\,\text{atm}=101325\,\text{Pa}\right)$
+pub const ATM: Pressure = Quantity::new(101325.0);
+/// Additional unit poise $\left(1\,\text{P}=0.1\,\text{Pa}\cdot\text{s}\right)$
+pub const POISE: Viscosity = Quantity::new(0.1);
 /// Additional unit calorie $\\left(1\\,\text{cal}=4.184\\,\text{J}\\right)$
 pub const CALORIE: Energy = Quantity::new(4.184);
 /// Additional unit day $\\left(1\\,\text{d}=86400,\text{s}\\right)$
@@ -550,6 +559,11 @@ pub const CLIGHT: Velocity = Quantity::new(299792458.0);
 pub const KCD: Quantity<f64, SIUnit<-2, -1, 3, 0, 0, 0, 1>> = Quantity::new(683.0);
 /// Gravitational constant $\\left(G=6.6743\\times 10^{-11}\\,\\frac{\text{m}^3}{\text{kg}\cdot\text{s}^2}\\right)$
 pub const G: Quantity<f64, SIUnit<-2, 3, -1, 0, 0, 0, 0>> = Quantity::new(6.6743e-11);
+/// Electric constant $\\left(\\varepsilon_0=8.8541878188\times 10^{-12}\\,\\frac{\text{F}}{\text{m}}\\right)$
+pub const EPSILON0: Quantity<f64, SIUnit<4, -3, -1, 2, 0, 0, 0>> = Quantity::new(8.8541878188e-12);
+/// Coulomb constant $\\left(k_\text{e}=\frac{1}{4\pi\varepsilon_0}=8987551786.1708\\,\\frac{\text{m}}{\text{F}}\\right)$
+pub const KE: Quantity<f64, SIUnit<-4, 3, 1, -2, 0, 0, 0>> =
+    Quantity::new(FRAC_1_PI / (4.0 * 8.8541878188e-12));
 
 /// Prefix quecto $\\left(\text{q}=10^{-30}\\right)$
 pub const QUECTO: f64 = 1e-30;
@@ -647,34 +661,46 @@ pub const RADIANS: Angle = Quantity::new(1.0);
 /// Angle unit degrees $\\left(1°=\\frac{\\pi}{180}\text{rad}\\right)$
 pub const DEGREES: Angle = Quantity::new(std::f64::consts::PI / 180.);
 
+macro_rules! angle_methods {
+    ($t:ty) => {
+        pub fn sin(self) -> $t {
+            self.0.sin()
+        }
+
+        pub fn cos(self) -> $t {
+            self.0.cos()
+        }
+
+        pub fn tan(self) -> $t {
+            self.0.tan()
+        }
+
+        pub fn asin(x: $t) -> Self {
+            Quantity::new(x.asin())
+        }
+
+        pub fn acos(x: $t) -> Self {
+            Quantity::new(x.acos())
+        }
+
+        pub fn atan(x: $t) -> Self {
+            Quantity::new(x.atan())
+        }
+
+        pub fn atan2(y: $t, x: $t) -> Self {
+            Quantity::new(y.atan2(x))
+        }
+    };
+}
+
+#[cfg(not(feature = "num-dual"))]
 impl Angle {
-    pub fn sin(self) -> f64 {
-        self.0.sin()
-    }
+    angle_methods!(f64);
+}
 
-    pub fn cos(self) -> f64 {
-        self.0.cos()
-    }
-
-    pub fn tan(self) -> f64 {
-        self.0.tan()
-    }
-
-    pub fn asin(x: f64) -> Self {
-        Quantity::new(x.asin())
-    }
-
-    pub fn acos(x: f64) -> Self {
-        Quantity::new(x.acos())
-    }
-
-    pub fn atan(x: f64) -> Self {
-        Quantity::new(x.atan())
-    }
-
-    pub fn atan2(y: f64, x: f64) -> Self {
-        Quantity::new(y.atan2(x))
-    }
+#[cfg(feature = "num-dual")]
+impl<T: num_dual::DualNum<f64>> Angle<T> {
+    angle_methods!(T);
 }
 
 impl<T> Dimensionless<T> {

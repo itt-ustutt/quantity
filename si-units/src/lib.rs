@@ -7,6 +7,7 @@ use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::types::{PyFloat, PyNotImplemented};
 use pyo3::{PyErr, PyTypeInfo};
+use std::f64::consts::FRAC_1_PI;
 use thiserror::Error;
 
 mod si_unit;
@@ -79,10 +80,18 @@ impl PySIObject {
         if let Ok(v) = self.value.extract::<f64>(py) {
             Ok(SINumber::new(v, self.unit).to_string())
         } else {
-            let value = self
-                .value
-                .call_method0(py, "__repr__")?
-                .extract::<String>(py)?;
+            let mut value = self.value.bind(py).clone();
+            if self.unit == _KILOGRAM
+                || self.unit == _KILOGRAM / _MOL
+                || self.unit == _KILOGRAM / _METER.powi(3)
+            {
+                // For these three specific units, unit.to_string() will not return the
+                // base unit (kg...) but rather g, in order to determine an appropriate
+                // prefix for scalars. In this general representation, there are no prefixes
+                // so we adjust the value to match the unit before printing.
+                value = self.value.bind(py).mul(1e3)?;
+            }
+            let value = value.call_method0("__repr__")?.extract::<String>()?;
             Ok(format!("{} {}", value, self.unit))
         }
     }
@@ -135,11 +144,17 @@ impl PySIObject {
         self.unit.eq(&other.unit)
     }
 
-    pub fn value_in<'py>(&self, py: Python<'py>, unit: &Self) -> PyResult<Bound<'py, PyAny>> {
-        self.check_units(unit)?;
-        self.value
-            .bind(py)
-            .call_method1("__truediv__", (&unit.value,))
+    pub fn value_in<'py>(
+        &self,
+        py: Python<'py>,
+        unit: &Bound<'py, PyAny>,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        if unit.cast::<Celsius>().is_ok() {
+            return self.__truediv__(unit);
+        }
+        let u = unit.extract::<PyRef<Self>>()?;
+        self.check_units(&u)?;
+        self.value.bind(py).call_method1("__truediv__", (&u.value,))
     }
 
     #[classattr]
@@ -266,15 +281,15 @@ impl PySIObject {
             .and_then(|v| v.extract::<usize>(py))
     }
 
-    fn __getitem__(&self, py: Python, idx: isize) -> PyResult<Self> {
+    fn __getitem__(&self, py: Python, idx: &Bound<'_, PyAny>) -> PyResult<Self> {
         let value = self.value.call_method1(py, "__getitem__", (idx,))?;
         Ok(Self::new(value, self.unit))
     }
 
-    fn __setitem__(&self, py: Python, idx: isize, value: SINumber) -> PyResult<()> {
+    fn __setitem__(&self, py: Python, idx: &Bound<'_, PyAny>, value: &Self) -> PyResult<()> {
         if self.unit == value.unit {
             self.value
-                .call_method1(py, "__setitem__", (idx, value.value))?;
+                .call_method1(py, "__setitem__", (idx, &value.value))?;
             Ok(())
         } else {
             Err(QuantityError::InconsistentUnits {
@@ -282,6 +297,11 @@ impl PySIObject {
                 unit2: value.unit,
             })?
         }
+    }
+
+    fn sum(&self, py: Python) -> PyResult<Self> {
+        let value = self.value.call_method0(py, "sum")?;
+        Ok(Self::new(value, self.unit))
     }
 
     #[getter]
@@ -503,6 +523,8 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_constant(m, "AMU", 1.6605390671738466e-27, _KILOGRAM)?;
     add_constant(m, "AU", 149597870700.0, _METER)?;
     add_constant(m, "BAR", 1e5, _PASCAL)?;
+    add_constant(m, "ATM", 101325., _PASCAL)?;
+    add_constant(m, "POISE", 0.1, _PASCAL * _SECOND)?;
     add_constant(m, "CALORIE", 4.184, _JOULE)?;
     m.add("CELSIUS", Celsius)?;
     add_constant(m, "DAY", 86400.0, _SECOND)?;
@@ -517,6 +539,13 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_constant(m, "G", 6.6743e-11, SIUnit([3, -1, -2, 0, 0, 0, 0]))?;
     let rgas = 1.380649e-23 * 6.02214076e23;
     add_constant(m, "RGAS", rgas, _JOULE_PER_MOL_AND_KELVIN)?;
+    add_constant(m, "EPSILON0", 8.8541878188e-12, _FARAD / _METER)?;
+    add_constant(
+        m,
+        "KE",
+        FRAC_1_PI / (4.0 * 8.8541878188e-12),
+        _METER / _FARAD,
+    )?;
 
     m.add("QUECTO", QUECTO)?;
     m.add("RONTO", RONTO)?;

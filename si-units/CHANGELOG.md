@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.4] - 2026-05-01
+### Changed
+- Generalized indexing, such that, e.g., general multidimensional slicing operations are possible for quantities containing NumPy arrays. [#110](https://github.com/itt-ustutt/quantity/pull/110)
+
+### Added
+- Added `ATM` and `POISE` as additional units for pressure and viscosity.
+- Added `sum` for `SIObject`s that can be summed. [#111](https://github.com/itt-ustutt/quantity/pull/111)
+- Added `EPSILON0` and `KE` as additional constants. [#113](https://github.com/itt-ustutt/quantity/pull/113)
+
+### Fixed
+- Fixed the String representation of non-scalar mass quantities. [#111](https://github.com/itt-ustutt/quantity/pull/111)
+
+## [0.11.3] - 2026-04-22
+### Added
+- Added stub information for methods and constants. [#106](https://github.com/itt-ustutt/quantity/pull/106)
+
 ## [0.11.2] - 2026-04-18
 ### Added
 - Added getters for `value` and `unit` of `SIObject`. [#102](https://github.com/itt-ustutt/quantity/pull/102)

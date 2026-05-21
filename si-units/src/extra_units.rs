@@ -1,8 +1,8 @@
-use crate::{PySIObject, QuantityError, _JOULE, _KELVIN, _METER};
+use crate::{_JOULE, _KELVIN, _METER, PySIObject, QuantityError};
+use pyo3::PyTypeInfo;
 use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
 use pyo3::types::{PyFloat, PyNotImplemented};
-use pyo3::PyTypeInfo;
 
 #[pyclass(module = "si_units")]
 #[derive(Clone, Copy)]
@@ -108,6 +108,10 @@ impl Angle {
 
     fn __neg__(&self) -> Self {
         Self(-self.0)
+    }
+
+    fn value_in(&self, unit: Self) -> f64 {
+        self.0 / unit.0
     }
 
     fn sin(&self) -> f64 {

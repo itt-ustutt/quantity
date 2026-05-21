@@ -1,6 +1,6 @@
 [project]
 name = "si-units"
-version = "0.11.2"
+version = "0.11.4"
 description = "Representation of quantites, i.e. of unit valued scalars and arrays."
 readme = "README.md"
 authors = [
