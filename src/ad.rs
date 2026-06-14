@@ -6,7 +6,7 @@ use num_dual::{
 };
 use std::ops::Sub;
 
-impl<D, F, T: DualStruct<D, F>, U> DualStruct<D, F> for Quantity<T, U> {
+impl<F, T: DualStruct<F>, U> DualStruct<F> for Quantity<T, U> {
     type Real = Quantity<T::Real, U>;
     type Inner = Quantity<T::Inner, U>;
 
