@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-06-14
+### Packaging
+- Updated `nalgebra` dependency to 0.35.
+- Updated `pyo3` and `numpy` dependencies to 0.29.
+- Updated `num-dual` dependency to 0.14.
+- Updated minimum supported Rust version to 1.89.
+
 ## [0.13.2] - 2026-05-21
 ### Added
 - Made `Quantity::new` available in `const` contexts.

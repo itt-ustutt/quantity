@@ -4,7 +4,7 @@ use pyo3::exceptions::PyTypeError;
 use pyo3::prelude::*;
 use pyo3::types::{PyFloat, PyNotImplemented};
 
-#[pyclass(module = "si_units")]
+#[pyclass(module = "si_units", from_py_object)]
 #[derive(Clone, Copy)]
 pub struct Celsius;
 
@@ -25,7 +25,7 @@ impl Celsius {
     }
 }
 
-#[pyclass(module = "si_units")]
+#[pyclass(module = "si_units", from_py_object)]
 #[derive(Clone, Copy)]
 pub struct Debye(pub f64);
 
@@ -55,7 +55,7 @@ impl Debye {
     }
 }
 
-#[pyclass(module = "si_units")]
+#[pyclass(module = "si_units", from_py_object)]
 #[derive(Clone, Copy)]
 pub struct Angle(pub(crate) f64);
 

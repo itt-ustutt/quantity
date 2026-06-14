@@ -5,7 +5,7 @@ authors = [
     "Philipp Rehner <prehner@ethz.ch>",
     "Gernot Bauer <bauer@itt.uni-stuttgart.de>",
 ]
-rust-version = "1.87"
+rust-version = "1.89"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Representation of SI unit valued scalars and arrays."
@@ -22,7 +22,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ndarray = "0.17"
-numpy = "0.27"
-pyo3 = { version = "0.27", features = ["extension-module", "abi3-py310"] }
+numpy = "0.29"
+pyo3 = { version = "0.29", features = ["extension-module", "abi3-py310"] }
 regex = "1.12"
 thiserror = "2.0"
