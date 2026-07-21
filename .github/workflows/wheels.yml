@@ -8,8 +8,8 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.11
       - name: Build Wheels
@@ -18,7 +18,7 @@ jobs:
           command: build
           args: --release --out dist -m si-units/Cargo.toml
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-linux-x86_64
           path: dist
@@ -28,8 +28,8 @@ jobs:
         target: [ {arch: x64, target: x86_64}, {arch: arm64, target: aarch64} ]
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.11
           architecture: ${{ matrix.target.arch }}
@@ -39,7 +39,7 @@ jobs:
           target: ${{ matrix.target.target }}
           args: --release --out dist -m si-units/Cargo.toml
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-macos-${{ matrix.target.target }}
           path: dist
@@ -49,8 +49,8 @@ jobs:
       matrix:
         target: [x64, x86]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.11
           architecture: ${{ matrix.target }}
@@ -60,7 +60,50 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --out dist -m si-units/Cargo.toml
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-windows-${{ matrix.target }}
+          path: dist
+  emscripten:
+    # wasm wheel
+    # Pyodide 314.x works with Python 3.14, Emscripten 5.0.3 and stable Rust 1.93.0.
+    # (abi3 still applies, but is not really required here since the platform pins one Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+      - name: Install pyodide-build
+        run: pip install "pyodide-build>=0.35,<0.36"
+
+      # Inspiration: jiter GH action :D
+      - name: Get pyodide config
+        id: pyodide-config
+        run: |
+          pyodide xbuildenv install
+          echo "rust-toolchain=$(pyodide config get rust_toolchain)" >> "$GITHUB_OUTPUT"
+          echo "emscripten-version=$(pyodide config get emscripten_version)" >> "$GITHUB_OUTPUT"
+          echo "pyodide-abi-version=$(pyodide config get pyodide_abi_version)" >> "$GITHUB_OUTPUT"
+          echo "rustflags=$(pyodide config get rustflags)" >> "$GITHUB_OUTPUT"
+
+      # The Emscripten SDK version must exactly match the one Pyodide was built
+      # against, otherwise the wasm fails to link.
+      - uses: emscripten-core/setup-emsdk@v16
+        with:
+          version: ${{ steps.pyodide-config.outputs.emscripten-version }}
+
+      - name: Build wheel
+        uses: PyO3/maturin-action@v1
+        env:
+          CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUSTFLAGS: ${{ steps.pyodide-config.outputs.rustflags }}
+          MATURIN_PYEMSCRIPTEN_PLATFORM_VERSION: ${{ steps.pyodide-config.outputs.pyodide-abi-version }}
+        with:
+          target: wasm32-unknown-emscripten
+          rust-toolchain: ${{ steps.pyodide-config.outputs.rust-toolchain }}
+          args: --release --out dist -m si-units/Cargo.toml -i 3.14
+      - name: Upload wheels
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheel-emscripten-wasm32
           path: dist
