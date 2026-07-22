@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.5] - 2026-06-22
+### Packaging
+- Added CI workflow for emscripten wheel. [#117](https://github.com/itt-ustutt/quantity/pull/117)
+
 ## [0.11.4] - 2026-05-01
 ### Changed
 - Generalized indexing, such that, e.g., general multidimensional slicing operations are possible for quantities containing NumPy arrays. [#110](https://github.com/itt-ustutt/quantity/pull/110)
