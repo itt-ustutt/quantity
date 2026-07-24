@@ -1,8 +1,8 @@
 use super::Quantity;
 use ndarray::iter::LanesMut;
 use ndarray::{
-    Array, Array1, ArrayBase, ArrayView, Axis, Data, DataMut, Dimension, NdIndex, RemoveAxis,
-    ShapeBuilder,
+    Array, Array1, ArrayBase, ArrayView, Axis, Data, DataMut, Dimension, IxDyn, NdIndex,
+    RemoveAxis, ShapeBuilder, ShapeError,
 };
 use num_traits::Zero;
 use std::iter::FromIterator;
@@ -157,6 +157,21 @@ impl<T, S: Data<Elem = T>, U, D: Dimension> Quantity<ArrayBase<S, D>, U> {
     /// Insert new array axis at axis and return the result.
     pub fn insert_axis(self, axis: Axis) -> Quantity<ArrayBase<S, D::Larger>, U> {
         Quantity::new(self.0.insert_axis(axis))
+    }
+
+    /// Convert an array or array view to another with the same type, but different dimensionality
+    /// type. Errors if the dimensions don't agree (the number of axes must match).
+    pub fn into_dimensionality<D2>(self) -> Result<Quantity<ArrayBase<S, D2>, U>, ShapeError>
+    where
+        D2: Dimension,
+    {
+        self.0.into_dimensionality().map(Quantity::new)
+    }
+
+    /// Convert any array or array view to a dynamic dimensional array or
+    /// array view (respectively).
+    pub fn into_dyn(self) -> Quantity<ArrayBase<S, IxDyn>, U> {
+        Quantity::new(self.0.into_dyn())
     }
 
     /// Return the element at `index`.
