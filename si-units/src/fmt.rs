@@ -67,10 +67,10 @@ impl SINumber {
             format!(
                 "{}\\,{}",
                 float_to_latex(value),
-                &unit_to_latex(symbols, exponents, Some(prefix))
+                unit_to_latex(symbols, exponents, Some(prefix))
             )
         } else {
-            format!("{}\\,{}", float_to_latex(self.value), &self.unit.to_latex())
+            format!("{}\\,{}", float_to_latex(self.value), self.unit.to_latex())
         }
     }
 }

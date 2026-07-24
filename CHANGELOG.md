@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-07-24
+### Added
+- Added `into_dimensionality` and `into_dyn` for quantities of arrays. [#119](https://github.com/itt-ustutt/quantity/pull/119)
+
 ## [0.14.0] - 2026-06-14
 ### Packaging
 - Updated `nalgebra` dependency to 0.35.
