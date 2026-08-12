@@ -9,6 +9,8 @@ use nalgebra::{DefaultAllocator, Dim, OMatrix};
 use ndarray::{Array, ArrayBase, Data, DataMut, DataOwned, Dimension};
 #[cfg(feature = "num-dual")]
 use num_dual::DualNum;
+#[cfg(feature = "num-dual")]
+use num_traits::FromPrimitive;
 use num_traits::{Inv, Signed};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -430,7 +432,7 @@ impl<U> Quantity<f64, U> {
 }
 
 #[cfg(feature = "num-dual")]
-impl<D: DualNum<f64>, U> Quantity<D, U> {
+impl<D: DualNum, U> Quantity<D, U> {
     /// Calculate the integer power of self.
     ///
     /// # Example
@@ -492,7 +494,7 @@ impl<D: DualNum<f64>, U> Quantity<D, U> {
     where
         U: Div<Const<R>>,
     {
-        Quantity::new(self.0.powf(1.0 / R as f64))
+        Quantity::new(self.0.powf(D::Primitive::from_f64(1.0 / R as f64).unwrap()))
     }
 }
 

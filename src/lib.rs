@@ -699,7 +699,7 @@ impl Angle {
 }
 
 #[cfg(feature = "num-dual")]
-impl<T: num_dual::DualNum<f64>> Angle<T> {
+impl<T: num_dual::DualNum> Angle<T> {
     angle_methods!(T);
 }
 
