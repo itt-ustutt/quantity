@@ -6,7 +6,7 @@ use num_dual::{
 };
 use std::ops::Sub;
 
-impl<F, T: DualStruct<F>, U> DualStruct<F> for Quantity<T, U> {
+impl<T: DualStruct, U> DualStruct for Quantity<T, U> {
     type Real = Quantity<T::Real, U>;
     type Inner = Quantity<T::Inner, U>;
 
@@ -19,21 +19,21 @@ impl<F, T: DualStruct<F>, U> DualStruct<F> for Quantity<T, U> {
     }
 }
 
-pub fn zeroth_derivative<G, T: DualNum<f64>, UX, UY>(g: G, x: Quantity<T, UX>) -> Quantity<T, UY>
+pub fn zeroth_derivative<G, T: DualNum, UX, UY>(g: G, x: Quantity<T, UX>) -> Quantity<T, UY>
 where
-    G: Fn(Quantity<Real<T, f64>, UX>) -> Quantity<Real<T, f64>, UY>,
+    G: Fn(Quantity<Real<T>, UX>) -> Quantity<Real<T>, UY>,
     UY: Sub<UX>,
 {
     let r = num_dual::zeroth_derivative(|x| g(Quantity::new(x)).0, x.0);
     Quantity::new(r)
 }
 
-pub fn first_derivative<G, T: DualNum<f64>, UX, UY>(
+pub fn first_derivative<G, T: DualNum, UX, UY>(
     g: G,
     x: Quantity<T, UX>,
 ) -> (Quantity<T, UY>, Quantity<T, Diff<UY, UX>>)
 where
-    G: Fn(Quantity<Dual<T, f64>, UX>) -> Quantity<Dual<T, f64>, UY>,
+    G: Fn(Quantity<Dual<T>, UX>) -> Quantity<Dual<T>, UY>,
     UY: Sub<UX>,
 {
     let r = num_dual::first_derivative(|x| g(Quantity::new(x)).0, x.0);
@@ -41,13 +41,13 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn gradient<G, T: DualNum<f64>, UX, UY, N: Dim>(
+pub fn gradient<G, T: DualNum, UX, UY, N: Dim>(
     g: G,
     x: &Quantity<OVector<T, N>, UX>,
 ) -> (Quantity<T, UY>, Quantity<OVector<T, N>, Diff<UY, UX>>)
 where
     DefaultAllocator: Allocator<N>,
-    G: Fn(Quantity<OVector<DualVec<T, f64, N>, N>, UX>) -> Quantity<DualVec<T, f64, N>, UY>,
+    G: Fn(Quantity<OVector<DualVec<T, N>, N>, UX>) -> Quantity<DualVec<T, N>, UY>,
     UY: Sub<UX>,
 {
     let r = num_dual::gradient(|x| g(Quantity::new(x)).0, &x.0);
@@ -55,13 +55,13 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn gradient_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
+pub fn gradient_copy<G, T: DualNum + Copy, UX, UY, N: Gradients>(
     g: G,
     x: &Quantity<OVector<T, N>, UX>,
 ) -> (Quantity<T, UY>, Quantity<OVector<T, N>, Diff<UY, UX>>)
 where
     DefaultAllocator: Allocator<N>,
-    G: Fn(Quantity<OVector<N::Dual<T, f64>, N>, UX>) -> Quantity<N::Dual<T, f64>, UY>,
+    G: Fn(Quantity<OVector<N::Dual<T>, N>, UX>) -> Quantity<N::Dual<T>, UY>,
     UY: Sub<UX>,
 {
     let r = N::gradient(|x, _: &()| g(Quantity::new(x)).0, &x.0, &());
@@ -69,7 +69,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn jacobian<G, T: DualNum<f64>, UX, UY, M: Dim, N: Dim>(
+pub fn jacobian<G, T: DualNum, UX, UY, M: Dim, N: Dim>(
     g: G,
     x: &Quantity<OVector<T, N>, UX>,
 ) -> (
@@ -78,9 +78,7 @@ pub fn jacobian<G, T: DualNum<f64>, UX, UY, M: Dim, N: Dim>(
 )
 where
     DefaultAllocator: Allocator<M> + Allocator<N> + Allocator<M, N> + Allocator<U1, N>,
-    G: Fn(
-        Quantity<OVector<DualVec<T, f64, N>, N>, UX>,
-    ) -> Quantity<OVector<DualVec<T, f64, N>, M>, UY>,
+    G: Fn(Quantity<OVector<DualVec<T, N>, N>, UX>) -> Quantity<OVector<DualVec<T, N>, M>, UY>,
     UY: Sub<UX>,
 {
     let r = num_dual::jacobian(|x| g(Quantity::new(x)).0, &x.0);
@@ -88,7 +86,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn jacobian_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
+pub fn jacobian_copy<G, T: DualNum + Copy, UX, UY, N: Gradients>(
     g: G,
     x: &Quantity<OVector<T, N>, UX>,
 ) -> (
@@ -97,7 +95,7 @@ pub fn jacobian_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
 )
 where
     DefaultAllocator: Allocator<N> + Allocator<N> + Allocator<N, N> + Allocator<U1, N>,
-    G: Fn(Quantity<OVector<N::Dual<T, f64>, N>, UX>) -> Quantity<OVector<N::Dual<T, f64>, N>, UY>,
+    G: Fn(Quantity<OVector<N::Dual<T>, N>, UX>) -> Quantity<OVector<N::Dual<T>, N>, UY>,
     UY: Sub<UX>,
 {
     let r = N::jacobian(|x, _: &()| g(Quantity::new(x)).0, &x.0, &());
@@ -105,7 +103,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn second_derivative<G, T: DualNum<f64>, UX, UY>(
+pub fn second_derivative<G, T: DualNum, UX, UY>(
     g: G,
     x: Quantity<T, UX>,
 ) -> (
@@ -114,7 +112,7 @@ pub fn second_derivative<G, T: DualNum<f64>, UX, UY>(
     Quantity<T, Diff<Diff<UY, UX>, UX>>,
 )
 where
-    G: Fn(Quantity<Dual2<T, f64>, UX>) -> Quantity<Dual2<T, f64>, UY>,
+    G: Fn(Quantity<Dual2<T>, UX>) -> Quantity<Dual2<T>, UY>,
     UY: Sub<UX>,
     Diff<UY, UX>: Sub<UX>,
 {
@@ -123,7 +121,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn hessian<G, T: DualNum<f64>, UX, UY, N: Dim>(
+pub fn hessian<G, T: DualNum, UX, UY, N: Dim>(
     g: G,
     x: &Quantity<OVector<T, N>, UX>,
 ) -> (
@@ -133,7 +131,7 @@ pub fn hessian<G, T: DualNum<f64>, UX, UY, N: Dim>(
 )
 where
     DefaultAllocator: Allocator<N> + Allocator<U1, N> + Allocator<N, N>,
-    G: Fn(Quantity<OVector<Dual2Vec<T, f64, N>, N>, UX>) -> Quantity<Dual2Vec<T, f64, N>, UY>,
+    G: Fn(Quantity<OVector<Dual2Vec<T, N>, N>, UX>) -> Quantity<Dual2Vec<T, N>, UY>,
     UY: Sub<UX>,
     Diff<UY, UX>: Sub<UX>,
 {
@@ -142,7 +140,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn hessian_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
+pub fn hessian_copy<G, T: DualNum + Copy, UX, UY, N: Gradients>(
     g: G,
     x: &Quantity<OVector<T, N>, UX>,
 ) -> (
@@ -152,7 +150,7 @@ pub fn hessian_copy<G, T: DualNum<f64> + Copy, UX, UY, N: Gradients>(
 )
 where
     DefaultAllocator: Allocator<N> + Allocator<N, N>,
-    G: Fn(Quantity<OVector<N::Dual2<T, f64>, N>, UX>) -> Quantity<N::Dual2<T, f64>, UY>,
+    G: Fn(Quantity<OVector<N::Dual2<T>, N>, UX>) -> Quantity<N::Dual2<T>, UY>,
     UY: Sub<UX>,
     Diff<UY, UX>: Sub<UX>,
 {
@@ -161,7 +159,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn second_partial_derivative<G, T: DualNum<f64>, UX, UY, UZ>(
+pub fn second_partial_derivative<G, T: DualNum, UX, UY, UZ>(
     g: G,
     (x, y): (Quantity<T, UX>, Quantity<T, UY>),
 ) -> (
@@ -171,12 +169,7 @@ pub fn second_partial_derivative<G, T: DualNum<f64>, UX, UY, UZ>(
     Quantity<T, Diff<Diff<UZ, UX>, UY>>,
 )
 where
-    G: Fn(
-        (
-            Quantity<HyperDual<T, f64>, UX>,
-            Quantity<HyperDual<T, f64>, UY>,
-        ),
-    ) -> Quantity<HyperDual<T, f64>, UZ>,
+    G: Fn((Quantity<HyperDual<T>, UX>, Quantity<HyperDual<T>, UY>)) -> Quantity<HyperDual<T>, UZ>,
     UZ: Sub<UX>,
     UZ: Sub<UY>,
     Diff<UZ, UX>: Sub<UY>,
@@ -194,7 +187,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn partial_hessian<G, T: DualNum<f64>, UX, UY, UZ, M: Dim, N: Dim>(
+pub fn partial_hessian<G, T: DualNum, UX, UY, UZ, M: Dim, N: Dim>(
     g: G,
     (x, y): (&Quantity<OVector<T, M>, UX>, &Quantity<OVector<T, N>, UY>),
 ) -> (
@@ -206,10 +199,10 @@ pub fn partial_hessian<G, T: DualNum<f64>, UX, UY, UZ, M: Dim, N: Dim>(
 where
     G: Fn(
         (
-            Quantity<OVector<HyperDualVec<T, f64, M, N>, M>, UX>,
-            Quantity<OVector<HyperDualVec<T, f64, M, N>, N>, UY>,
+            Quantity<OVector<HyperDualVec<T, M, N>, M>, UX>,
+            Quantity<OVector<HyperDualVec<T, M, N>, N>, UY>,
         ),
-    ) -> Quantity<HyperDualVec<T, f64, M, N>, UZ>,
+    ) -> Quantity<HyperDualVec<T, M, N>, UZ>,
     DefaultAllocator: Allocator<N> + Allocator<M> + Allocator<M, N> + Allocator<U1, N>,
     UZ: Sub<UX>,
     UZ: Sub<UY>,
@@ -228,7 +221,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn partial_hessian_copy<G, T: DualNum<f64> + Copy, UX, UY, UZ, N: Gradients>(
+pub fn partial_hessian_copy<G, T: DualNum + Copy, UX, UY, UZ, N: Gradients>(
     g: G,
     (x, y): (&Quantity<OVector<T, N>, UX>, Quantity<T, UY>),
 ) -> (
@@ -240,10 +233,10 @@ pub fn partial_hessian_copy<G, T: DualNum<f64> + Copy, UX, UY, UZ, N: Gradients>
 where
     G: Fn(
         (
-            Quantity<OVector<N::HyperDual<T, f64>, N>, UX>,
-            Quantity<N::HyperDual<T, f64>, UY>,
+            Quantity<OVector<N::HyperDual<T>, N>, UX>,
+            Quantity<N::HyperDual<T>, UY>,
         ),
-    ) -> Quantity<N::HyperDual<T, f64>, UZ>,
+    ) -> Quantity<N::HyperDual<T>, UZ>,
     DefaultAllocator: Allocator<N>,
     UZ: Sub<UX>,
     UZ: Sub<UY>,
@@ -264,7 +257,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn third_derivative<G, T: DualNum<f64>, UX, UY>(
+pub fn third_derivative<G, T: DualNum, UX, UY>(
     g: G,
     x: Quantity<T, UX>,
 ) -> (
@@ -274,7 +267,7 @@ pub fn third_derivative<G, T: DualNum<f64>, UX, UY>(
     Quantity<T, Diff<Diff<Diff<UY, UX>, UX>, UX>>,
 )
 where
-    G: Fn(Quantity<Dual3<T, f64>, UX>) -> Quantity<Dual3<T, f64>, UY>,
+    G: Fn(Quantity<Dual3<T>, UX>) -> Quantity<Dual3<T>, UY>,
     UY: Sub<UX>,
     Diff<UY, UX>: Sub<UX>,
     Diff<Diff<UY, UX>, UX>: Sub<UX>,
@@ -289,7 +282,7 @@ where
 }
 
 #[expect(clippy::type_complexity)]
-pub fn third_partial_derivative<G, T: DualNum<f64>, UX, UY, UZ, U>(
+pub fn third_partial_derivative<G, T: DualNum, UX, UY, UZ, U>(
     g: G,
     (x, y, z): (Quantity<T, UX>, Quantity<T, UY>, Quantity<T, UZ>),
 ) -> (
@@ -305,11 +298,11 @@ pub fn third_partial_derivative<G, T: DualNum<f64>, UX, UY, UZ, U>(
 where
     G: Fn(
         (
-            Quantity<HyperHyperDual<T, f64>, UX>,
-            Quantity<HyperHyperDual<T, f64>, UY>,
-            Quantity<HyperHyperDual<T, f64>, UZ>,
+            Quantity<HyperHyperDual<T>, UX>,
+            Quantity<HyperHyperDual<T>, UY>,
+            Quantity<HyperHyperDual<T>, UZ>,
         ),
-    ) -> Quantity<HyperHyperDual<T, f64>, UY>,
+    ) -> Quantity<HyperHyperDual<T>, UY>,
     U: Sub<UX>,
     U: Sub<UY>,
     U: Sub<UZ>,
@@ -343,10 +336,10 @@ mod test_num_dual {
     use num_dual::{Dual64, ImplicitDerivative, ImplicitFunction};
 
     struct AreaImplicit;
-    impl ImplicitFunction<f64> for AreaImplicit {
+    impl ImplicitFunction for AreaImplicit {
         type Parameters<D> = Area<D>;
         type Variable<D> = D;
-        fn residual<D: DualNum<f64> + Copy>(x: D, &area: &Area<D>) -> D {
+        fn residual<D: DualNum + Copy>(x: D, &area: &Area<D>) -> D {
             let l = Length::new(x);
             (area - l * l).convert_into(area)
         }
@@ -361,18 +354,18 @@ mod test_num_dual {
         assert_eq!(x, a.0.sqrt())
     }
 
-    fn volume<D: DualNum<f64> + Copy>(x: Length<D>) -> Volume<D> {
+    fn volume<D: DualNum + Copy>(x: Length<D>) -> Volume<D> {
         x * x * x
     }
 
-    fn distance<D: DualNum<f64>, N: Dim>(x: Length<OVector<D, N>>) -> Length<D>
+    fn distance<D: DualNum, N: Dim>(x: Length<OVector<D, N>>) -> Length<D>
     where
         DefaultAllocator: Allocator<N>,
     {
         x.dot(&x).sqrt()
     }
 
-    fn volume2<D: DualNum<f64> + Copy>((x, h): (Length<D>, Length<D>)) -> Volume<D> {
+    fn volume2<D: DualNum + Copy>((x, h): (Length<D>, Length<D>)) -> Volume<D> {
         x * x * h
     }
 
