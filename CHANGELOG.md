@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added the `experimental-inspect` feature, which annotates the Python conversions of quantities with `si_units.SIObject` (and angles with `si_units.Angle`) so that `pyo3`'s stub generation produces proper type hints.
+
+### Packaging
+- Updated `pyo3` and `numpy` dependencies to 0.30.
 
 ## [0.15.0] - 2026-08-12
 ### Packaging
