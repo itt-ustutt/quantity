@@ -6,10 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added the `experimental-inspect` feature, which annotates the Python conversions of quantities with `si_units.SIObject` (and angles with `si_units.Angle`) so that `pyo3`'s stub generation produces proper type hints.
+- Added the `experimental-inspect` feature, which annotates the Python conversions of quantities with `si_units.SIObject` (and angles with `si_units.Angle`) so that `pyo3`'s stub generation produces proper type hints. [#122](https://github.com/itt-ustutt/quantity/pull/122)
 
 ### Packaging
-- Updated `pyo3` and `numpy` dependencies to 0.30.
+- Updated `pyo3` and `numpy` dependencies to 0.30. [#122](https://github.com/itt-ustutt/quantity/pull/122)
 
 ## [0.15.0] - 2026-08-12
 ### Packaging
