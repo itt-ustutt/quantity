@@ -169,6 +169,47 @@ def linspace(start: SIObject, end: SIObject, n: int) -> SIObject:
     """
     ...
 
+def declare_unit(value: float, expr: str) -> SIObject | float:
+    """Build a quantity from a numeric value and an SI unit expression.
+
+    The expression accepts SI base and derived unit symbols, optionally
+    combined with standard SI prefixes (e.g. `"kWh"`, `"mm**2"`, `"J/mol/K"`).
+    Each atom is matched greedily; ties between a bare unit and a prefix + unit
+    split go to the bare unit, so `kg`, `cd`, `mol`, `min`, `Pa` keep their
+    canonical meaning.
+
+    Recognised symbols (case-sensitive):
+
+    * SI base/derived: `m`, `kg`, `s`, `A`, `K`, `mol`, `cd`, `Hz`, `N`,
+      `Pa`, `J`, `W`, `C`, `V`, `F`, `S`, `T`, `H`, `Wb`.
+    * Accepted non-SI: `min`, `h`, `d`, `bar`, `cal`, `g`, `L`/`l`.
+    * Special units with ASCII aliases: `Ohm`/`ohm` (also `Ω`, U+03A9),
+      `Ang`/`ang` (also `Å`, U+00C5).
+    * Prefixes: `Q R Y Z E P T G M k h d c m u n p f a z y r q`, plus
+      `da` for deca and `µ` (U+00B5) as alias for `u` (micro).
+
+    Supported operators: `*`, `/`, `**n` (or `^n`), with `²` (U+00B2) and `³`
+    (U+00B3) as shortcuts. Whitespace and implicit multiplication between
+    adjacent atoms are allowed.
+
+    Args:
+        value: Numeric value expressed in the given unit.
+        expr: Unit expression string.
+
+    Returns:
+        A SIObject in base SI units, or a float when the expression is
+        dimensionless.
+
+    Raises:
+        ValueError: If the expression cannot be parsed.
+
+    Examples:
+        >>> from si_units import declare_unit, KILO, WATT, HOUR
+        >>> declare_unit(5.0, "kWh") == 5.0 * KILO * WATT * HOUR
+        True
+    """
+    ...
+
 def logspace(start: SIObject, end: SIObject, n: int) -> SIObject:
     """Logarithmically spaced quantities.
 

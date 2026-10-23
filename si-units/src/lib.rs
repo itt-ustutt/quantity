@@ -15,6 +15,7 @@ use si_unit::SIUnit;
 mod extra_units;
 use extra_units::{Angle, Celsius, Debye};
 mod fmt;
+mod formula;
 
 /// Error type used to indicate unit conversion failures.
 #[derive(Error, Debug)]
@@ -488,6 +489,7 @@ pub fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(array, m)?)?;
     m.add_function(wrap_pyfunction!(linspace, m)?)?;
     m.add_function(wrap_pyfunction!(logspace, m)?)?;
+    m.add_function(wrap_pyfunction!(formula::declare_unit, m)?)?;
 
     add_constant(m, "SECOND", 1.0, _SECOND)?;
     add_constant(m, "METER", 1.0, _METER)?;
