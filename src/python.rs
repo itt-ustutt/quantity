@@ -10,8 +10,15 @@ use numpy::IntoPyArray;
 use numpy::PyReadonlyArray;
 #[cfg(feature = "nalgebra")]
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, ToPyArray};
+#[cfg(feature = "experimental-inspect")]
+use pyo3::{inspect::PyStaticExpr, type_hint_identifier};
 use pyo3::{exceptions::PyValueError, prelude::*};
 use std::sync::LazyLock;
+
+#[cfg(feature = "experimental-inspect")]
+const SIOBJECT_TYPE_HINT: PyStaticExpr = type_hint_identifier!("si_units", "SIObject");
+#[cfg(feature = "experimental-inspect")]
+const ANGLE_TYPE_HINT: PyStaticExpr = type_hint_identifier!("si_units", "Angle");
 
 static SIOBJECT: LazyLock<Py<PyAny>> = LazyLock::new(|| {
     Python::attach(|py| {
@@ -37,6 +44,8 @@ impl<
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const OUTPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L, M, T, I, N, THETA, J];
@@ -60,6 +69,8 @@ impl<
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const OUTPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L, M, T, I, N, THETA, J];
@@ -83,6 +94,8 @@ impl<
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const OUTPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L, M, T, I, N, THETA, J];
@@ -106,6 +119,8 @@ impl<
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const OUTPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
 
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let unit = [L, M, T, I, N, THETA, J];
@@ -128,6 +143,8 @@ where
     Self: PrintUnit,
 {
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const INPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
     fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob
             .call_method0("__getnewargs__")
@@ -168,6 +185,8 @@ where
     Self: PrintUnit,
 {
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const INPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
     fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob
             .call_method0("__getnewargs__")
@@ -208,6 +227,8 @@ where
     Self: PrintUnit,
 {
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const INPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
     fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob.call_method0("__getnewargs__").and_then(|raw| {
             raw.extract::<(PyReadonlyArray1<f64>, [i8; 7])>()
@@ -250,6 +271,8 @@ where
     Self: PrintUnit,
 {
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const INPUT_TYPE: PyStaticExpr = SIOBJECT_TYPE_HINT;
     fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok((value, unit_from)) = ob.call_method0("__getnewargs__").and_then(|raw| {
             raw.extract::<(PyReadonlyArray2<f64>, [i8; 7])>()
@@ -291,6 +314,8 @@ impl<'py> IntoPyObject<'py> for Angle {
     type Target = PyAny;
     type Output = Bound<'py, PyAny>;
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const OUTPUT_TYPE: PyStaticExpr = ANGLE_TYPE_HINT;
     fn into_pyobject(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         ANGLE.bind(py).call1((self.0,))
     }
@@ -298,6 +323,8 @@ impl<'py> IntoPyObject<'py> for Angle {
 
 impl<'py> FromPyObject<'_, 'py> for Angle {
     type Error = PyErr;
+    #[cfg(feature = "experimental-inspect")]
+    const INPUT_TYPE: PyStaticExpr = ANGLE_TYPE_HINT;
 
     fn extract(ob: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
         let Ok(value) = ob
