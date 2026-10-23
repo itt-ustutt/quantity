@@ -810,7 +810,7 @@ such as a numpy.ndarray or a torch.tensor.</p>
 
 <p><span class="doc-section-title">Examples:</span></p>
     <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">si_units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># don&#39;t do this:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># don't do this:</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">two_meters_init</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">SIObject</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># instead, do this:</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">two_meters_mul</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">METER</span>
@@ -897,9 +897,9 @@ such as a numpy.ndarray or a torch.tensor.</p>
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Any</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a new quantity.</span>
+<span class="w">    </span><span class="sd">"""Constructs a new quantity.</span>
 
-<span class="sd">    Warning: Don&#39;t use the default constructor</span>
+<span class="sd">    Warning: Don't use the default constructor</span>
 <span class="sd">        This constructor should not be used to construct a quantity.</span>
 <span class="sd">        Instead, multiply the value (float or array of floats)</span>
 <span class="sd">        by the appropriate unit. See example below.</span>
@@ -915,12 +915,12 @@ such as a numpy.ndarray or a torch.tensor.</p>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import si_units as si</span>
-<span class="sd">        &gt;&gt;&gt; # don&#39;t do this:</span>
+<span class="sd">        &gt;&gt;&gt; # don't do this:</span>
 <span class="sd">        &gt;&gt;&gt; two_meters_init = si.SIObject(2.0, [1, 0, 0, 0, 0, 0, 0])</span>
 <span class="sd">        &gt;&gt;&gt; # instead, do this:</span>
 <span class="sd">        &gt;&gt;&gt; two_meters_mul = 2.0 * si.METER</span>
 <span class="sd">        &gt;&gt;&gt; assert two_meters_init == two_meters_mul</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -1037,20 +1037,20 @@ such as a numpy.ndarray or a torch.tensor.</p>
 <span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the cubic root.</span>
+<span class="w">    </span><span class="sd">"""Calculate the cubic root.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Cubic root of the quantity.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError: When exponents of units are not multiples of three.</span>
-<span class="sd">        AttributeError: When the inner data type has no &#39;cbrt&#39; method.</span>
+<span class="sd">        AttributeError: When the inner data type has no 'cbrt' method.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; from si_units import METER</span>
 <span class="sd">        &gt;&gt;&gt; volume = METER**3</span>
 <span class="sd">        &gt;&gt;&gt; length = volume.cbrt()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1157,20 +1157,20 @@ such as a numpy.ndarray or a torch.tensor.</p>
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the square root.</span>
+<span class="w">    </span><span class="sd">"""Calculates the square root.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Square root of the quantity.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError: When exponents of units are not multiples of two.</span>
-<span class="sd">        AttributeError: When the inner data type has no &#39;sqrt&#39; method.</span>
+<span class="sd">        AttributeError: When the inner data type has no 'sqrt' method.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; from si_units import METER</span>
 <span class="sd">        &gt;&gt;&gt; square = METER**2</span>
 <span class="sd">        &gt;&gt;&gt; length = square.sqrt()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1256,14 +1256,14 @@ such as a numpy.ndarray or a torch.tensor.</p>
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">has_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests if the quantity has the same unit as the argument.</span>
+<span class="w">    </span><span class="sd">"""Tests if the quantity has the same unit as the argument.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        other: The quantity to compare to.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Wheter the units of the compared quantities are the same or not.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1395,7 +1395,7 @@ is divided by unit and returned without the unit wrapper.</p>
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">value_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">Self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the numeric value expressed in specified unit.</span>
+<span class="w">    </span><span class="sd">"""Return the numeric value expressed in specified unit.</span>
 
 <span class="sd">    The underlying value (float, numpy.ndarray, torch.tensor, ...)</span>
 <span class="sd">    is divided by unit and returned without the unit wrapper.</span>
@@ -1414,7 +1414,7 @@ is divided by unit and returned without the unit wrapper.</p>
 <span class="sd">        &gt;&gt;&gt; energy = 5.4e6 * JOULE</span>
 <span class="sd">        &gt;&gt;&gt; energy.value_in(KILO * WATT * HOUR)</span>
 <span class="sd">        1.5</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1540,7 +1540,7 @@ even if value is given as a scalar.</p>
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">SIObject</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">SIObject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build SIObject from scalar or list.</span>
+<span class="w">    </span><span class="sd">"""Build SIObject from scalar or list.</span>
 
 <span class="sd">    When the input is a scalar, it is stored in an array with a single element.</span>
 
@@ -1553,7 +1553,7 @@ even if value is given as a scalar.</p>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError: If the elements of value have different units.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1703,7 +1703,7 @@ the same unit, or if n is not positive.</p>
 <span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Linearly spaced quantities.</span>
+<span class="w">    </span><span class="sd">"""Linearly spaced quantities.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        start: Lowest value.</span>
@@ -1715,9 +1715,9 @@ the same unit, or if n is not positive.</p>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError:</span>
-<span class="sd">            If start and end values are not scalars, if they don&#39;t have</span>
+<span class="sd">            If start and end values are not scalars, if they don't have</span>
 <span class="sd">            the same unit, or if n is not positive.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1867,7 +1867,7 @@ the same unit, or if n is not positive.</p>
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logspace</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">SIObject</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SIObject</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Logarithmically spaced quantities.</span>
+<span class="w">    </span><span class="sd">"""Logarithmically spaced quantities.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        start: Lowest value.</span>
@@ -1879,9 +1879,9 @@ the same unit, or if n is not positive.</p>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError:</span>
-<span class="sd">            If start and end values are not scalars, if they don&#39;t have</span>
+<span class="sd">            If start and end values are not scalars, if they don't have</span>
 <span class="sd">            the same unit, or if n is not positive.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>

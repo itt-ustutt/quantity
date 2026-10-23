@@ -749,8 +749,8 @@ You can use this to convert units:</p>
 <span class="c1"># make sure we actually have a volume</span>
 <span class="c1"># this checks the quantity (here length**3), not the actual unit</span>
 <span class="c1"># i.e. we could have used volume.has_unit(METER**3) for the same effect.</span>
-<span class="k">assert</span> <span class="n">volume</span><span class="o">.</span><span class="n">has_unit</span><span class="p">(</span><span class="n">METER</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;Something went wrong.&quot;</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;V = </span><span class="si">{</span><span class="n">volume</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ANGSTROM</span><span class="o">**</span><span class="mi">3</span><span class="si">:</span><span class="s1">.2g</span><span class="si">}</span><span class="s1"> A^3&#39;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">volume</span><span class="o">.</span><span class="n">has_unit</span><span class="p">(</span><span class="n">METER</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span> <span class="s2">"Something went wrong."</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'V = </span><span class="si">{</span><span class="n">volume</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ANGSTROM</span><span class="o">**</span><span class="mi">3</span><span class="si">:</span><span class="s1">.2g</span><span class="si">}</span><span class="s1"> A^3'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 <div class="highlight"><pre><span></span><code>V = 8.9e+06 A^3
 </code></pre></div>
