@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Packaging
 - Updated `pyo3` and `numpy` dependencies to 0.30.
 
+### Fixed
+- Fixed the string representation of non-scalar gram-based quantities
+  (`g`, `g/mol`, `g/m³`) so array values are scaled to the displayed unit.
+
 ## [0.11.5] - 2026-06-22
 ### Packaging
 - Added CI workflow for emscripten wheel. [#117](https://github.com/itt-ustutt/quantity/pull/117)

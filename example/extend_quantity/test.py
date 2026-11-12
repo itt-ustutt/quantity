@@ -29,3 +29,17 @@ def test_nalgebra():
     >>> test_nalgebra(p, V)
     array([ 500., 1100.]) J
     """
+
+def test_repr_array():
+    """
+    >>> import si_units as si
+    >>> import numpy as np
+    >>> repr(np.array([1.0, 2.0, 3.0]) * si.GRAM)
+    'array([1., 2., 3.]) g'
+    >>> repr(np.array([1.0, 2.0, 3.0]) * si.GRAM / si.MOL)
+    'array([1., 2., 3.]) g/mol'
+    >>> repr(np.array([1.0, 2.0, 3.0]) * si.GRAM / si.METER**3)
+    'array([1., 2., 3.]) g/m³'
+    >>> repr(np.array([1.0, 2.0, 3.0]) * si.METER)
+    'array([1., 2., 3.]) m'
+    """

@@ -80,17 +80,12 @@ impl PySIObject {
         if let Ok(v) = self.value.extract::<f64>(py) {
             Ok(SINumber::new(v, self.unit).to_string())
         } else {
-            let mut value = self.value.bind(py).clone();
-            if self.unit == _KILOGRAM
-                || self.unit == _KILOGRAM / _MOL
-                || self.unit == _KILOGRAM / _METER.powi(3)
-            {
-                // For these three specific units, unit.to_string() will not return the
-                // base unit (kg...) but rather g, in order to determine an appropriate
-                // prefix for scalars. In this general representation, there are no prefixes
-                // so we adjust the value to match the unit before printing.
-                value = self.value.bind(py).mul(1e3)?;
-            }
+            let scale = self.unit.display_scale();
+            let value = if scale == 1.0 {
+                self.value.bind(py).clone()
+            } else {
+                self.value.bind(py).mul(scale)?
+            };
             let value = value.call_method0("__repr__")?.extract::<String>()?;
             Ok(format!("{} {}", value, self.unit))
         }

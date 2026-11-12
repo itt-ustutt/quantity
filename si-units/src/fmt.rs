@@ -144,6 +144,20 @@ impl SIUnit {
             None => unit_to_latex(&UNIT_SYMBOLS, &self.0, None),
         }
     }
+
+    /// Factor by which a value stored in canonical SI base units must be
+    /// multiplied to match the unit used for display.
+    ///
+    /// The kilogram dimension is displayed as `g` (one gram is `1e-3` kg), so a
+    /// value stored in kg must be multiplied by `1e3` before it is shown in
+    /// grams. Units without a derived symbol are rendered directly from their
+    /// base exponents and return `1`.
+    pub(crate) fn display_scale(self) -> f64 {
+        DERIVED_UNITS
+            .get(&self)
+            .map(|(unit, _, _, _, _)| 1.0 / unit.value)
+            .unwrap_or(1.0)
+    }
 }
 
 fn unit_to_latex(symbols: &[&str], exponents: &[i8], prefix: Option<&str>) -> String {
