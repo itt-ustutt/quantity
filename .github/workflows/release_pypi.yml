@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         target: [ {arch: x64, target: x86_64}, {arch: arm64, target: aarch64} ]
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
